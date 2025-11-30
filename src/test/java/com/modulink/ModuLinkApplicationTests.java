@@ -1,4 +1,4 @@
-package com.oct.modulink;
+package com.modulink;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
