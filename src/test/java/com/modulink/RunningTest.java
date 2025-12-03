@@ -9,8 +9,7 @@ import org.springframework.http.ResponseEntity;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-// Configurazione: DEFINED_PORT dice a Spring di usare la porta reale e non una random
-// properties = "server.port=80" forza l'uso della porta 80
+
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT, properties = "server.port=8080")
 class RunningTest {
 
@@ -22,8 +21,7 @@ class RunningTest {
 
     @Test
     void applicationShouldRespondOnPort80() {
-        // Verifica preliminare: siamo davvero sulla porta 80?
-        assertThat(port).isEqualTo(80);
+        assertThat(port).isEqualTo(8080);
 
         // Effettua una chiamata GET alla root (o a /actuator/health se preferisci)
         ResponseEntity<String> response = restTemplate.getForEntity("http://localhost:8080/", String.class);
