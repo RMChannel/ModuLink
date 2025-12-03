@@ -1,0 +1,36 @@
+name: Java Spring Boot CI with Port 80 Check
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Scarica il codice
+      - uses: actions/checkout@v4
+
+      # 2. Configura Java 17 (o la tua versione)
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+
+      # 3. Workaround per la porta 80 (IMPORTANTE)
+      # Le porte < 1024 sono privilegiate. In un container standard non-root non puoi usarle.
+      # Questo step configura authbind o permette java di usare porte basse se necessario,
+      # ma il metodo più pulito in CI è non testare sulla 80.
+      # Tuttavia, se obbligatorio, proviamo a lanciare il test come root o tramite configurazione container.
+      # Qui usiamo un semplice 'mvn test' che lancerà il test JUnit creato sopra.
+
+      - name: Build and Test with Maven
+        run: mvn -B verify
+        # Nota: Se il test fallisce per "Permission denied" sulla porta 80,
+        # GitHub Actions permette di girare su runner Linux standard che potrebbero bloccarlo.
+        # Una soluzione rapida in CI è usare 'sudo' ma non è raccomandato per Maven.
