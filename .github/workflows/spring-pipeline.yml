@@ -1,4 +1,4 @@
-name: Java Spring Boot CI with Port 80 Check
+name: Java Spring Boot CI with Port 8080 Check
 
 on:
   push:
