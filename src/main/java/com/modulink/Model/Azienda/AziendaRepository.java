@@ -2,6 +2,7 @@ package com.modulink.Model.Azienda;
 
 import com.modulink.Model.Utente.UtenteEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import java.util.Optional;
 
@@ -17,7 +18,7 @@ import java.util.Optional;
  *
  * @see AziendaEntity
  * @author Modulink Team
- * @version 1.0
+ * @version 1.1
  */
 public interface AziendaRepository extends JpaRepository<AziendaEntity, Integer> {
 
@@ -32,4 +33,15 @@ public interface AziendaRepository extends JpaRepository<AziendaEntity, Integer>
      * @return Un {@link Optional} contenente l'azienda se trovata, oppure un Optional vuoto se nessuna corrispondenza è stata trovata.
      */
     Optional<AziendaEntity> findByPiva(String piva);
+
+    /**
+     * Trova il valore massimo dell'ID presente nella tabella Azienda.
+     * <p>
+     * Utilizza una query JPQL personalizzata per aggregare i dati direttamente sul database,
+     * risultando molto performante.
+     *
+     * @return L'ID più alto registrato (Integer). Restituisce null se la tabella è vuota.
+     */
+    @Query("SELECT MAX(a.id_azienda) FROM AziendaEntity a")
+    Integer findMaxId();
 }
