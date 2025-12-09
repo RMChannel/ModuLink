@@ -30,7 +30,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/home/**").hasRole("USER")
-                        .requestMatchers("/favicon.ico","/", "/login","/css/**", "/photo/**","/uploads/**").permitAll()
+                        .requestMatchers("/favicon.ico","/", "/login","static/css/**", "/photo/**","/uploads/**").permitAll()
                         .anyRequest().authenticated() // tutte le altre pagine richiedono login
                 )
                 .formLogin(form -> form
