@@ -1,7 +1,6 @@
 package com.modulink.Controller.Register;
 
 import com.modulink.Model.Azienda.AziendaEntity;
-import com.modulink.Model.Azienda.AziendaRepository;
 import com.modulink.Model.Azienda.AziendaService;
 import com.modulink.Model.Ruolo.RuoloEntity;
 import com.modulink.Model.Ruolo.RuoloRepository;
@@ -9,11 +8,9 @@ import com.modulink.Model.Utente.Associazione.AssociazioneEntity;
 import com.modulink.Model.Utente.Associazione.AssociazioneRepository;
 import com.modulink.Model.Utente.CustomUserDetailsService;
 import com.modulink.Model.Utente.PasswordUtility;
-import com.modulink.Model.Utente.UserRepository;
 import com.modulink.Model.Utente.UtenteEntity;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
-import org.apache.catalina.User;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -30,14 +27,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.Principal;
-import java.util.Optional;
 
 /**
  * Controller Spring MVC che gestisce il flusso di registrazione (Onboarding) di una nuova Azienda e del suo Responsabile.
  * <p>
  * Il processo è strutturato come un <strong>Wizard in due passaggi</strong>:
  * <ol>
- * <li>Registrazione dati Azienda (Anagrafica, Logo, P.IVA).</li>
+ * <li>Registrazione dati Azienda (Anagrafica, Logo, P.IVA, Contatti).</li>
  * <li>Registrazione dati Utente Responsabile (Credenziali, Profilo).</li>
  * </ol>
  * <p>
@@ -45,7 +41,7 @@ import java.util.Optional;
  * {@link RegisterAziendaForm} tra le varie richieste HTTP finché l'intero processo non viene completato.
  *
  * @author Modulink Team
- * @version 1.1
+ * @version 1.2
  */
 @Controller
 @SessionAttributes("registerAziendaForm")
@@ -94,6 +90,7 @@ public class RegisterController {
      * <ul>
      * <li>Validazione formale dei dati (JSR-380).</li>
      * <li>Verifica univocità della Partita IVA nel database.</li>
+     * <li><strong>Normalizzazione del numero di telefono</strong> (rimozione spazi bianchi) e verifica della sua univocità nel sistema.</li>
      * <li>Conversione temporanea del file Logo in array di byte per conservarlo in sessione.</li>
      * </ul>
      * Se tutto è corretto, prepara il model per il secondo step (Registrazione Utente).
@@ -119,6 +116,13 @@ public class RegisterController {
                 return "/register/RegistraAzienda";
             }
             else {
+                // Normalizza il telefono rimuovendo gli spazi e verifica univocità
+                registerAziendaForm.setTelefono(registerAziendaForm.getTelefono().replaceAll(" ",""));
+                if(aziendaService.findByTelefono(registerAziendaForm.getTelefono())) {
+                    bindingResult.rejectValue("telefono","telefono.found","Il telefono inserito risulta già registrato da un'altra azienda");
+                    model.addAttribute("registerAziendaForm", registerAziendaForm);
+                    return "/register/RegistraAzienda";
+                }
                 MultipartFile file = registerAziendaForm.getLogo();
                 if(file!=null && !file.isEmpty()) {
                     registerAziendaForm.setLogoBytes(file.getBytes());
@@ -193,38 +197,20 @@ public class RegisterController {
                     model.addAttribute("registerUtenteForm", registerUtenteForm);
                     return "/register/RegistraUtente";
                 } catch (UsernameNotFoundException ignored) {}
-
                 String filename="";
-
                 if(registerAziendaForm.getLogoBytes()!=null) { //Salva il logo dell'azienda
                     String logodir="azienda-logos/";
                     Path uploadPath = Paths.get(logodir);
-                    if(!uploadPath.
-                            toFile().
-                            exists())
-                        uploadPath.
-                                toFile().
-                                mkdirs();
-
+                    if(!uploadPath.toFile().exists()) uploadPath.toFile().mkdirs();
                     filename=registerAziendaForm.getPiva()+registerAziendaForm.getLogoFileName();
-
                     Path filePath=uploadPath.resolve(filename);
-
                     if(Files.exists(filePath)) Files.delete(filePath);
-
                     Files.write(filePath,registerAziendaForm.getLogoBytes());
                     filename=logodir+filename;
                 }
                 //Salva l'azienda
-                AziendaEntity aziendaEntity = new AziendaEntity(
-                        registerAziendaForm.getNomeAzienda(),
-                        registerAziendaForm.getPiva(),
-                        registerAziendaForm.getIndirizzo(),
-                        registerAziendaForm.getCitta(),
-                        registerAziendaForm.getCap(),
-                        registerAziendaForm.getTelefono(),
-                        filename);
-                aziendaService.registraAzienda(aziendaEntity);
+                AziendaEntity aziendaEntity = new AziendaEntity(registerAziendaForm.getNomeAzienda(),registerAziendaForm.getPiva(),registerAziendaForm.getIndirizzo(),registerAziendaForm.getCitta(),registerAziendaForm.getCap(),registerAziendaForm.getTelefono(),filename);
+                aziendaEntity=aziendaService.registraAzienda(aziendaEntity);
 
                 filename="";
                 if(registerUtenteForm.getImmagineProfilo().getBytes().length!=0) { //Salva il logo del responsabile
@@ -238,7 +224,7 @@ public class RegisterController {
                     filename=logodir+filename;
                 }
                 //Salvo il responsabile
-                UtenteEntity utenteEntity = new UtenteEntity(aziendaEntity,registerUtenteForm.getEmail(), PasswordUtility.hashPassword(registerUtenteForm.getPassword()),registerUtenteForm.getNome(),registerUtenteForm.getCognome(),registerUtenteForm.getTelefono(),filename);
+                UtenteEntity utenteEntity = new UtenteEntity(aziendaEntity,registerUtenteForm.getEmail(), PasswordUtility.hashPassword(registerUtenteForm.getPassword()),registerUtenteForm.getNome(),registerUtenteForm.getCognome(),registerUtenteForm.getTelefonoutente(),filename);
                 userDetailsService.registraUtente(utenteEntity,aziendaEntity.getId_azienda());
 
                 //Creo il ruolo default del Responsabile

@@ -79,10 +79,10 @@
                                 <input type="tel"
                                        class="form-control"
                                        id="telefono"
-                                       th:field="*{telefono}"
-                                       th:classappend="${#fields.hasErrors('telefono')} ? 'is-invalid' : ''"
+                                       th:field="*{telefonoutente}"
+                                       th:classappend="${#fields.hasErrors('telefonoutente')} ? 'is-invalid' : ''"
                                        placeholder="+39 ...">
-                                <div class="invalid-feedback" th:if="${#fields.hasErrors('telefono')}" th:errors="*{telefono}"></div>
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('telefonoutente')}" th:errors="*{telefonoutente}"></div>
                             </div>
                         </div>
 
