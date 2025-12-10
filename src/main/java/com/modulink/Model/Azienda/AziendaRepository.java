@@ -17,7 +17,7 @@ import java.util.Optional;
  *
  * @see AziendaEntity
  * @author Modulink Team
- * @version 1.1
+ * @version 1.2
  */
 public interface AziendaRepository extends JpaRepository<AziendaEntity, Integer> {
 
@@ -43,4 +43,18 @@ public interface AziendaRepository extends JpaRepository<AziendaEntity, Integer>
      */
     @Query("SELECT MAX(a.id_azienda) FROM AziendaEntity a")
     Integer findMaxId();
+
+    /**
+     * Recupera un'istanza di {@link AziendaEntity} basandosi sul numero di telefono.
+     * <p>
+     * Metodo utilizzato principalmente in fase di registrazione per verificare che il
+     * numero di telefono inserito non sia già associato ad un'altra azienda nel sistema.
+     * <p>
+     * Nota: Si assume che il parametro passato sia già normalizzato (es. senza spazi)
+     * se i dati nel DB sono salvati in tale formato.
+     *
+     * @param telefono Il numero di telefono da cercare.
+     * @return Un {@link Optional} contenente l'azienda se il telefono corrisponde, altrimenti vuoto.
+     */
+    Optional<AziendaEntity> findByTelefono(String telefono);
 }
