@@ -1,6 +1,5 @@
 package com.modulink.Model.Azienda;
 
-import com.modulink.Model.Utente.UtenteEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
