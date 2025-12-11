@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import java.security.Principal;
 
 @Controller
-public class DashboardControll {
+public class DashboardController {
     @GetMapping("/dashboard")
     public String dashboard(Principal principal, Model model) {
         if(principal == null)
