@@ -1,0 +1,98 @@
+/* Terms Page Styles - Modulink */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f5f5f7;
+    color: #333;
+    line-height: 1.6;
+    margin: 0;
+}
+
+.terms-container {
+    max-width: 1000px;
+    margin: 40px auto;
+    padding: 20px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+}
+
+.terms-header {
+    text-align: center;
+    margin-bottom: 40px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #e6e6e6;
+}
+
+.terms-header h1 {
+    color: #001f3f;
+    font-size: 2.2em;
+    margin-bottom: 10px;
+}
+
+.last-updated {
+    color: #777;
+    font-style: italic;
+    font-size: 0.9em;
+}
+
+.terms-content {
+    padding: 0 15px;
+}
+
+.terms-section {
+    margin-bottom: 30px;
+}
+
+.terms-section h2 {
+    color: #001f3f;
+    font-size: 1.5em;
+    margin-bottom: 15px;
+    padding-bottom: 5px;
+    border-bottom: 2px solid #4ecdc4; /* Colore accento mantenuto */
+    display: inline-block;
+}
+
+.terms-section p {
+    margin-bottom: 15px;
+}
+
+.terms-section ul {
+    margin-left: 20px;
+    margin-bottom: 15px;
+}
+
+.terms-section li {
+    margin-bottom: 8px;
+}
+
+/* Stile per il box contatti */
+.contact-info {
+    background-color: #f7f9fc;
+    padding: 15px 20px;
+    border-left: 4px solid #4ecdc4;
+    margin-top: 15px;
+}
+
+.contact-info p {
+    margin-bottom: 5px;
+}
+
+strong {
+    color: #001f3f;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+    .terms-container {
+        margin: 20px auto;
+        padding: 15px;
+    }
+
+    .terms-header h1 {
+        font-size: 1.8em;
+    }
+
+    .terms-section h2 {
+        font-size: 1.3em;
+    }
+}
