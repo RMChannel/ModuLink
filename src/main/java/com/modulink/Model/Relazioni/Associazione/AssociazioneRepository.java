@@ -1,4 +1,4 @@
-package com.modulink.Model.Utente.Associazione;
+package com.modulink.Model.Relazioni.Associazione;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

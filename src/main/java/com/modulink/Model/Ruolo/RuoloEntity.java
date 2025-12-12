@@ -1,7 +1,13 @@
 package com.modulink.Model.Ruolo;
 
 import com.modulink.Model.Azienda.AziendaEntity;
+import com.modulink.Model.Relazioni.Affiliazione.AffiliazioneEntity;
+import com.modulink.Model.Relazioni.Associazione.AssociazioneEntity;
+import com.modulink.Model.Utente.UtenteEntity;
 import jakarta.persistence.*;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Rappresenta l'entità <strong>Ruolo</strong> nel sistema Modulink.
@@ -72,6 +78,17 @@ public class RuoloEntity {
      */
     @Column(name="Descrizione")
     private String descrizione;
+
+    /**
+     * Relazione One-To-Many verso l'entità di associazione intermedio.
+     * <p>
+     * Questa struttura permette di navigare dai ruoli agli utenti che li possiedono.
+     */
+    @OneToMany(mappedBy = "ruolo", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<AssociazioneEntity> associazioni = new HashSet<>();
+
+    @OneToMany(mappedBy = "ruolo", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<AffiliazioneEntity> affiliazioni = new HashSet<>();
 
     /**
      * Costruttore vuoto predefinito.
@@ -186,5 +203,21 @@ public class RuoloEntity {
      */
     public void setDescrizione(String descrizione) {
         this.descrizione = descrizione;
+    }
+
+    public Set<AssociazioneEntity> getAssociazioni() {
+        return associazioni;
+    }
+
+    public void setAssociazioni(Set<AssociazioneEntity> associazioni) {
+        this.associazioni = associazioni;
+    }
+
+    public Set<AffiliazioneEntity> getAffiliazioni() {
+        return affiliazioni;
+    }
+
+    public void setAffiliazioni(Set<AffiliazioneEntity> affiliazioni) {
+        this.affiliazioni = affiliazioni;
     }
 }
