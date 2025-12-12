@@ -2,7 +2,7 @@ package com.modulink.Model.Utente;
 
 import com.modulink.Model.Azienda.AziendaEntity;
 import com.modulink.Model.Ruolo.RuoloEntity;
-import com.modulink.Model.Utente.Associazione.AssegnazioneEntity;
+import com.modulink.Model.Utente.Associazione.AssociazioneEntity;
 import jakarta.persistence.*;
 
 import java.util.HashSet;
@@ -21,7 +21,7 @@ import java.util.Set;
  * @see UtenteID
  * @see AziendaEntity
  * @see RuoloEntity
- * @see AssegnazioneEntity
+ * @see AssociazioneEntity
  * @author Modulink Team
  * @version 1.3
  */
@@ -62,7 +62,7 @@ public class UtenteEntity {
      * di Utente e Ruolo.
      */
     @OneToMany(mappedBy = "utente", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<AssegnazioneEntity> associazioni = new HashSet<>();
+    private Set<AssociazioneEntity> associazioni = new HashSet<>();
 
     /**
      * Indirizzo email dell'utente.
@@ -266,9 +266,9 @@ public class UtenteEntity {
      * <p>
      * Di solito non viene usato direttamente dalla logica di business,
      * ma serve a Hibernate per gestire la persistenza.
-     * @return Il Set di {@link AssegnazioneEntity}.
+     * @return Il Set di {@link AssociazioneEntity}.
      */
-    public Set<AssegnazioneEntity> getAssociazioni() {
+    public Set<AssociazioneEntity> getAssociazioni() {
         return associazioni;
     }
 
@@ -276,7 +276,7 @@ public class UtenteEntity {
      * Imposta il set delle associazioni.
      * @param associazioni Il nuovo set di associazioni.
      */
-    public void setAssociazioni(Set<AssegnazioneEntity> associazioni) {
+    public void setAssociazioni(Set<AssociazioneEntity> associazioni) {
         this.associazioni = associazioni;
     }
 
@@ -292,7 +292,7 @@ public class UtenteEntity {
     public Set<RuoloEntity> getRuoli() {
         Set<RuoloEntity> ruoli = new HashSet<>();
         if(associazioni != null) {
-            for(AssegnazioneEntity assoc : associazioni) {
+            for(AssociazioneEntity assoc : associazioni) {
                 ruoli.add(assoc.getRuolo());
             }
         }
@@ -302,13 +302,13 @@ public class UtenteEntity {
     /**
      * Metodo di utilità per aggiungere un ruolo all'utente.
      * <p>
-     * Crea automaticamente una nuova istanza di {@link AssegnazioneEntity}
+     * Crea automaticamente una nuova istanza di {@link AssociazioneEntity}
      * che collega questo utente al ruolo specificato e la aggiunge alla collezione.
      *
      * @param ruolo Il ruolo da assegnare.
      */
     public void addRuolo(RuoloEntity ruolo) {
-        AssegnazioneEntity assoc = new AssegnazioneEntity(this, ruolo);
+        AssociazioneEntity assoc = new AssociazioneEntity(this, ruolo);
         this.associazioni.add(assoc);
     }
 }

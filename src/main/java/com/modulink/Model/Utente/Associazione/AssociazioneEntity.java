@@ -20,16 +20,16 @@ import jakarta.persistence.*;
  * Questa entità risolve il problema mappando esplicitamente le colonne ID come attributi semplici
  * e definendo le relazioni come <code>@ManyToOne</code> in sola lettura (insertable=false, updatable=false).
  *
- * @see AssegnazioneID
+ * @see AssocazioneID
  * @see UtenteEntity
  * @see RuoloEntity
  * @author Modulink Team
  * @version 1.0
  */
 @Entity
-@Table(name = "Assegnazione", schema = "modulink")
-@IdClass(AssegnazioneID.class)
-public class AssegnazioneEntity {
+@Table(name = "Associazione", schema = "modulink")
+@IdClass(AssocazioneID.class)
+public class AssociazioneEntity {
 
     /**
      * Parte della chiave primaria: ID dell'utente associato.
@@ -90,7 +90,7 @@ public class AssegnazioneEntity {
      * Costruttore vuoto.
      * Necessario per JPA per istanziare la classe via reflection.
      */
-    public AssegnazioneEntity() {}
+    public AssociazioneEntity() {}
 
     /**
      * Costruttore principale per creare una nuova associazione.
@@ -101,7 +101,7 @@ public class AssegnazioneEntity {
      * @param utente L'utente a cui assegnare il ruolo.
      * @param ruolo  Il ruolo da assegnare.
      */
-    public AssegnazioneEntity(UtenteEntity utente, RuoloEntity ruolo) {
+    public AssociazioneEntity(UtenteEntity utente, RuoloEntity ruolo) {
         this.utente = utente;
         this.ruolo = ruolo;
 
