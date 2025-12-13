@@ -84,7 +84,7 @@ public class AziendaEntity {
      * Questo campo mappa la colonna fisica sul database ed è l'unico responsabile
      * delle operazioni di scrittura (INSERT/UPDATE) per la relazione.
      */
-    @Column(name="Responsabile_ID_Utente", nullable = true)
+    @Column(name="Responsabile_ID_Utente", nullable = false)
     private Integer responsabileIdUtente;
 
     // --- MODIFICA 2: Mappiamo la relazione in SOLA LETTURA ---
