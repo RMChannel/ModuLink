@@ -23,7 +23,7 @@ import java.util.Set;
  * @see RuoloEntity
  * @see AssociazioneEntity
  * @author Modulink Team
- * @version 1.2
+ * @version 1.3
  */
 @Entity
 @Table(name="Utente", schema="modulink")
@@ -113,7 +113,6 @@ public class UtenteEntity {
     /**
      * Costruttore completo per inizializzare un oggetto UtenteEntity.
      *
-     * @param id_utente             L'ID numerico manuale (calcolato).
      * @param azienda               L'entità Azienda di appartenenza.
      * @param email                 L'indirizzo email dell'utente.
      * @param hash_password         La password cifrata dell'utente.
@@ -122,8 +121,7 @@ public class UtenteEntity {
      * @param telefono              Il numero di telefono (può essere null).
      * @param path_immagine_profilo Il percorso dell'immagine profilo (può essere null).
      */
-    public UtenteEntity(int id_utente, AziendaEntity azienda, String email, String hash_password, String nome, String cognome, String telefono, String path_immagine_profilo) {
-        this.id_utente = id_utente;
+    public UtenteEntity(AziendaEntity azienda, String email, String hash_password, String nome, String cognome, String telefono, String path_immagine_profilo) {
         this.azienda = azienda;
         this.email = email;
         this.hash_password = hash_password;

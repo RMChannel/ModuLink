@@ -1,0 +1,155 @@
+/* --- 1. CONFIGURAZIONE GLOBALE --- */
+body {
+    background-color: #ffffff;
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', sans-serif;
+    color: #334155;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    padding: 20px 0;
+}
+
+/* --- 2. CARD PRINCIPALE --- */
+.registration-card {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+    overflow: hidden;
+    border: 1px solid #e2e8f0;
+}
+
+/* --- 3. HEADER CARD --- */
+.card-header {
+    background: linear-gradient(180deg, #2563eb 0%, #1d4ed8 100%);
+    color: white;
+    padding: 40px 30px;
+    text-align: center;
+}
+
+.card-header h2 {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    font-size: 28px;
+    letter-spacing: -0.5px;
+}
+
+/* --- 4. CORPO CARD --- */
+.card-body {
+    padding: 40px;
+}
+
+/* --- 5. FORM ELEMENTS --- */
+.form-label {
+    font-weight: 500;
+    color: #0f172a;
+    margin-bottom: 8px;
+    font-size: 14px;
+}
+
+.form-control, .form-select {
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    padding: 12px 15px;
+    transition: all 0.2s ease;
+    font-family: 'Inter', sans-serif;
+    color: #334155;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    outline: none;
+}
+
+.invalid-feedback {
+    font-size: 0.875rem;
+    margin-top: 5px;
+    color: #dc3545;
+}
+
+.is-invalid {
+    border-color: #dc3545;
+}
+
+/* --- 6. BOTTONI --- */
+.btn-primary {
+    background: #2563eb;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 40px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    color: white;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+}
+
+.btn-primary:hover {
+    background: #1d4ed8;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(37, 99, 235, 0.3);
+}
+
+.btn-primary:active {
+    transform: scale(0.98);
+}
+
+/* --- 7. UPLOAD FILE --- */
+.logo-preview {
+    max-width: 200px;
+    max-height: 200px;
+    margin-top: 10px;
+    border-radius: 8px;
+    display: none;
+    border: 1px solid #e2e8f0;
+}
+
+.file-upload-wrapper {
+    position: relative;
+}
+
+.file-upload-label {
+    display: inline-block;
+    padding: 20px;
+    background-color: #f8fafc;
+    border: 2px dashed #cbd5e1;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+    width: 100%;
+    color: #64748b;
+    font-weight: 500;
+}
+
+.file-upload-label:hover {
+    background-color: #dbeafe;
+    border-color: #2563eb;
+    color: #2563eb;
+}
+
+.file-upload-input {
+    display: none;
+}
+
+/* --- 8. DIVISORI SEZIONE --- */
+.section-divider {
+    margin: 30px 0;
+    border-top: 1px solid #e2e8f0;
+    position: relative;
+}
+
+.section-title {
+    background: white;
+    padding: 0 15px;
+    position: relative;
+    top: -12px;
+    display: inline-block;
+    color: #2563eb;
+    font-weight: 600;
+    font-family: 'Poppins', sans-serif;
+    font-size: 16px;
+}
