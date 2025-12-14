@@ -1,17 +1,122 @@
-/* --- 1. CONFIGURAZIONE GLOBALE --- */
-body {
-    background-color: #ffffff;
-    margin: 0;
-    padding: 0;
-    font-family: 'Inter', sans-serif;
-    color: #334155;
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    padding: 20px 0;
+/* ============================
+   1. CONFIGURAZIONE GLOBALE
+   ============================ */
+* {
+    box-sizing: border-box;
 }
 
-/* --- 2. CARD PRINCIPALE --- */
+/* FIX STABILITÀ: Forza la barra di scorrimento sempre visibile */
+html {
+    overflow-y: scroll;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    /* Grigio chiaro (come Login) per contrasto con la card bianca */
+    background-color: #f0f2f5;
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    color: #334155;
+}
+
+/* ============================
+   2. COMPONENTI UI (BOTTONI - Stile Main)
+   ============================ */
+.btn {
+    padding: 10px 24px;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    line-height: 1.2;
+}
+
+.btn:hover { transform: translateY(-2px); }
+.btn:active { transform: scale(0.98); }
+
+.btn-outline {
+    border: 1px solid #e2e8f0;
+    color: #0f172a;
+    background: white;
+}
+.btn-outline:hover { background-color: #f8fafc; border-color: #cbd5e1; }
+
+.btn-solid {
+    background: #2563eb;
+    color: #fff;
+    /* Fix altezza bordi identico al Main */
+    border: 1px solid #2563eb;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+}
+.btn-solid:hover {
+    background: #1d4ed8;
+    border-color: #1d4ed8;
+    box-shadow: 0 6px 16px rgba(37, 99, 235, 0.3);
+}
+
+/* ============================
+   3. HEADER (Stile Main)
+   ============================ */
+.site-header {
+    padding: 20px 5%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #f1f5f9;
+    position: sticky;
+    top: 0;
+    background: #ffffff; /* Bianco solido come Main */
+    z-index: 1000;
+    max-width: 1440px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+/* Target per il container dei bottoni */
+.site-header > div:last-child {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    padding: 0;
+    height: 50px;
+}
+
+.logo img {
+    height: 100%;
+    width: auto;
+    display: block;
+    object-fit: contain;
+    border: none;
+}
+
+.nav-links { display: flex; gap: 40px; font-weight: 500; font-size: 16px; }
+.nav-links a { text-decoration: none; color: #64748b; transition: color 0.2s; }
+.nav-links a:hover { color: #2563eb; }
+
+/* ============================
+   4. LAYOUT REGISTRAZIONE
+   ============================ */
+.register-container {
+    width: 100%;
+    max-width: 700px; /* Più largo del login per contenere il form */
+    margin: 40px 20px;
+    flex: 1; /* Occupa lo spazio disponibile */
+    display: flex;
+    flex-direction: column;
+}
+
 .registration-card {
     background: white;
     border-radius: 16px;
@@ -20,7 +125,7 @@ body {
     border: 1px solid #e2e8f0;
 }
 
-/* --- 3. HEADER CARD --- */
+/* --- HEADER CARD --- */
 .card-header {
     background: linear-gradient(180deg, #2563eb 0%, #1d4ed8 100%);
     color: white;
@@ -36,26 +141,29 @@ body {
     letter-spacing: -0.5px;
 }
 
-/* --- 4. CORPO CARD --- */
+/* --- CORPO CARD --- */
 .card-body {
     padding: 40px;
 }
 
-/* --- 5. FORM ELEMENTS --- */
+/* --- FORM ELEMENTS --- */
 .form-label {
     font-weight: 500;
     color: #0f172a;
     margin-bottom: 8px;
     font-size: 14px;
+    display: block;
 }
 
 .form-control, .form-select {
+    width: 100%;
     border-radius: 8px;
     border: 1px solid #e2e8f0;
     padding: 12px 15px;
     transition: all 0.2s ease;
     font-family: 'Inter', sans-serif;
     color: #334155;
+    font-size: 16px;
 }
 
 .form-control:focus, .form-select:focus {
@@ -74,7 +182,7 @@ body {
     border-color: #dc3545;
 }
 
-/* --- 6. BOTTONI --- */
+/* --- BOTTONE SUBMIT FORM (Primario) --- */
 .btn-primary {
     background: #2563eb;
     border: none;
@@ -85,6 +193,8 @@ body {
     color: white;
     cursor: pointer;
     box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+    width: 100%;
+    font-size: 16px;
 }
 
 .btn-primary:hover {
@@ -97,7 +207,7 @@ body {
     transform: scale(0.98);
 }
 
-/* --- 7. UPLOAD FILE --- */
+/* --- UPLOAD FILE --- */
 .logo-preview {
     max-width: 200px;
     max-height: 200px;
@@ -135,11 +245,12 @@ body {
     display: none;
 }
 
-/* --- 8. DIVISORI SEZIONE --- */
+/* --- DIVISORI SEZIONE --- */
 .section-divider {
     margin: 30px 0;
     border-top: 1px solid #e2e8f0;
     position: relative;
+    text-align: center;
 }
 
 .section-title {
@@ -152,4 +263,49 @@ body {
     font-weight: 600;
     font-family: 'Poppins', sans-serif;
     font-size: 16px;
+}
+
+/* ============================
+   5. RESPONSIVE / MOBILE
+   ============================ */
+
+@media (max-width: 900px) {
+    .nav-links { display: none; }
+}
+
+@media (max-width: 480px) {
+    /* Header più compatto (Stile Main) */
+    .site-header {
+        padding: 10px 15px;
+    }
+
+    .logo { height: 32px; }
+
+    /* Bottoni Header più piccoli */
+    .site-header > div:last-child .btn {
+        padding: 6px 12px;
+        font-size: 13px;
+        white-space: nowrap;
+    }
+
+    .site-header > div:last-child {
+        gap: 8px;
+    }
+
+    /* Layout Registrazione Mobile */
+    .register-container {
+        margin: 20px 10px;
+    }
+
+    .card-body {
+        padding: 25px 20px;
+    }
+
+    .card-header {
+        padding: 30px 20px;
+    }
+
+    .card-header h2 {
+        font-size: 24px;
+    }
 }

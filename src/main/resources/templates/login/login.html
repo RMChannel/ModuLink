@@ -2,25 +2,23 @@
 <html lang="it" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - ModuLink</title>
     <link rel="stylesheet" th:href="@{/css/main.css}">
     <link rel="stylesheet" th:href="@{/css/login.css}">
     <link rel="icon" type="image/x-icon" th:href="@{/favicon.ico}">
 </head>
+<header th:replace="~{fragments/header :: mainHeader}"></header>
 <body>
 <div class="login-container">
     <div class="login-box">
         <div class="logo-container">
             <img th:src="@{/photo/logo.png}" alt="ModuLink Logo" class="logo">
-            <h1>ModuLink</h1>
         </div>
         <p class="subtitle">Accedi al tuo account</p>
 
-        <div th:if="${errorMessage}" class="alert alert-danger">
-            <p th:text="${errorMessage}"></p>
-        </div>
-        <div th:if="${logoutMessage}" class="alert alert-success">
-            <p th:text="${logoutMessage}"></p>
+        <div th:if="${param.error}" class="alert alert-danger">
+            Nome utente o password non validi.
         </div>
 
         <form th:action="@{/login}" method="post">
@@ -35,7 +33,7 @@
             <button type="submit" class="btn-login">Accedi</button>
         </form>
         <div class="register-link">
-            <p>Non hai un account? <a th:href="@{/register/utente}">Registrati ora</a></p>
+            <p>Non hai un account? <a th:href="@{/register}">Registrati ora</a></p>
         </div>
     </div>
 </div>

@@ -1,0 +1,167 @@
+/* =========================================
+   1. GLOBAL & RESET (Stile Modulink)
+   ========================================= */
+* { box-sizing: border-box; }
+
+body {
+    background-color: #f4f6f9;
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', sans-serif;
+    color: #334155;
+    overflow-x: hidden;
+    padding-bottom: 50px;
+    line-height: 1.6;
+}
+
+h1, h2, h3, h4 {
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+}
+
+/* =========================================
+   2. COMPONENTI UI (Bottoni)
+   ========================================= */
+.btn {
+    padding: 10px 24px;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.2s ease;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+}
+.btn:hover { transform: translateY(-2px); }
+.btn:active { transform: scale(0.98); }
+
+.btn-outline {
+    border: 1px solid #e2e8f0;
+    color: #0f172a;
+    margin-right: 10px;
+    background: white;
+}
+.btn-outline:hover { background-color: #f8fafc; border-color: #cbd5e1; }
+
+.btn-solid {
+    background: #2563eb;
+    color: #fff;
+    border: none;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+}
+.btn-solid:hover { background: #1d4ed8; box-shadow: 0 6px 16px rgba(37, 99, 235, 0.3); }
+
+/* =========================================
+   3. LAYOUT HEADER
+   ========================================= */
+.site-header {
+    padding: 20px 5%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #f1f5f9;
+    position: sticky;
+    top: 0;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(8px);
+    z-index: 1000;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    padding: 0;
+    height: 50px;
+}
+.logo img {
+    height: 100%;
+    width: auto;
+    display: block;
+    object-fit: contain;
+}
+
+.nav-links { display: flex; gap: 40px; font-weight: 500; font-size: 16px; }
+.nav-links a { text-decoration: none; color: #64748b; transition: color 0.2s; }
+.nav-links a:hover { color: #2563eb; }
+
+@media (max-width: 768px) {
+    .nav-links { display: none; }
+}
+
+/* =========================================
+   4. STILI SPECIFICI PRIVACY
+   ========================================= */
+.privacy-container {
+    max-width: 1000px;
+    margin: 40px auto;
+    padding: 40px;
+    background-color: white;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e2e8f0;
+}
+
+.privacy-header {
+    text-align: center;
+    margin-bottom: 40px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.privacy-header h1 {
+    color: #0f172a;
+    font-size: 2.2em;
+    margin-bottom: 10px;
+}
+
+.privacy-content { padding: 0 10px; }
+
+.privacy-section { margin-bottom: 30px; }
+
+.privacy-section h2 {
+    color: #0f172a;
+    font-size: 1.5em;
+    margin-bottom: 15px;
+    padding-bottom: 5px;
+    border-bottom: 2px solid #2563eb;
+    display: inline-block;
+}
+
+.privacy-section p { margin-bottom: 15px; color: #334155; }
+
+.privacy-section ul { margin-left: 20px; margin-bottom: 15px; }
+.privacy-section li { margin-bottom: 8px; }
+
+/* Eventuale box contatti se presente nell'HTML */
+.contact-info {
+    background-color: #f8fafc;
+    padding: 20px;
+    border-left: 4px solid #2563eb;
+    margin-top: 20px;
+    border-radius: 0 6px 6px 0;
+}
+.contact-info p { margin-bottom: 5px; }
+
+strong { color: #0f172a; }
+
+/* =========================================
+   5. FOOTER
+   ========================================= */
+footer {
+    background: #f8fafc;
+    padding: 40px 0;
+    text-align: center;
+    border-top: 1px solid #e2e8f0;
+    color: #64748b;
+    font-size: 14px;
+    margin-top: 60px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .privacy-container { margin: 20px; padding: 20px; }
+    .privacy-header h1 { font-size: 1.8em; }
+}
