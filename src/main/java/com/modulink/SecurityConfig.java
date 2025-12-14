@@ -29,7 +29,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable()) // Per semplicità, ma considera di abilitarlo in produzione
                 .authorizeHttpRequests(auth -> auth
                         // Permetti l'accesso alle risorse statiche e alle pagine pubbliche
-                        .requestMatchers("/", "/login", "/register/**", "/css/**", "/photo/**", "/favicon.ico").permitAll()
+                        .requestMatchers("/", "/login", "/register/**","/register-utente", "/css/**", "/photo/**", "/favicon.ico","/dashboard").permitAll()
                         // Richiedi l'autenticazione per qualsiasi altra richiesta
                         .anyRequest().authenticated()
                 )
@@ -40,6 +40,8 @@ public class SecurityConfig {
                         .loginProcessingUrl("/login")
                         // Pagina di atterraggio dopo un login riuscito
                         .defaultSuccessUrl("/dashboard", true)
+                        //Pagina login con errore
+                        .failureUrl("/login?error")
                         // Permetti a tutti di accedere alla pagina di login
                         .permitAll()
                 )
