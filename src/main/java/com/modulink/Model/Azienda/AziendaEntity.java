@@ -22,6 +22,7 @@ public class AziendaEntity {
      */
     @Id
     @Column(name="ID_Azienda", nullable = false, unique = true)
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     private int id_azienda;
 
     /**

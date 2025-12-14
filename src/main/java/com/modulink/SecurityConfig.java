@@ -26,24 +26,30 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable()) // disabilitato per semplicità, valuta se abilitarlo
+                .csrf(csrf -> csrf.disable()) // Per semplicità, ma considera di abilitarlo in produzione
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/home/**").hasRole("USER")
-                        .requestMatchers("/favicon.ico","/", "/login","/css/**", "/photo/**","/uploads/**","/register","/register-utente").permitAll()
-                        .anyRequest().authenticated() // tutte le altre pagine richiedono login
+                        // Permetti l'accesso alle risorse statiche e alle pagine pubbliche
+                        .requestMatchers("/", "/login", "/register/**", "/css/**", "/photo/**", "/favicon.ico").permitAll()
+                        // Richiedi l'autenticazione per qualsiasi altra richiesta
+                        .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
-                        .loginPage("/")     // tua pagina custom
-                        .loginProcessingUrl("/login") // gestito da Spring Security, NON devi scriverlo tu
-                        .failureUrl("/?error=true")
-                        .defaultSuccessUrl("/home", true) // redirect dopo login
+                        // Specifica la pagina di login personalizzata
+                        .loginPage("/login")
+                        // L'URL a cui il form invia i dati (gestito da Spring Security)
+                        .loginProcessingUrl("/login")
+                        // Pagina di atterraggio dopo un login riuscito
+                        .defaultSuccessUrl("/dashboard", true)
+                        // Permetti a tutti di accedere alla pagina di login
                         .permitAll()
                 )
                 .logout(logout -> logout
+                        // L'URL per eseguire il logout
                         .logoutUrl("/logout")
-                        .logoutSuccessUrl("/")
+                        // Pagina di atterraggio dopo il logout
+                        .logoutSuccessUrl("/login?logout")
                         .invalidateHttpSession(true)
+                        .deleteCookies("JSESSIONID")
                         .permitAll()
                 );
 

@@ -193,19 +193,37 @@ public class RegisterController {
                     model.addAttribute("registerUtenteForm", registerUtenteForm);
                     return "/register/RegistraUtente";
                 } catch (UsernameNotFoundException ignored) {}
+
                 String filename="";
+
                 if(registerAziendaForm.getLogoBytes()!=null) { //Salva il logo dell'azienda
                     String logodir="azienda-logos/";
                     Path uploadPath = Paths.get(logodir);
-                    if(!uploadPath.toFile().exists()) uploadPath.toFile().mkdirs();
+                    if(!uploadPath.
+                            toFile().
+                            exists())
+                        uploadPath.
+                                toFile().
+                                mkdirs();
+
                     filename=registerAziendaForm.getPiva()+registerAziendaForm.getLogoFileName();
+
                     Path filePath=uploadPath.resolve(filename);
+
                     if(Files.exists(filePath)) Files.delete(filePath);
+
                     Files.write(filePath,registerAziendaForm.getLogoBytes());
                     filename=logodir+filename;
                 }
                 //Salva l'azienda
-                AziendaEntity aziendaEntity = new AziendaEntity(registerAziendaForm.getNomeAzienda(),registerAziendaForm.getPiva(),registerAziendaForm.getIndirizzo(),registerAziendaForm.getCitta(),registerAziendaForm.getCap(),registerAziendaForm.getTelefono(),filename);
+                AziendaEntity aziendaEntity = new AziendaEntity(
+                        registerAziendaForm.getNomeAzienda(),
+                        registerAziendaForm.getPiva(),
+                        registerAziendaForm.getIndirizzo(),
+                        registerAziendaForm.getCitta(),
+                        registerAziendaForm.getCap(),
+                        registerAziendaForm.getTelefono(),
+                        filename);
                 aziendaService.registraAzienda(aziendaEntity);
 
                 filename="";
