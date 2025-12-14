@@ -78,7 +78,7 @@ public class RegisterResponsabileForm {
      */
     @NotBlank(message = "Il numero di telefono non può essere vuoto")
     @Pattern(regexp = "^(\\+\\d{1,3}( )?)?((\\(\\d{3}\\))|\\d{3})[- .]?\\d{3}[- .]?\\d{4}$", message = "Inserire un numero di telefono valido (es. +39 333 1234567)")
-    private String telefono;
+    private String telefonoutente;
 
     /**
      * File contenente l'immagine del profilo (opzionale).
@@ -171,16 +171,16 @@ public class RegisterResponsabileForm {
      * Restituisce il numero di telefono.
      * @return Il telefono formattato come stringa.
      */
-    public String getTelefono() {
-        return telefono;
+    public String getTelefonoutente() {
+        return telefonoutente;
     }
 
     /**
      * Imposta il numero di telefono.
      * @param telefono Il nuovo telefono.
      */
-    public void setTelefono(String telefono) {
-        this.telefono = telefono;
+    public void setTelefonoutente(String telefono) {
+        this.telefonoutente = telefono;
     }
 
     /**
