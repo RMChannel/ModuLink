@@ -45,7 +45,7 @@ import java.util.Optional;
  * {@link RegisterAziendaForm} tra le varie richieste HTTP finché l'intero processo non viene completato.
  *
  * @author Modulink Team
- * @version 1.0
+ * @version 1.1
  */
 @Controller
 @SessionAttributes("registerAziendaForm")
@@ -209,7 +209,7 @@ public class RegisterController {
                 aziendaService.registraAzienda(aziendaEntity);
 
                 filename="";
-                if(registerUtenteForm.getImmagineProfilo()!=null) { //Salva il logo del responsabile
+                if(registerUtenteForm.getImmagineProfilo().getBytes().length!=0) { //Salva il logo del responsabile
                     String logodir="user-logos/";
                     Path uploadPath = Paths.get(logodir);
                     if(!uploadPath.toFile().exists()) uploadPath.toFile().mkdirs();
