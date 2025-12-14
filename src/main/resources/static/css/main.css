@@ -1,4 +1,9 @@
-* { box-sizing: border-box; }
+/* =========================================
+   1. GLOBAL & RESET
+   ========================================= */
+* {
+    box-sizing: border-box;
+}
 
 body {
     background-color: #ffffff;
@@ -10,26 +15,36 @@ body {
 }
 
 /* --- 2. TIPOGRAFIA --- */
-h1, h2, h3, h4 { font-family: 'Poppins', sans-serif; margin: 0; }
+h1, h2, h3, h4 {
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+}
+
 .text-primary { color: #2563eb; }
 
-/* --- 3. COMPONENTI UI --- */
+/* =========================================
+   3. COMPONENTI UI (BOTTONI)
+   ========================================= */
 .btn {
     padding: 10px 24px;
     border-radius: 6px;
     font-weight: 600;
     cursor: pointer;
     text-decoration: none;
-    display: inline-block;
+    /* Flexbox per centrare testo e icone perfettamente */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     transition: all 0.2s ease;
+    line-height: 1.2;
 }
+
 .btn:hover { transform: translateY(-2px); }
 .btn:active { transform: scale(0.98); }
 
 .btn-outline {
     border: 1px solid #e2e8f0;
     color: #0f172a;
-    margin-right: 10px;
     background: white;
 }
 .btn-outline:hover { background-color: #f8fafc; border-color: #cbd5e1; }
@@ -37,12 +52,20 @@ h1, h2, h3, h4 { font-family: 'Poppins', sans-serif; margin: 0; }
 .btn-solid {
     background: #2563eb;
     color: #fff;
-    border: none;
+    /* FIX IMPORTANTE: Aggiunto bordo dello stesso colore dello sfondo
+       per pareggiare l'altezza con il bottone outline (che ha il bordo) */
+    border: 1px solid #2563eb;
     box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
 }
-.btn-solid:hover { background: #1d4ed8; box-shadow: 0 6px 16px rgba(37, 99, 235, 0.3); }
+.btn-solid:hover {
+    background: #1d4ed8;
+    border-color: #1d4ed8;
+    box-shadow: 0 6px 16px rgba(37, 99, 235, 0.3);
+}
 
-/* --- 4. LAYOUT DEL SITO --- */
+/* =========================================
+   4. HEADER & NAVIGAZIONE
+   ========================================= */
 .site-header {
     padding: 20px 5%;
     display: flex;
@@ -58,30 +81,40 @@ h1, h2, h3, h4 { font-family: 'Poppins', sans-serif; margin: 0; }
     width: 100%;
 }
 
+/* Regola per il contenitore dei bottoni (l'ultimo div nell'header) */
+.site-header > div:last-child {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Spazio costante tra i bottoni */
+}
+
 /* --- LOGO --- */
 .logo {
     display: flex;
     align-items: center;
     padding: 0;
-    height: 50px; /* Altezza fissa per la navbar */
+    height: 50px; /* Altezza fissa */
 }
 
+/* Gestione Immagine Logo */
 .logo img {
-    height: 100%; /* L'immagine si adatta all'altezza del contenitore */
-    width: auto;  /* La larghezza si adatta automaticamente */
+    height: 100%;
+    width: auto;
     display: block;
     object-fit: contain;
     border: none;
 }
 
+/* --- LINK DI NAVIGAZIONE --- */
 .nav-links { display: flex; gap: 40px; font-weight: 500; font-size: 16px; }
 .nav-links a { text-decoration: none; color: #64748b; transition: color 0.2s; }
 .nav-links a:hover { color: #2563eb; }
 
-@media (max-width: 768px) {
-    .nav-links { display: none; }
-}
+/* =========================================
+   5. SEZIONI HOMEPAGE
+   ========================================= */
 
+/* Hero Section */
 .hero-section {
     padding: 100px 20px;
     text-align: center;
@@ -102,6 +135,7 @@ h1, h2, h3, h4 { font-family: 'Poppins', sans-serif; margin: 0; }
     letter-spacing: -1.5px;
 }
 
+/* Features Section */
 .features-section {
     padding: 80px 0;
     background: #fff;
@@ -132,6 +166,7 @@ h1, h2, h3, h4 { font-family: 'Poppins', sans-serif; margin: 0; }
 .feature-title { font-size: 22px; font-weight: 600; margin-bottom: 12px; color: #0f172a; }
 .feature-text { color: #64748b; line-height: 1.6; font-size: 16px; }
 
+/* Modules Section */
 .modules-section {
     padding: 100px 0;
     background: #0f172a;
@@ -162,6 +197,7 @@ h1, h2, h3, h4 { font-family: 'Poppins', sans-serif; margin: 0; }
 .module-icon { font-size: 40px; margin-bottom: 20px; color: #60a5fa; }
 .module-card h4 { font-weight: 500; font-size: 18px; letter-spacing: 0.5px; }
 
+/* Footer */
 footer {
     background: #f8fafc;
     padding: 40px 0;
@@ -169,4 +205,38 @@ footer {
     border-top: 1px solid #e2e8f0;
     color: #64748b;
     font-size: 14px;
+}
+
+/* =========================================
+   6. MEDIA QUERIES (RESPONSIVE)
+   ========================================= */
+
+@media (max-width: 900px) {
+    .nav-links { display: none; } /* Nasconde menu nav su tablet */
+}
+
+@media (max-width: 480px) {
+    /* Header più compatto */
+    .site-header {
+        padding: 10px 15px;
+    }
+
+    /* Logo più piccolo per non occupare troppo spazio */
+    .logo { height: 32px; }
+
+    /* STILE SPECIFICO BOTTONI HEADER SU MOBILE */
+    /* Li rende più piccoli per farli stare sulla stessa riga del logo */
+    .site-header > div:last-child .btn {
+        padding: 6px 12px;     /* Meno padding interno */
+        font-size: 13px;       /* Testo leggermente più piccolo */
+        white-space: nowrap;   /* Evita che il testo vada a capo */
+    }
+
+    .site-header > div:last-child {
+        gap: 8px; /* Gap ridotto tra i due bottoni */
+    }
+
+    /* Ridimensiona Hero Title */
+    .hero-title { font-size: 36px; }
+    .hero-section { padding: 60px 20px; }
 }
