@@ -19,10 +19,11 @@ public class AziendaService {
     }
 
     @Transactional
-    public void registraAzienda(AziendaEntity azienda) {
+    public AziendaEntity registraAzienda(AziendaEntity azienda) {
         Integer maxID=aziendaRepository.findMaxId();
         if(maxID==null) maxID=-1;
         azienda.setId_azienda(maxID+1);
         aziendaRepository.save(azienda);
+        return azienda;
     }
 }

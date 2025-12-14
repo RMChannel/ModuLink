@@ -1,7 +1,6 @@
 package com.modulink.Controller.Register;
 
 import com.modulink.Model.Azienda.AziendaEntity;
-import com.modulink.Model.Azienda.AziendaRepository;
 import com.modulink.Model.Azienda.AziendaService;
 import com.modulink.Model.Ruolo.RuoloEntity;
 import com.modulink.Model.Ruolo.RuoloRepository;
@@ -9,11 +8,9 @@ import com.modulink.Model.Utente.Associazione.AssociazioneEntity;
 import com.modulink.Model.Utente.Associazione.AssociazioneRepository;
 import com.modulink.Model.Utente.CustomUserDetailsService;
 import com.modulink.Model.Utente.PasswordUtility;
-import com.modulink.Model.Utente.UserRepository;
 import com.modulink.Model.Utente.UtenteEntity;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
-import org.apache.catalina.User;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -30,7 +27,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.Principal;
-import java.util.Optional;
 
 /**
  * Controller Spring MVC che gestisce il flusso di registrazione (Onboarding) di una nuova Azienda e del suo Responsabile.
@@ -206,7 +202,7 @@ public class RegisterController {
                 }
                 //Salva l'azienda
                 AziendaEntity aziendaEntity = new AziendaEntity(registerAziendaForm.getNomeAzienda(),registerAziendaForm.getPiva(),registerAziendaForm.getIndirizzo(),registerAziendaForm.getCitta(),registerAziendaForm.getCap(),registerAziendaForm.getTelefono(),filename);
-                aziendaService.registraAzienda(aziendaEntity);
+                aziendaEntity=aziendaService.registraAzienda(aziendaEntity);
 
                 filename="";
                 if(registerUtenteForm.getImmagineProfilo().getBytes().length!=0) { //Salva il logo del responsabile
@@ -220,7 +216,7 @@ public class RegisterController {
                     filename=logodir+filename;
                 }
                 //Salvo il responsabile
-                UtenteEntity utenteEntity = new UtenteEntity(aziendaEntity,registerUtenteForm.getEmail(), PasswordUtility.hashPassword(registerUtenteForm.getPassword()),registerUtenteForm.getNome(),registerUtenteForm.getCognome(),registerUtenteForm.getTelefono(),filename);
+                UtenteEntity utenteEntity = new UtenteEntity(aziendaEntity,registerUtenteForm.getEmail(), PasswordUtility.hashPassword(registerUtenteForm.getPassword()),registerUtenteForm.getNome(),registerUtenteForm.getCognome(),registerUtenteForm.getTelefonoutente(),filename);
                 userDetailsService.registraUtente(utenteEntity,aziendaEntity.getId_azienda());
 
                 //Creo il ruolo default del Responsabile

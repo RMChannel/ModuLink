@@ -33,7 +33,7 @@ public class RuoloEntity {
      * assegnato logicamente dall'applicazione (es. sequenziale per azienda).
      */
     @Id
-    @Column(name="ID_Ruolo", nullable = false, unique = true)
+    @Column(name="ID_Ruolo", nullable = false)
     private int id_ruolo;
 
     /**
