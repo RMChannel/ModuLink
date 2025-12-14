@@ -33,7 +33,7 @@ import java.security.Principal;
  * <p>
  * Il processo è strutturato come un <strong>Wizard in due passaggi</strong>:
  * <ol>
- * <li>Registrazione dati Azienda (Anagrafica, Logo, P.IVA).</li>
+ * <li>Registrazione dati Azienda (Anagrafica, Logo, P.IVA, Contatti).</li>
  * <li>Registrazione dati Utente Responsabile (Credenziali, Profilo).</li>
  * </ol>
  * <p>
@@ -41,7 +41,7 @@ import java.security.Principal;
  * {@link RegisterAziendaForm} tra le varie richieste HTTP finché l'intero processo non viene completato.
  *
  * @author Modulink Team
- * @version 1.1
+ * @version 1.2
  */
 @Controller
 @SessionAttributes("registerAziendaForm")
@@ -90,6 +90,7 @@ public class RegisterController {
      * <ul>
      * <li>Validazione formale dei dati (JSR-380).</li>
      * <li>Verifica univocità della Partita IVA nel database.</li>
+     * <li><strong>Normalizzazione del numero di telefono</strong> (rimozione spazi bianchi) e verifica della sua univocità nel sistema.</li>
      * <li>Conversione temporanea del file Logo in array di byte per conservarlo in sessione.</li>
      * </ul>
      * Se tutto è corretto, prepara il model per il secondo step (Registrazione Utente).
@@ -115,6 +116,13 @@ public class RegisterController {
                 return "/register/RegistraAzienda";
             }
             else {
+                // Normalizza il telefono rimuovendo gli spazi e verifica univocità
+                registerAziendaForm.setTelefono(registerAziendaForm.getTelefono().replaceAll(" ",""));
+                if(aziendaService.findByTelefono(registerAziendaForm.getTelefono())) {
+                    bindingResult.rejectValue("telefono","telefono.found","Il telefono inserito risulta già registrato da un'altra azienda");
+                    model.addAttribute("registerAziendaForm", registerAziendaForm);
+                    return "/register/RegistraAzienda";
+                }
                 MultipartFile file = registerAziendaForm.getLogo();
                 if(file!=null && !file.isEmpty()) {
                     registerAziendaForm.setLogoBytes(file.getBytes());
