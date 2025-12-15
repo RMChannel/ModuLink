@@ -1,11 +1,10 @@
 <!DOCTYPE html>
-<html lang="it">
+<html lang="it" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ModuLink - L'Ecosistema Gestionale</title>
 
-    <!-- Importazione Font e Icone -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -14,25 +13,8 @@
 </head>
 <body>
 
-<!-- 1. HEADER (Sticky Navigation) -->
-<header class="site-header">
-    <div class="logo">
-        <img th:src="@{/photo/logo.png}">
-    </div>
-    <nav class="nav-links">
-        <a href="#">Funzionalità</a>
-        <a href="#">Soluzioni</a>
-        <a href="#">Prezzi</a>
-        <a href="#">Docs</a>
-    </nav>
+<header th:replace="~{fragments/header :: mainHeader}"></header>
 
-    <div>
-        <a th:href="@{/login}" class="btn btn-outline">Login</a>
-        <a th:href="@{/register}" class="btn btn-solid">Registra Azienda</a>
-    </div>
-</header>
-
-<!-- 2. HERO SECTION -->
 <section class="hero-section">
     <div class="container">
         <h1>Modulink</h1>
@@ -42,23 +24,19 @@
     </div>
 </section>
 
-<!-- 3. FEATURES SECTION -->
 <section class="features-section">
     <div class="container">
         <div class="feature-grid">
-            <!-- Card 1 -->
             <div class="feature-card">
                 <div class="icon-box"><i class="fa-solid fa-layer-group"></i></div>
                 <div class="feature-title">Modularità Totale</div>
                 <p class="feature-text">Scegli dal catalogo le App che ti servono (GTM, GDM, GCA). Paga solo per ciò che usi, senza costi nascosti.</p>
             </div>
-            <!-- Card 2 -->
             <div class="feature-card">
                 <div class="icon-box"><i class="fa-solid fa-users-gear"></i></div>
                 <div class="feature-title">Multi-Tenant & Ruoli</div>
                 <p class="feature-text">Isolamento dati garantito e controllo accessi granulare (RBAC) per ogni dipendente e reparto.</p>
             </div>
-            <!-- Card 3 -->
             <div class="feature-card">
                 <div class="icon-box"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
                 <div class="feature-title">Personalizzazione</div>
@@ -68,7 +46,6 @@
     </div>
 </section>
 
-<!-- 4. MODULES SECTION -->
 <section class="modules-section">
     <div class="container">
         <div class="section-header">
@@ -88,26 +65,15 @@
                 <div class="module-icon"><i class="fa-solid fa-boxes-stacked"></i></div>
                 <h4>Magazzino</h4>
             </div>
-            <!-- Card extra per bilanciare il layout -->
             <div class="module-card" style="border-style: dashed; border-color: rgba(255,255,255,0.3);">
                 <div class="module-icon" style="color: #94a3b8;"><i class="fa-solid fa-plus"></i></div>
-                <h4 style="color: #94a3b8;">Richiedi Modulo</h4>
+                <h4 style="color: #94a3b8;">Modulo personalizzato</h4>
             </div>
         </div>
     </div>
 </section>
 
-<!-- 5. FOOTER -->
-<footer>
-    <div class="container">
-        <p>&copy; 2025 ModuLink. Piattaforma Modulare Enterprise.</p>
-        <div style="margin-top: 10px;">
-            <a href="#" style="color: #64748b; margin: 0 10px; text-decoration: none;">Privacy</a>
-            <a href="#" style="color: #64748b; margin: 0 10px; text-decoration: none;">Termini</a>
-            <a href="#" style="color: #64748b; margin: 0 10px; text-decoration: none;">Contatti</a>
-        </div>
-    </div>
-</footer>
+<footer th:replace="~{fragments/footer :: mainFooter}"></footer>
 
 </body>
 </html>

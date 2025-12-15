@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<header th:fragment="mainHeader" class="site-header">
+  <div class="logo">
+    <img th:src="@{/photo/logo.png}" alt="Logo Modulink">
+  </div>
+  <nav class="nav-links">
+    <a href="#">Funzionalità</a>
+    <a href="#">Soluzioni</a>
+    <a href="#">Prezzi</a>
+    <a href="#">Docs</a>
+  </nav>
+
+  <div>
+    <a th:href="@{/login}" class="btn btn-outline">Login</a>
+    <a th:href="@{/register}" class="btn btn-solid">Registra Azienda</a>
+  </div>
+</header>
+
+</body>
+</html>
