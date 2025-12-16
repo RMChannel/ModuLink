@@ -1,16 +1,18 @@
 package com.modulink.Model.Modulo;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
+@IdClass(ModuloID.class)
 @Table(name = "modulo",schema = "modulink")
 public class ModuloEntity {
     @Id
     @Column(name = "id_modulo", nullable = false)
     private int id_modulo;
+
+    @Id
+    @Column(name = "id_azienda", nullable = false)
+    private int id_azienda;
 
     @Column(name = "nome", nullable = false)
     private String nome;
@@ -23,8 +25,9 @@ public class ModuloEntity {
 
     public ModuloEntity(){}
 
-    public ModuloEntity(int id_modulo, String nome, String descrizione, String url_icona) {
+    public ModuloEntity(int id_modulo, int id_azienda, String nome, String descrizione, String url_icona) {
         this.id_modulo = id_modulo;
+        this.id_azienda = id_azienda;
         this.nome = nome;
         this.descrizione = descrizione;
         this.url_icona = url_icona;
@@ -36,6 +39,14 @@ public class ModuloEntity {
 
     public void setId_modulo(int id_modulo) {
         this.id_modulo = id_modulo;
+    }
+
+    public int getId_azienda() {
+        return id_azienda;
+    }
+
+    public void setId_azienda(int id_azienda) {
+        this.id_azienda = id_azienda;
     }
 
     public String getNome() {
