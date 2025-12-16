@@ -39,5 +39,14 @@ public class HomeController {
             return "homepage/privacy";
         }
     }
+    @GetMapping("/termini")
+    public String termini(Model model, Principal principal) {
+        if(principal != null) {
+            return "redirect:/home";
+        }
+        else {
+            return "homepage/termini";
+        }
+    }
 
 }
