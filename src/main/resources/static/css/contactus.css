@@ -1,22 +1,152 @@
-/* Reset di base */
+/* =========================================
+   1. GLOBAL & RESET (Stile Homepage)
+   ========================================= */
+
 * {
     box-sizing: border-box;
-    margin: 0;
-    padding: 0;
 }
 
 body {
-    font-family: 'Poppins', sans-serif;
-    background-color: #f4f6f9;
-    color: #333;
+    background-color: #f4f6f9; /* Colore di sfondo specifico pagina contatti */
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', sans-serif;
+    color: #334155;
+    overflow-x: hidden;
     padding-bottom: 50px;
 }
+
+/* Tipografia */
+h1, h2, h3, h4 {
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+}
+
+.text-primary {
+    color: #2563eb;
+}
+
+/* =========================================
+   2. COMPONENTI UI (Bottoni Homepage)
+   ========================================= */
+
+.btn {
+    padding: 10px 24px;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.2s ease;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+}
+
+.btn:active {
+    transform: scale(0.98);
+}
+
+.btn-outline {
+    border: 1px solid #e2e8f0;
+    color: #0f172a;
+    margin-right: 10px;
+    background: white;
+}
+
+.btn-outline:hover {
+    background-color: #f8fafc;
+    border-color: #cbd5e1;
+}
+
+.btn-solid {
+    background: #2563eb;
+    color: #fff;
+    border: none;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+}
+
+.btn-solid:hover {
+    background: #1d4ed8;
+    box-shadow: 0 6px 16px rgba(37, 99, 235, 0.3);
+}
+
+/* =========================================
+   3. LAYOUT HEADER (Identico alla Homepage)
+   ========================================= */
+
+.site-header {
+    padding: 20px 5%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #f1f5f9;
+    position: sticky;
+    top: 0;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(8px);
+    z-index: 1000;
+    max-width: 1440px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    padding: 0;
+    height: 50px;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 700;
+    font-size: 24px;
+    color: #0f172a;
+}
+
+.logo img {
+    height: 100%;
+    width: auto;
+    display: block;
+    object-fit: contain;
+    border: none;
+}
+
+.nav-links {
+    display: flex;
+    gap: 40px;
+    font-weight: 500;
+    font-size: 16px;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: #64748b;
+    transition: color 0.2s;
+}
+
+.nav-links a:hover {
+    color: #2563eb;
+}
+
+/* Responsive Header */
+@media (max-width: 768px) {
+    .nav-links {
+        display: none;
+    }
+}
+
+/* =========================================
+   4. STILI SPECIFICI PAGINA CONTATTI
+   ========================================= */
 
 .page-title {
     text-align: center;
     margin: 40px 0;
-    color: #2c3e50;
+    color: #0f172a;
     font-weight: 700;
+    font-size: 32px;
 }
 
 .main-container {
@@ -31,42 +161,46 @@ body {
     width: 100%;
     max-width: 1200px;
     background: white;
-    padding: 30px;
-    border-radius: 15px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+    padding: 40px;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e2e8f0;
 }
 
 .section-title {
-    margin-bottom: 30px;
-    color: #34495e;
-    border-bottom: 2px solid #eee;
-    padding-bottom: 10px;
+    margin-bottom: 40px;
+    color: #334155;
+    border-bottom: 2px solid #f1f5f9;
+    padding-bottom: 15px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 24px;
+    font-weight: 600;
 }
 
 .contacts-grid {
     display: grid;
-    /* Griglia responsive: le colonne si adattano automaticamente */
     grid-template-columns: repeat(2, 1fr);
-    gap: 20px;
+    gap: 30px;
 }
 
-/* --- Card Raggruppata --- */
+/* Card Contatto */
 .info-card {
     display: flex;
     flex-direction: column;
     align-items: center;
     background: #fff;
-    padding: 25px 20px;
+    padding: 30px;
     border-radius: 12px;
-    border: 1px solid #eee;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid #e2e8f0;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s;
     text-align: center;
-    height: 100%; /* Forza l'altezza al 100% della cella della griglia */
+    height: 100%;
 }
 
 .info-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+    border-color: #cbd5e1;
 }
 
 .icon-box {
@@ -78,7 +212,7 @@ body {
     justify-content: center;
     font-size: 24px;
     color: white;
-    margin-bottom: 15px;
+    margin-bottom: 20px;
     flex-shrink: 0;
 }
 
@@ -88,67 +222,71 @@ body {
 .bg-insta { background: linear-gradient(135deg, #833ab4, #fd1d1d, #fcb045); }
 
 .info-card h4 {
-    margin-bottom: 15px;
+    margin-bottom: 20px;
     font-size: 1.1rem;
-    color: #2c3e50;
+    color: #0f172a;
     text-transform: uppercase;
     letter-spacing: 0.5px;
     font-weight: 700;
+    font-family: 'Poppins', sans-serif;
 }
 
-/* Lista Contatti interna alla card */
 .contact-list {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 12px;
     width: 100%;
 }
 
 .contact-item {
     display: block;
-    padding: 10px;
-    background-color: #f8f9fa;
+    padding: 12px;
+    background-color: #f8fafc;
     border-radius: 8px;
     text-decoration: none;
-    color: #555;
+    color: #475569;
     font-weight: 500;
     transition: all 0.2s ease;
     font-size: 0.95rem;
+    border: 1px solid transparent;
 }
 
 .contact-item:hover {
-    background-color: #eef2f7;
-    color: #3498db;
+    background-color: #f1f5f9;
+    color: #2563eb;
     transform: translateX(3px);
+    border-color: #e2e8f0;
 }
 
-/* Colori specifici hover per tipo */
-.bg-email + h4 + .contact-list .contact-item:hover { color: #e67e22; }
+/* Hover specifici per tipo */
+.bg-email + h4 + .contact-list .contact-item:hover { color: #d35400; }
 .bg-insta + h4 + .contact-list .contact-item:hover { color: #c13584; }
 
-/* --- Wrapper Mappa --- */
+/* Mappa Wrapper */
 .map-wrapper {
     position: relative;
-    border-radius: 12px;
+    border-radius: 16px;
     overflow: hidden;
-    border: 1px solid #eee;
+    border: 1px solid #e2e8f0;
     display: flex;
     flex-direction: column;
-    height: 100%; /* Riempie l'altezza della riga della griglia */
-    min-height: 300px; /* Altezza minima per mobile */
+    height: 100%;
+    min-height: 350px;
     background: white;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
 
 .map-label {
-    background: #2c3e50;
+    background: #1e293b;
     color: white;
-    padding: 10px 20px;
+    padding: 12px 20px;
     font-size: 0.9rem;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 10px;
     flex-shrink: 0;
+    font-weight: 500;
 }
 
 .map-wrapper iframe {
@@ -159,9 +297,35 @@ body {
     flex-grow: 1;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
+/* =========================================
+   5. FOOTER (Stile Homepage)
+   ========================================= */
+
+footer {
+    background: #f8fafc;
+    padding: 40px 0;
+    text-align: center;
+    border-top: 1px solid #e2e8f0;
+    color: #64748b;
+    font-size: 14px;
+    margin-top: 60px;
+}
+
+/* =========================================
+   6. RESPONSIVE CONTATTI
+   ========================================= */
+
+@media (max-width: 900px) {
     .contacts-grid {
         grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .page-title {
+        font-size: 28px;
+    }
+    .info-section {
+        padding: 20px;
     }
 }
