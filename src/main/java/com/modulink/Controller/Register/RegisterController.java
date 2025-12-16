@@ -4,8 +4,8 @@ import com.modulink.Model.Azienda.AziendaEntity;
 import com.modulink.Model.Azienda.AziendaService;
 import com.modulink.Model.Ruolo.RuoloEntity;
 import com.modulink.Model.Ruolo.RuoloRepository;
-import com.modulink.Model.Utente.Associazione.AssociazioneEntity;
-import com.modulink.Model.Utente.Associazione.AssociazioneRepository;
+import com.modulink.Model.Utente.Associazione.AssegnazioneEntity;
+import com.modulink.Model.Utente.Associazione.AssegnazioneRepository;
 import com.modulink.Model.Utente.CustomUserDetailsService;
 import com.modulink.Model.Utente.PasswordUtility;
 import com.modulink.Model.Utente.UtenteEntity;
@@ -49,7 +49,7 @@ public class RegisterController {
     private final CustomUserDetailsService userDetailsService;
     private final AziendaService aziendaService;
     private final RuoloRepository ruoloRepository;
-    private final AssociazioneRepository associazioneRepository;
+    private final AssegnazioneRepository assegnazioneRepository;
 
     /**
      * Costruttore per l'iniezione delle dipendenze.
@@ -57,13 +57,13 @@ public class RegisterController {
      * @param userDetailsService     Servizio per la gestione degli utenti e autenticazione.
      * @param aziendaService         Servizio per la logica di business relativa alle aziende.
      * @param ruoloRepository        Repository per la persistenza dei ruoli.
-     * @param associazioneRepository Repository per collegare utenti e ruoli.
+     * @param assegnazioneRepository Repository per collegare utenti e ruoli.
      */
-    public RegisterController(CustomUserDetailsService userDetailsService, AziendaService aziendaService, RuoloRepository ruoloRepository, AssociazioneRepository associazioneRepository) {
+    public RegisterController(CustomUserDetailsService userDetailsService, AziendaService aziendaService, RuoloRepository ruoloRepository, AssegnazioneRepository assegnazioneRepository) {
         this.userDetailsService = userDetailsService;
         this.aziendaService = aziendaService;
         this.ruoloRepository = ruoloRepository;
-        this.associazioneRepository = associazioneRepository;
+        this.assegnazioneRepository = assegnazioneRepository;
     }
 
     /**
@@ -232,8 +232,8 @@ public class RegisterController {
                 ruoloRepository.save(ruoloResponsabile);
 
                 //Creo l'associazione tra Utente e Ruolo Responsabile
-                AssociazioneEntity associazioneResponsabile = new AssociazioneEntity(utenteEntity,ruoloResponsabile);
-                associazioneRepository.save(associazioneResponsabile);
+                AssegnazioneEntity associazioneResponsabile = new AssegnazioneEntity(utenteEntity,ruoloResponsabile);
+                assegnazioneRepository.save(associazioneResponsabile);
 
                 //La sessione viene svuotata visto che l'azienda è stata registrata correttamente e anche il responsabile
                 sessionStatus.setComplete();
