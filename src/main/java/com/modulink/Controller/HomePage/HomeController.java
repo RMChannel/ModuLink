@@ -19,4 +19,14 @@ public class HomeController {
             return "index";
         }
     }
+
+    @GetMapping("/contactus")
+    public String contactUs(Model model, Principal principal) {
+        if(principal != null) {
+            return "redirect:/home";
+        }
+        else {
+            return "homepage/contactus";
+        }
+    }
 }
