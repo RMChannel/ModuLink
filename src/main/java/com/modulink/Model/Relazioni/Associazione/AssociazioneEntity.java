@@ -1,4 +1,4 @@
-package com.modulink.Model.Utente.Associazione;
+package com.modulink.Model.Relazioni.Associazione;
 
 import com.modulink.Model.Ruolo.RuoloEntity;
 import com.modulink.Model.Utente.UtenteEntity;
