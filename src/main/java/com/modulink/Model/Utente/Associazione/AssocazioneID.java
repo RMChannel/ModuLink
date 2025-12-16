@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.Objects;
 
 /**
- * Rappresenta la chiave primaria composta per l'entità di unione {@link AssegnazioneEntity}.
+ * Rappresenta la chiave primaria composta per l'entità di unione {@link AssociazioneEntity}.
  * <p>
  * Questa classe definisce l'identità univoca di un'assegnazione di ruolo.
  * L'identità è formata dalla tripla:
@@ -14,15 +14,15 @@ import java.util.Objects;
  * <li><strong>Azienda:</strong> Il contesto condiviso (l'utente e il ruolo devono appartenere alla stessa azienda).</li>
  * </ul>
  * <p>
- * È necessaria per il funzionamento di {@link jakarta.persistence.IdClass} su {@link AssegnazioneEntity}.
+ * È necessaria per il funzionamento di {@link jakarta.persistence.IdClass} su {@link AssociazioneEntity}.
  * I nomi dei campi qui definiti devono corrispondere esattamente ai nomi degli attributi
  * annotati con {@code @Id} nella classe Entity corrispondente.
  *
- * @see AssegnazioneEntity
+ * @see AssociazioneEntity
  * @author Modulink Team
  * @version 1.0
  */
-public class AssegnazioneID implements Serializable {
+public class AssocazioneID implements Serializable {
 
     /**
      * Parte della FK verso Utente.
@@ -54,7 +54,7 @@ public class AssegnazioneID implements Serializable {
      * Costruttore vuoto.
      * Richiesto da JPA per la creazione dell'istanza tramite reflection.
      */
-    public AssegnazioneID() {}
+    public AssocazioneID() {}
 
     /**
      * Costruttore completo.
@@ -63,7 +63,7 @@ public class AssegnazioneID implements Serializable {
      * @param id_ruolo   L'ID del ruolo.
      * @param id_azienda L'ID dell'azienda condivisa.
      */
-    public AssegnazioneID(int id_utente, int id_ruolo, int id_azienda) {
+    public AssocazioneID(int id_utente, int id_ruolo, int id_azienda) {
         this.id_utente = id_utente;
         this.id_ruolo = id_ruolo;
         this.id_azienda = id_azienda;
@@ -82,7 +82,7 @@ public class AssegnazioneID implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        AssegnazioneID that = (AssegnazioneID) o;
+        AssocazioneID that = (AssocazioneID) o;
         return id_utente == that.id_utente &&
                 id_ruolo == that.id_ruolo &&
                 id_azienda == that.id_azienda;
