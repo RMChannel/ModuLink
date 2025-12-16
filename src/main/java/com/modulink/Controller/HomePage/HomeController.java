@@ -29,4 +29,15 @@ public class HomeController {
             return "homepage/contactus";
         }
     }
+
+    @GetMapping("/privacy")
+    public String privacy(Model model, Principal principal) {
+        if(principal != null) {
+            return "redirect:/home";
+        }
+        else {
+            return "homepage/privacy";
+        }
+    }
+
 }
