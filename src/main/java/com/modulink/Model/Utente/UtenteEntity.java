@@ -2,7 +2,7 @@ package com.modulink.Model.Utente;
 
 import com.modulink.Model.Azienda.AziendaEntity;
 import com.modulink.Model.Ruolo.RuoloEntity;
-import com.modulink.Model.Utente.Associazione.AssociazioneEntity;
+import com.modulink.Model.Relazioni.Associazione.AssociazioneEntity;
 import jakarta.persistence.*;
 
 import java.util.HashSet;
