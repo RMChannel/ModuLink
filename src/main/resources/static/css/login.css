@@ -1,73 +1,136 @@
+/* ============================
+   1. RESET E BASE
+   ============================ */
+* {
+    box-sizing: border-box;
+}
+
 body {
-    display: grid;
+    display: flex;
+    flex-direction: column;
     align-items: center;
-    height: 100vh;
+    min-height: 100vh;
     background-color: #f0f2f5;
     margin: 0;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
+/* ============================
+   2. HEADER (Desktop)
+   ============================ */
+.site-header {
+    width: 100%;
+    background-color: #ffffff;
+    padding: 15px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    height: 70px;
+}
+
+.site-header a { text-decoration: none; color: inherit; }
+
+/* Stili per l'immagine del logo nell'header */
+.site-header .logo img {
+    height: 40px;
+    width: auto;
+    display: block;
+}
+
+.nav-links { display: flex; gap: 30px; }
+.nav-links a {
+    color: #555;
+    font-weight: 500;
+    font-size: 15px;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+.nav-links a:hover { color: #007bff; }
+
+.header-buttons { display: flex; gap: 10px; }
+
+.btn {
+    padding: 8px 20px;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.2s;
+}
+
+.btn-outline { border: 1px solid #ddd; background: transparent; color: #333; }
+.btn-outline:hover { border-color: #007bff; color: #007bff; }
+
+.btn-solid { background-color: #007bff; color: white; border: 1px solid #007bff; }
+.btn-solid:hover { background-color: #0056b3; border-color: #0056b3; }
+
+/* ============================
+   3. LOGIN BOX
+   ============================ */
 .login-container {
-    text-align: center;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-top: 70px; /* Compensa l'altezza dell'header fisso */
+    flex: 1;
+    align-items: center;
+    padding: 20px;
 }
 
 .login-box {
+    width: 100%;
+    max-width: 400px;
     background: #fff;
     padding: 40px;
     border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    width: 150%;
-    max-width: 400px;
-    display: inline-block;
+    text-align: center;
 }
 
 .logo-container {
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 10px;
+    margin-bottom: 20px;
 }
 
-.logo {
-    width: 200px;
-    height: 50px;
-}
-
-h1 {
-    font-size: 28px;
-    color: #333;
-    margin: 0;
+/* Stile specifico per il logo dentro il box di login */
+.logo-container .logo {
+    max-width: 200px;
+    height: auto;
 }
 
 .subtitle {
     font-size: 16px;
     color: #666;
-    margin-bottom: 25px;
+    margin-bottom: 30px;
+    margin-top: 10px;
 }
 
-.input-group {
-    margin-bottom: 20px;
-    text-align: left;
-}
-
-.input-group label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: 600;
-    color: #333;
-}
-
+/* Form Elements */
+.input-group { margin-bottom: 20px; text-align: left; }
+.input-group label { display: block; margin-bottom: 8px; font-weight: 600; color: #444; font-size: 14px; }
 .input-group input {
     width: 100%;
-    padding: 12px;
+    padding: 12px 15px;
     border: 1px solid #ddd;
     border-radius: 6px;
     font-size: 16px;
+    outline: none;
+    transition: border-color 0.3s;
 }
+.input-group input:focus { border-color: #007bff; }
 
 .btn-login {
     width: 100%;
-    padding: 12px;
+    padding: 14px;
     background-color: #007bff;
     border: none;
     border-radius: 6px;
@@ -75,44 +138,57 @@ h1 {
     font-size: 16px;
     font-weight: 600;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.2s;
+    margin-top: 10px;
+}
+.btn-login:hover { background-color: #0056b3; }
+
+.register-link { margin-top: 25px; font-size: 14px; color: #666; }
+.register-link a { color: #007bff; text-decoration: none; font-weight: 600; }
+.register-link a:hover { text-decoration: underline; }
+
+.alert { padding: 12px; margin-bottom: 20px; border-radius: 6px; text-align: left; font-size: 14px; }
+.alert-danger { background-color: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
+
+/* ============================
+   4. RESPONSIVE / MOBILE
+   ============================ */
+@media (max-width: 768px) {
+    .nav-links { display: none; } /* Nasconde i link del menu su tablet */
 }
 
-.btn-login:hover {
-    background-color: #0056b3;
-}
+@media (max-width: 480px) {
+    /* Nascondiamo l'header globale su mobile */
+    .site-header {
+        display: none;
+    }
 
-.register-link {
-    margin-top: 20px;
-    font-size: 14px;
-}
+    body {
+        padding: 0;
+        background-color: white;
+    }
 
-.register-link a {
-    color: #007bff;
-    text-decoration: none;
-    font-weight: 600;
-}
+    .login-container {
+        margin-top: 0; /* Rimuove lo spazio riservato all'header */
+        padding: 0;
+        align-items: stretch; /* Forza l'altezza piena */
+    }
 
-.register-link a:hover {
-    text-decoration: underline;
-}
+    .login-box {
+        width: 100%;
+        max-width: none;
+        min-height: 100vh; /* Occupa tutta l'altezza */
+        border-radius: 0;
+        box-shadow: none;
 
-.alert {
-    padding: 15px;
-    margin-bottom: 20px;
-    border-radius: 6px;
-    text-align: center;
-    font-size: 14px;
-}
+        /* Centratura verticale del contenuto */
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 30px 20px;
+    }
 
-.alert-danger {
-    background-color: #f8d7da;
-    color: #721c24;
-    border: 1px solid #f5c6cb;
-}
-
-.alert-success {
-    background-color: #d4edda;
-    color: #155724;
-    border: 1px solid #c3e6cb;
+    /* Piccoli aggiustamenti per mobile */
+    .subtitle { font-size: 14px; }
+    .input-group input { font-size: 16px; } /* Evita zoom su iOS */
 }

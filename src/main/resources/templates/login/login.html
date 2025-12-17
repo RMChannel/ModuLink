@@ -2,11 +2,13 @@
 <html lang="it" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - ModuLink</title>
     <link rel="stylesheet" th:href="@{/css/main.css}">
     <link rel="stylesheet" th:href="@{/css/login.css}">
     <link rel="icon" type="image/x-icon" th:href="@{/favicon.ico}">
 </head>
+<header th:replace="~{fragments/header :: mainHeader}"></header>
 <body>
 <div class="login-container">
     <div class="login-box">
