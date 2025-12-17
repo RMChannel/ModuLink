@@ -72,16 +72,7 @@
         </section>
     </div>
 </div>
-<footer>
-    <div class="container">
-        <p>© 2025 ModuLink. Piattaforma Modulare Enterprise.</p>
-        <div style="margin-top: 10px;">
-            <a th:href="@{/privacy}" style="color: #64748b; margin: 0 10px; text-decoration: none;">Privacy</a>
-            <a th:href="@{/termini}" style="color: #64748b; margin: 0 10px; text-decoration: none;">Termini</a>
-            <a th:href="@{/contactus}" style="color: #64748b; margin: 0 10px; text-decoration: none;">Contatti</a>
-        </div>
-    </div>
-</footer>
+<footer th:replace="~{fragments/footer :: mainFooter}"></footer>
 
 </body>
 </html>
