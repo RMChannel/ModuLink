@@ -1,29 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Informativa sulla Privacy - Modulink</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/ico" href="<%=request.getContextPath()%>/media/favicon.png">
+    <title>ModuLink - L'Ecosistema Gestionale</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/main.css}">
     <link rel="stylesheet" th:href="@{/css/privacy.css}">
 </head>
-<body>
-<header class="site-header">
-    <div class="logo">
-        <img th:src="@{/photo/logo.png}" alt="Logo Modulink">
-    </div>
-    <nav class="nav-links">
-        <a href="#">Funzionalità</a>
-        <a href="#">Soluzioni</a>
-        <a href="#">Prezzi</a>
-        <a href="#">Docs</a>
-    </nav>
-    <div>
-        <a th:href="@{/login}" class="btn btn-outline">Login</a>
-        <a th:href="@{/register}" class="btn btn-solid">Registra Azienda</a>
-    </div>
-</header>
 
+<header th:replace="~{fragments/header :: mainHeader}"></header>
+
+<body>
 <div class="privacy-container">
     <div class="privacy-header">
         <h1>Informativa sulla Privacy</h1>
