@@ -1,121 +1,232 @@
-body {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    background-color: #f0f2f5;
-    margin: 0;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+/* ============================
+   1. RESET E BASE
+   ============================ */
+* {
+    box-sizing: border-box;
 }
 
+/* FIX STABILITÀ: Forza la barra di scorrimento sempre visibile
+   per evitare che l'header "salti" orizzontalmente quando si passa
+   dalla Home (lunga) al Login (corto) */
+html {
+    overflow-y: scroll;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    /* Mantengo il grigio chiaro specifico del login per contrasto con il box bianco */
+    background-color: #f0f2f5;
+    margin: 0;
+    /* Font uniformato a quello del Main */
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    color: #334155;
+}
+
+/* ============================
+   2. COMPONENTI UI (BOTTONI - Stile Main)
+   ============================ */
+.btn {
+    padding: 10px 24px;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    line-height: 1.2;
+}
+
+.btn:hover { transform: translateY(-2px); }
+.btn:active { transform: scale(0.98); }
+
+.btn-outline {
+    border: 1px solid #e2e8f0;
+    color: #0f172a;
+    background: white;
+}
+.btn-outline:hover { background-color: #f8fafc; border-color: #cbd5e1; }
+
+.btn-solid {
+    background: #2563eb;
+    color: #fff;
+    /* Fix altezza bordi identico al Main */
+    border: 1px solid #2563eb;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+}
+.btn-solid:hover {
+    background: #1d4ed8;
+    border-color: #1d4ed8;
+    box-shadow: 0 6px 16px rgba(37, 99, 235, 0.3);
+}
+
+/* ============================
+   3. HEADER (Stile Main)
+   ============================ */
+.site-header {
+    padding: 20px 5%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #f1f5f9;
+    /* Cambiato da fixed a sticky per coerenza col Main */
+    position: sticky;
+    top: 0;
+    /* FIX COLORE: Bianco solido (non trasparente) per evitare che il grigio
+       dello sfondo del login alteri il colore dell'header rispetto alla Home */
+    background: #ffffff;
+    z-index: 1000;
+    max-width: 1440px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.site-header > div:last-child {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    padding: 0;
+    height: 50px;
+}
+
+.logo img {
+    height: 100%;
+    width: auto;
+    display: block;
+    object-fit: contain;
+    border: none;
+}
+
+.nav-links { display: flex; gap: 40px; font-weight: 500; font-size: 16px; }
+.nav-links a { text-decoration: none; color: #64748b; transition: color 0.2s; }
+.nav-links a:hover { color: #2563eb; }
+
+/* ============================
+   4. LOGIN BOX
+   ============================ */
 .login-container {
-    text-align: center;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    /* Rimosso margin-top: 70px perché sticky occupa spazio nel flusso */
+    flex: 1;
+    align-items: center;
+    padding: 20px;
 }
 
 .login-box {
+    width: 100%;
+    max-width: 400px;
     background: #fff;
     padding: 40px;
     border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    width: 100%;
-    max-width: 400px;
-    display: inline-block;
+    text-align: center;
 }
 
 .logo-container {
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 10px;
+    margin-bottom: 20px;
 }
 
-.logo {
-    width: 50px;
-    height: 50px;
-    margin-right: 15px;
-}
-
-h1 {
-    font-size: 28px;
-    color: #333;
-    margin: 0;
+.logo-container .logo {
+    max-width: 200px;
+    height: auto;
 }
 
 .subtitle {
     font-size: 16px;
-    color: #666;
-    margin-bottom: 25px;
+    color: #64748b;
+    margin-bottom: 30px;
+    margin-top: 10px;
 }
 
-.input-group {
-    margin-bottom: 20px;
-    text-align: left;
-}
-
-.input-group label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: 600;
-    color: #333;
-}
-
+/* Form Elements */
+.input-group { margin-bottom: 20px; text-align: left; }
+.input-group label { display: block; margin-bottom: 8px; font-weight: 600; color: #334155; font-size: 14px; }
 .input-group input {
     width: 100%;
-    padding: 12px;
-    border: 1px solid #ddd;
+    padding: 12px 15px;
+    border: 1px solid #e2e8f0;
     border-radius: 6px;
     font-size: 16px;
-    box-sizing: border-box; /* Important for padding */
+    outline: none;
+    transition: border-color 0.3s;
+    font-family: inherit;
 }
+.input-group input:focus { border-color: #2563eb; }
 
 .btn-login {
     width: 100%;
-    padding: 12px;
-    background-color: #007bff;
+    padding: 14px;
+    background-color: #2563eb; /* Aggiornato al blu del tema Main */
     border: none;
     border-radius: 6px;
     color: white;
     font-size: 16px;
     font-weight: 600;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.2s;
+    margin-top: 10px;
+}
+.btn-login:hover { background-color: #1d4ed8; }
+
+.register-link { margin-top: 25px; font-size: 14px; color: #64748b; }
+.register-link a { color: #2563eb; text-decoration: none; font-weight: 600; }
+.register-link a:hover { text-decoration: underline; }
+
+.alert { padding: 12px; margin-bottom: 20px; border-radius: 6px; text-align: left; font-size: 14px; }
+.alert-danger { background-color: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
+
+/* ============================
+   5. RESPONSIVE / MOBILE
+   ============================ */
+
+/* Uniformato breakpoint Nav a 900px come nel Main */
+@media (max-width: 900px) {
+    .nav-links { display: none; }
 }
 
-.btn-login:hover {
-    background-color: #0056b3;
-}
+@media (max-width: 480px) {
+    /* MANTENUTA LOGICA ORIGINALE LOGIN: Header nascosto su mobile */
+    .site-header {
+        display: none;
+    }
 
-.register-link {
-    margin-top: 20px;
-    font-size: 14px;
-}
+    body {
+        padding: 0;
+        background-color: white;
+    }
 
-.register-link a {
-    color: #007bff;
-    text-decoration: none;
-    font-weight: 600;
-}
+    .login-container {
+        margin-top: 0;
+        padding: 0;
+        align-items: stretch;
+    }
 
-.register-link a:hover {
-    text-decoration: underline;
-}
+    .login-box {
+        width: 100%;
+        max-width: none;
+        min-height: 100vh;
+        border-radius: 0;
+        box-shadow: none;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 30px 20px;
+    }
 
-.alert {
-    padding: 15px;
-    margin-bottom: 20px;
-    border-radius: 6px;
-    text-align: center;
-    font-size: 14px;
-}
-
-.alert-danger {
-    background-color: #f8d7da;
-    color: #721c24;
-    border: 1px solid #f5c6cb;
-}
-
-.alert-success {
-    background-color: #d4edda;
-    color: #155724;
-    border: 1px solid #c3e6cb;
+    .subtitle { font-size: 14px; }
+    .input-group input { font-size: 16px; }
 }

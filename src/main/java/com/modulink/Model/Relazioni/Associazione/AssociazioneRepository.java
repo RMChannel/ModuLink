@@ -1,4 +1,4 @@
-package com.modulink.Model.Utente.Associazione;
+package com.modulink.Model.Relazioni.Associazione;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -10,13 +10,13 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * per la tabella di associazione intermedia tra Utenti e Ruoli.
  * <p>
  * Essendo l'entità mappata su una architettura a <strong>Chiave Primaria Composta</strong>,
- * il repository è tipizzato su {@link AssociazioneID}.
+ * il repository è tipizzato su {@link AssocazioneID}.
  *
  * @see AssociazioneEntity
- * @see AssociazioneID
+ * @see AssocazioneID
  * @see JpaRepository
  * @author Modulink Team
  * @version 1.0
  */
-public interface AssociazioneRepository extends JpaRepository<AssociazioneEntity, AssociazioneID> {
+public interface AssociazioneRepository extends JpaRepository<AssociazioneEntity, AssocazioneID> {
 }

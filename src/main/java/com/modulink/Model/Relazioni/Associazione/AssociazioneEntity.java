@@ -1,4 +1,4 @@
-package com.modulink.Model.Utente.Associazione;
+package com.modulink.Model.Relazioni.Associazione;
 
 import com.modulink.Model.Ruolo.RuoloEntity;
 import com.modulink.Model.Utente.UtenteEntity;
@@ -20,7 +20,7 @@ import jakarta.persistence.*;
  * Questa entità risolve il problema mappando esplicitamente le colonne ID come attributi semplici
  * e definendo le relazioni come <code>@ManyToOne</code> in sola lettura (insertable=false, updatable=false).
  *
- * @see AssociazioneID
+ * @see AssocazioneID
  * @see UtenteEntity
  * @see RuoloEntity
  * @author Modulink Team
@@ -28,7 +28,7 @@ import jakarta.persistence.*;
  */
 @Entity
 @Table(name = "Associazione", schema = "modulink")
-@IdClass(AssociazioneID.class)
+@IdClass(AssocazioneID.class)
 public class AssociazioneEntity {
 
     /**

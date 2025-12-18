@@ -19,4 +19,34 @@ public class HomeController {
             return "index";
         }
     }
+
+    @GetMapping("/contactus")
+    public String contactUs(Model model, Principal principal) {
+        if(principal != null) {
+            return "redirect:/home";
+        }
+        else {
+            return "homepage/contactus";
+        }
+    }
+
+    @GetMapping("/privacy")
+    public String privacy(Model model, Principal principal) {
+        if(principal != null) {
+            return "redirect:/home";
+        }
+        else {
+            return "homepage/privacy";
+        }
+    }
+    @GetMapping("/termini")
+    public String termini(Model model, Principal principal) {
+        if(principal != null) {
+            return "redirect:/home";
+        }
+        else {
+            return "homepage/termini";
+        }
+    }
+
 }

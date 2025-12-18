@@ -1,4 +1,4 @@
-package com.modulink.Model.Utente.Associazione;
+package com.modulink.Model.Relazioni.Associazione;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -22,7 +22,7 @@ import java.util.Objects;
  * @author Modulink Team
  * @version 1.0
  */
-public class AssociazioneID implements Serializable {
+public class AssocazioneID implements Serializable {
 
     /**
      * Parte della FK verso Utente.
@@ -54,7 +54,7 @@ public class AssociazioneID implements Serializable {
      * Costruttore vuoto.
      * Richiesto da JPA per la creazione dell'istanza tramite reflection.
      */
-    public AssociazioneID() {}
+    public AssocazioneID() {}
 
     /**
      * Costruttore completo.
@@ -63,7 +63,7 @@ public class AssociazioneID implements Serializable {
      * @param id_ruolo   L'ID del ruolo.
      * @param id_azienda L'ID dell'azienda condivisa.
      */
-    public AssociazioneID(int id_utente, int id_ruolo, int id_azienda) {
+    public AssocazioneID(int id_utente, int id_ruolo, int id_azienda) {
         this.id_utente = id_utente;
         this.id_ruolo = id_ruolo;
         this.id_azienda = id_azienda;
@@ -82,7 +82,7 @@ public class AssociazioneID implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        AssociazioneID that = (AssociazioneID) o;
+        AssocazioneID that = (AssocazioneID) o;
         return id_utente == that.id_utente &&
                 id_ruolo == that.id_ruolo &&
                 id_azienda == that.id_azienda;

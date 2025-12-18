@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ModuLink - L'Ecosistema Gestionale</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+    <link rel="stylesheet" th:href="@{/css/privacy.css}">
+</head>
+
+<header th:replace="~{fragments/header :: mainHeader}"></header>
+
+<body>
+<div class="privacy-container">
+    <div class="privacy-header">
+        <h1>Informativa sulla Privacy</h1>
+    </div>
+
+    <div class="privacy-content">
+        <section class="privacy-section">
+            <h2>1. Introduzione</h2>
+            <p>Benvenuto su <strong>Modulink</strong>. La tua privacy è importante per noi. Questa informativa spiega in modo semplice come trattiamo i tuoi dati quando utilizzi la nostra applicazione web.</p>
+        </section>
+
+        <section class="privacy-section">
+            <h2>2. Dati che raccogliamo</h2>
+            <p>Raccogliamo solo i dati essenziali per il funzionamento del servizio:</p>
+            <ul>
+                <li><strong>Dati dell'account</strong>: nome, indirizzo email e credenziali di accesso (password crittografata).</li>
+                <li><strong>Dati tecnici</strong>: indirizzo IP e informazioni di base sul dispositivo per garantire la sicurezza e il corretto funzionamento dell'app.</li>
+            </ul>
+        </section>
+
+        <section class="privacy-section">
+            <h2>3. Come utilizziamo i tuoi dati</h2>
+            <p>Utilizziamo le tue informazioni esclusivamente per:</p>
+            <ul>
+                <li>Permetterti di accedere e utilizzare le funzionalità di Modulink.</li>
+                <li>Garantire la sicurezza del tuo account.</li>
+                <li>Inviarti comunicazioni essenziali relative al servizio (es. recupero password).</li>
+            </ul>
+        </section>
+
+        <section class="privacy-section">
+            <h2>4. Condivisione dei dati</h2>
+            <p>I tuoi dati non vengono venduti a terzi. Possono essere condivisi solo con fornitori di servizi tecnici (come il servizio di hosting) strettamente necessari per mantenere l'app online, o se richiesto dalla legge.</p>
+        </section>
+
+        <section class="privacy-section">
+            <h2>5. Cookie</h2>
+            <p>Modulink utilizza solo cookie tecnici ed essenziali necessari per mantenerti connesso e ricordare le tue preferenze di navigazione. Non utilizziamo cookie di profilazione pubblicitaria.</p>
+        </section>
+
+        <section class="privacy-section">
+            <h2>6. I tuoi diritti</h2>
+            <p>In conformità con il GDPR, hai il diritto di accedere ai tuoi dati, richiederne la rettifica o la cancellazione contattando il nostro supporto.</p>
+        </section>
+
+        <section class="privacy-section">
+            <h2>7. Sicurezza</h2>
+            <p>Adottiamo misure di sicurezza standard per proteggere i tuoi dati da accessi non autorizzati.</p>
+        </section>
+
+        <section class="privacy-section">
+            <h2>8. Contatti</h2>
+            <p>Per qualsiasi domanda riguardante questa informativa, puoi contattarci all'indirizzo email di supporto dedicato.</p>
+        </section>
+    </div>
+</div>
+<footer th:replace="~{fragments/footer :: mainFooter}"></footer>
+
+</body>
+</html>

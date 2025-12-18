@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ModuLink - L'Ecosistema Gestionale</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+    <link rel="stylesheet" th:href="@{/css/termini.css}">
+</head>
+
+<header th:replace="~{fragments/header :: mainHeader}"></header>
+
+<body>
+<div class="terms-container">
+  <div class="terms-header">
+    <h1>Termini e Condizioni</h1>
+  </div>
+
+  <div class="terms-content">
+    <section class="terms-section">
+      <h2>1. Introduzione</h2>
+      <p>Benvenuto su <strong>Modulink</strong>. Utilizzando la nostra webapp, accetti di rispettare le seguenti regole basilari. Se non sei d'accordo con questi termini, ti invitiamo a non utilizzare il servizio.</p>
+    </section>
+
+    <section class="terms-section">
+      <h2>2. Uso del Servizio</h2>
+      <p>Ti impegni a utilizzare Modulink solo per scopi leciti. È vietato:</p>
+      <ul>
+        <li>Utilizzare il sito per attività illegali o fraudolente.</li>
+        <li>Tentare di danneggiare o interferire con la sicurezza del sito.</li>
+        <li>Copiare o rivendere i nostri servizi senza permesso.</li>
+      </ul>
+    </section>
+
+    <section class="terms-section">
+      <h2>3. Il Tuo Account</h2>
+      <p>Se crei un account su Modulink:</p>
+      <ul>
+        <li>Sei responsabile della sicurezza della tua password.</li>
+        <li>Tutte le attività svolte tramite il tuo account sono sotto la tua responsabilità.</li>
+        <li>Ci riserviamo il diritto di sospendere l'account in caso di violazione delle regole.</li>
+      </ul>
+    </section>
+
+    <section class="terms-section">
+      <h2>4. Proprietà Intellettuale</h2>
+      <p>Tutti i contenuti, il logo "Modulink", il codice e il design del sito sono di nostra proprietà. Non è consentito copiarli o utilizzarli per scopi commerciali senza il nostro consenso scritto.</p>
+    </section>
+
+    <section class="terms-section">
+      <h2>5. Limitazione di Responsabilità</h2>
+      <p>Modulink è fornito "così com'è". Sebbene ci impegniamo a mantenere il servizio attivo e funzionale, non possiamo garantire che sia privo di errori o sempre accessibile. Non siamo responsabili per eventuali disservizi temporanei.</p>
+    </section>
+
+    <section class="terms-section">
+      <h2>6. Modifiche ai Termini</h2>
+      <p>Potremmo aggiornare questi termini in futuro. Continuando a utilizzare Modulink dopo le modifiche, accetti implicitamente i nuovi termini.</p>
+    </section>
+
+    <section class="terms-section">
+      <h2>7. Contatti</h2>
+      <p>Per qualsiasi domanda su questi termini, scrivici a:</p>
+      <div class="contact-info">
+        <p><strong>Email:</strong> info@modulink.app</p>
+      </div>
+    </section>
+  </div>
+</div>
+<footer th:replace="~{fragments/footer :: mainFooter}"></footer>
+
+</body>
+</html>
