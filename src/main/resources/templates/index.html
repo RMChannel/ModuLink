@@ -15,22 +15,7 @@
 <body>
 
 <!-- 1. HEADER (Sticky Navigation) -->
-<header class="site-header">
-    <div class="logo">
-        <img th:src="@{/photo/logo.png}">
-    </div>
-    <nav class="nav-links">
-        <a href="#">Funzionalità</a>
-        <a href="#">Soluzioni</a>
-        <a href="#">Prezzi</a>
-        <a href="#">Docs</a>
-    </nav>
-
-    <div>
-        <a th:href="@{/login}" class="btn btn-outline">Login</a>
-        <a th:href="@{/register}" class="btn btn-solid">Registra Azienda</a>
-    </div>
-</header>
+<div th:replace="fragments/header :: header">
 
 <!-- 2. HERO SECTION -->
 <section class="hero-section">
