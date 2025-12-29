@@ -1,0 +1,173 @@
+/* GDU Module Styles */
+@import url('../../user/colors.css');
+
+.gdu-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.gdu-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text-heading);
+    margin: 0;
+}
+
+.btn-add-user {
+    background-color: var(--color-primary);
+    color: var(--color-white);
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.2s;
+}
+
+.btn-add-user:hover {
+    background-color: var(--color-primary-dark);
+    color: var(--color-white);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-btn-primary);
+}
+
+/* Table Styles */
+.user-table-container {
+    background: var(--bg-white);
+    border-radius: 1rem;
+    box-shadow: var(--shadow-card);
+    overflow: hidden;
+}
+
+.table {
+    margin-bottom: 0;
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table th {
+    background-color: var(--bg-light);
+    color: var(--text-secondary);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+    padding: 1rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.table td {
+    padding: 1rem;
+    vertical-align: middle;
+    color: var(--text-body);
+    border-bottom: 1px solid var(--border-color-light);
+}
+
+.table tbody tr:hover {
+    background-color: var(--bg-body-alt);
+}
+
+.user-avatar-small {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-color: var(--color-primary-light);
+    color: var(--color-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 0.8rem;
+    margin-right: 0.75rem;
+}
+
+.user-cell {
+    display: flex;
+    align-items: center;
+}
+
+.role-badge {
+    display: inline-block;
+    padding: 0.25rem 0.5rem;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    margin-right: 0.25rem;
+    color: var(--color-white);
+}
+
+.action-btn {
+    border: none;
+    background: transparent;
+    color: var(--text-secondary);
+    padding: 0.25rem;
+    margin: 0 0.25rem;
+    transition: color 0.2s;
+}
+
+.action-btn:hover {
+    color: var(--color-primary);
+}
+
+.action-btn.delete:hover {
+    color: var(--text-danger);
+}
+
+/* Modal Styles */
+.modal-content {
+    background-color: var(--bg-white);
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-card);
+    border-radius: 1rem;
+}
+
+.modal-header {
+    border-bottom: 1px solid var(--border-color-light);
+}
+
+.modal-title {
+    color: var(--text-heading);
+}
+
+.modal-body {
+    color: var(--text-body);
+}
+
+.modal-footer {
+    border-top: 1px solid var(--border-color-light);
+}
+
+.form-label {
+    color: var(--text-body);
+    font-weight: 500;
+}
+
+.form-control {
+    background-color: var(--bg-body);
+    border: 1px solid var(--border-color);
+    color: var(--text-body);
+}
+
+.form-control:focus {
+    background-color: var(--bg-white);
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 4px var(--border-focus);
+}
+
+.form-check-label {
+    color: var(--text-body);
+}
+
+[data-theme='dark'] .form-control {
+    background-color: var(--bg-light);
+    border-color: var(--border-color);
+}
+
+[data-theme='dark'] .form-control:focus {
+    background-color: var(--bg-light);
+}

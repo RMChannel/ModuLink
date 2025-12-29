@@ -1,6 +1,17 @@
 package com.modulink.Model.Relazioni.Attivazione;
 
+import com.modulink.Model.Azienda.AziendaEntity;
+import com.modulink.Model.Modulo.ModuloEntity;
+import com.modulink.Model.Ruolo.RuoloEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
+import java.util.List;
 
 public interface AttivazioneRepository extends JpaRepository<AttivazioneEntity,AttivazioneID> {
+
+    @Query("SELECT a.modulo FROM AttivazioneEntity a WHERE a.azienda = :azienda")
+    public List<ModuloEntity> findModuliByAzienda(@Param("azienda") AziendaEntity azienda);
+
 }
