@@ -5,6 +5,9 @@ import com.modulink.Model.Modulo.ModuloRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 public class AttivazioneService {
     private final AttivazioneRepository attivazioneRepository;
@@ -17,7 +20,11 @@ public class AttivazioneService {
 
     @Transactional
     public void attivazioneDefault(AziendaEntity aziendaEntity) {
-        AttivazioneEntity attivazione=new AttivazioneEntity(moduloRepository.getReferenceById(0),aziendaEntity);
-        attivazioneRepository.save(attivazione);
+        List<AttivazioneEntity> attivazioni=new ArrayList<>();
+
+        AttivazioneEntity attivazione1=new AttivazioneEntity(moduloRepository.getReferenceById(0),aziendaEntity);
+
+        attivazioni.add(attivazione1);
+        attivazioneRepository.saveAll(attivazioni);
     }
 }
