@@ -15,6 +15,9 @@ public class ModuloEntity {
     @Column(name = "descrizione", nullable = false)
     private String descrizione;
 
+    @Column(name = "url_modulo", nullable = false)
+    private String url_modulo;
+
     @Column(name = "url_icona")
     private String url_icona;
 

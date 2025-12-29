@@ -184,6 +184,77 @@ h1, h2, h3, h4, h5, h6 {
     transition: opacity 0.2s ease;
 }
 
+/* --- Sub-menu Styling --- */
+.sidebar-menu .has-submenu {
+    cursor: pointer;
+    justify-content: space-between;
+}
+
+.sidebar-menu .submenu-toggle-icon {
+    font-size: 0.8rem;
+    transition: transform 0.3s ease;
+    margin-left: auto; /* Push to right */
+    min-width: 16px; /* Override standard icon width */
+}
+
+/* Rotate chevron when expanded */
+.sidebar-menu .has-submenu.expanded .submenu-toggle-icon {
+    transform: rotate(90deg);
+}
+
+.sidebar-menu .submenu {
+    display: none; /* Hidden by default */
+    list-style: none;
+    padding-left: 0;
+    margin-top: 5px;
+    background-color: rgba(0, 0, 0, 0.02);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.sidebar-menu .submenu.show {
+    display: block;
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.sidebar-menu .submenu li {
+    margin-bottom: 2px;
+}
+
+.sidebar-menu .submenu a {
+    padding: 8px 16px 8px 45px; /* Indent sub-items */
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+.sidebar-menu .submenu a:hover {
+    background-color: transparent;
+    color: var(--color-primary);
+}
+
+.sidebar-menu .submenu a::before {
+    content: "•";
+    position: absolute;
+    left: 28px;
+    font-size: 1.2rem;
+    line-height: 0.8rem;
+    opacity: 0.6;
+}
+
+/* Hide sub-menus entirely when sidebar is collapsed to avoid layout break */
+#sidebar.collapsed .submenu {
+    display: none !important;
+}
+
+#sidebar.collapsed .submenu-toggle-icon {
+    display: none;
+}
+
 #sidebar.collapsed .sidebar-menu a {
     justify-content: center;
     padding: 12px 0;
