@@ -1,173 +1,147 @@
-/* GDU Module Styles */
 @import url('../../user/colors.css');
 
-.gdu-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 2rem;
-    padding-bottom: 1rem;
-    border-bottom: 1px solid var(--border-color);
+/* =========================================
+   GDU MODULE STYLES - ADAPTIVE THEME
+   ========================================= */
+
+/* 1. Container & Typography Override */
+.container-fluid {
+    /* Transparent to let body background show through */
+    background-color: transparent; 
+    color: var(--text-body);
 }
 
-.gdu-title {
-    font-size: 1.5rem;
-    font-weight: 600;
+h1.h2, h2, h3 {
     color: var(--text-heading);
-    margin: 0;
+    font-weight: 700;
 }
 
-.btn-add-user {
+/* 2. Toolbar & Buttons */
+.btn-toolbar .btn-outline-primary {
+    color: var(--color-primary);
+    border-color: var(--color-primary);
+    transition: all 0.3s ease;
+}
+
+.btn-toolbar .btn-outline-primary:hover {
     background-color: var(--color-primary);
     color: var(--color-white);
-    border: none;
-    padding: 0.5rem 1rem;
-    border-radius: 0.5rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    transition: all 0.2s;
-}
-
-.btn-add-user:hover {
-    background-color: var(--color-primary-dark);
-    color: var(--color-white);
-    transform: translateY(-1px);
     box-shadow: var(--shadow-btn-primary);
 }
 
-/* Table Styles */
-.user-table-container {
-    background: var(--bg-white);
-    border-radius: 1rem;
+/* 3. Responsive Table Adaptation */
+.table-responsive {
+    background-color: var(--bg-white);
+    border-radius: 12px;
     box-shadow: var(--shadow-card);
-    overflow: hidden;
+    padding: 0; /* Let table fill it */
+    overflow: hidden; /* Clips corners */
+    border: 1px solid var(--border-color);
 }
 
+/* Bootstrap Table Variables Override */
 .table {
-    margin-bottom: 0;
+    --bs-table-color: var(--text-body);
+    --bs-table-bg: var(--bg-white);
+    --bs-table-border-color: var(--border-color-light);
+    --bs-table-striped-bg: var(--bg-body-alt);
+    --bs-table-striped-color: var(--text-body);
+    --bs-table-active-bg: var(--bg-light);
+    --bs-table-active-color: var(--text-body);
+    --bs-table-hover-bg: var(--bg-light);
+    --bs-table-hover-color: var(--text-body);
+    
+    margin-bottom: 0; /* Remove bottom margin inside card */
     width: 100%;
     border-collapse: collapse;
 }
 
-.table th {
-    background-color: var(--bg-light);
-    color: var(--text-secondary);
+/* Table Header */
+.table thead th {
+    background-color: var(--bg-light); /* Or var(--bg-dark-section) if preferring dark header */
+    color: var(--text-heading);
     font-weight: 600;
     text-transform: uppercase;
     font-size: 0.75rem;
     letter-spacing: 0.05em;
     padding: 1rem;
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: 2px solid var(--border-color);
+    vertical-align: middle;
 }
 
-.table td {
+/* Override if .table-dark is used explicitly in HTML */
+.table thead.table-dark th {
+    background-color: var(--bg-dark-section);
+    color: var(--text-light);
+    border-color: rgba(255,255,255,0.1);
+}
+
+/* Table Body */
+.table tbody td {
     padding: 1rem;
     vertical-align: middle;
-    color: var(--text-body);
     border-bottom: 1px solid var(--border-color-light);
+    color: var(--text-body);
 }
 
-.table tbody tr:hover {
-    background-color: var(--bg-body-alt);
+/* Row Hover Effect */
+.table-hover tbody tr:hover {
+    background-color: var(--bg-light);
+    transition: background-color 0.2s ease;
 }
 
-.user-avatar-small {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    background-color: var(--color-primary-light);
-    color: var(--color-primary);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+/* 4. Badges & Status */
+.badge {
     font-weight: 600;
-    font-size: 0.8rem;
-    margin-right: 0.75rem;
+    padding: 0.5em 0.8em;
+    border: 1px solid transparent;
 }
 
-.user-cell {
-    display: flex;
-    align-items: center;
-}
-
-.role-badge {
-    display: inline-block;
-    padding: 0.25rem 0.5rem;
-    border-radius: 999px;
-    font-size: 0.75rem;
-    font-weight: 500;
-    margin-right: 0.25rem;
+/* Ensure dynamic style colors (from th:style) work well, 
+   but we can add a default fallback or override if needed. 
+   Here we trust the inline style for color but ensure readability. */
+.badge.bg-secondary {
+    /* If role color isn't set, fallback */
+    background-color: var(--text-secondary) !important;
     color: var(--color-white);
 }
 
-.action-btn {
-    border: none;
-    background: transparent;
-    color: var(--text-secondary);
-    padding: 0.25rem;
-    margin: 0 0.25rem;
-    transition: color 0.2s;
-}
-
-.action-btn:hover {
+/* 5. Action Buttons in Table */
+.btn-sm.btn-outline-primary {
     color: var(--color-primary);
+    border-color: var(--border-color-hover); /* Subtler border */
+    background: transparent;
 }
 
-.action-btn.delete:hover {
-    color: var(--text-danger);
-}
-
-/* Modal Styles */
-.modal-content {
-    background-color: var(--bg-white);
-    border: 1px solid var(--border-color);
-    box-shadow: var(--shadow-card);
-    border-radius: 1rem;
-}
-
-.modal-header {
-    border-bottom: 1px solid var(--border-color-light);
-}
-
-.modal-title {
-    color: var(--text-heading);
-}
-
-.modal-body {
-    color: var(--text-body);
-}
-
-.modal-footer {
-    border-top: 1px solid var(--border-color-light);
-}
-
-.form-label {
-    color: var(--text-body);
-    font-weight: 500;
-}
-
-.form-control {
-    background-color: var(--bg-body);
-    border: 1px solid var(--border-color);
-    color: var(--text-body);
-}
-
-.form-control:focus {
-    background-color: var(--bg-white);
+.btn-sm.btn-outline-primary:hover {
+    color: var(--color-primary);
     border-color: var(--color-primary);
-    box-shadow: 0 0 0 4px var(--border-focus);
+    background-color: var(--color-primary-light);
 }
 
-.form-check-label {
-    color: var(--text-body);
+.btn-sm.btn-outline-danger {
+    color: var(--text-secondary); /* Muted by default */
+    border-color: var(--border-color-hover);
+    background: transparent;
 }
 
-[data-theme='dark'] .form-control {
-    background-color: var(--bg-light);
+.btn-sm.btn-outline-danger:hover {
+    color: var(--text-danger);
+    border-color: var(--text-danger);
+    background-color: var(--bg-alert-danger);
+}
+
+/* 6. Empty State */
+.text-muted em {
+    font-style: normal;
+    color: var(--text-secondary);
+}
+
+/* 7. Dark Mode Specifics (where vars aren't enough) */
+[data-theme='dark'] .table-responsive {
     border-color: var(--border-color);
 }
 
-[data-theme='dark'] .form-control:focus {
-    background-color: var(--bg-light);
+[data-theme='dark'] .btn-toolbar .btn-outline-primary {
+    /* Ensure visibility on dark */
 }
