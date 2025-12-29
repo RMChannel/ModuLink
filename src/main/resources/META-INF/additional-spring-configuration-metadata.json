@@ -1,0 +1,8 @@
+{
+  "properties": [
+    {
+      "name": "activate.databasepop",
+      "type": "java.lang.String",
+      "description": "Description for activate.databasepop."
+  }
+] }
