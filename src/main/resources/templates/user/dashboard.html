@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/user/colors.css}">
     <link rel="stylesheet" th:href="@{/css/user/dashboard-layout.css}">
     <script>
         // Recupera il tema salvato dal localStorage (default: light)
@@ -16,9 +17,17 @@
 </head>
 <body>
 <div class="dashboard-wrapper">
-    <div th:replace="~{user/sidebar :: sidebar}"></div>
+    <!-- Sidebar Fragment -->
+    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
 
-
+    <!-- Main Content -->
+    <div id="content">
+        <!-- Top Navbar mobile toggle could go here if needed -->
+        <div class="container-fluid">
+            <h1>Benvenuto nella Dashboard</h1>
+            <p>Contenuto principale della dashboard qui...</p>
+        </div>
+    </div>
 </div>
 
 <!-- Bootstrap JavaScript Bundle (include Popper) -->
@@ -33,33 +42,15 @@
         // ========================================
         const sidebar = document.getElementById('sidebar');
         const sidebarCollapseBtn = document.getElementById('sidebarCollapse');
+        const sidebarIcon = sidebarCollapseBtn ? sidebarCollapseBtn.querySelector('i') : null;
 
-        // Verifica che gli elementi esistano prima di aggiungere event listeners
         if (sidebar && sidebarCollapseBtn) {
-            const toggleIcon = sidebarCollapseBtn.querySelector('i');
-
-            // (Opzionale) Ripristina lo stato della sidebar dal localStorage
-            // const savedSidebarState = localStorage.getItem('sidebarState');
-            // if (savedSidebarState === 'collapsed') {
-            //     sidebar.classList.add('collapsed');
-            // }
-
-            // Event listener per il toggle della sidebar
+            // Logica Pin/Collapse
             sidebarCollapseBtn.addEventListener('click', function () {
                 sidebar.classList.toggle('collapsed');
-
-                // Cambia l'icona in base allo stato (collapsed/expanded)
-                if (sidebar.classList.contains('collapsed')) {
-                    toggleIcon.classList.remove('bi-chevron-left');
-                    toggleIcon.classList.add('bi-chevron-right');
-                    // (Opzionale) Salva lo stato nel localStorage
-                    // localStorage.setItem('sidebarState', 'collapsed');
-                } else {
-                    toggleIcon.classList.remove('bi-chevron-right');
-                    toggleIcon.classList.add('bi-chevron-left');
-                    // (Opzionale) Salva lo stato nel localStorage
-                    // localStorage.setItem('sidebarState', 'expanded');
-                }
+                
+                // Opzionale: Cambia icona se necessario (es. pin fill vs pin vuoto o frecce)
+                // Qui usiamo rotazione CSS
             });
         }
 
@@ -69,39 +60,12 @@
         const themeToggleBtn = document.getElementById('themeToggleBtn');
 
         if (themeToggleBtn) {
-            // Recupera il tema corrente dal localStorage
-            const currentTheme = localStorage.getItem('theme') || 'light';
-
-            /**
-             * Aggiorna l'UI del pulsante tema in base al tema attivo
-             * @param {string} theme - Il tema attivo ('light' o 'dark')
-             */
-            function updateThemeButtonUI(theme) {
-                if (theme === 'dark') {
-                    themeToggleBtn.classList.remove('light-mode');
-                    themeToggleBtn.classList.add('dark-mode');
-                } else {
-                    themeToggleBtn.classList.remove('dark-mode');
-                    themeToggleBtn.classList.add('light-mode');
-                }
-            }
-
-            // Inizializza l'UI del pulsante con il tema corrente
-            updateThemeButtonUI(currentTheme);
-
-            // Event listener per il cambio tema
             themeToggleBtn.addEventListener('click', function() {
-                // Recupera il tema attuale dall'attributo HTML
                 let currentTheme = document.documentElement.getAttribute('data-theme');
-                // Inverte il tema (light <-> dark)
                 let newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-
-                // Applica il nuovo tema
+                
                 document.documentElement.setAttribute('data-theme', newTheme);
-                // Salva la preferenza nel localStorage
                 localStorage.setItem('theme', newTheme);
-                // Aggiorna l'UI del pulsante
-                updateThemeButtonUI(newTheme);
             });
         }
     });

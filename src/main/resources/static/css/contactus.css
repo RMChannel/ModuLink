@@ -1,3 +1,5 @@
+@import 'user/colors.css';
+
 /* =========================================
    1. GLOBAL & RESET
    ========================================= */
@@ -6,11 +8,11 @@
 }
 
 body {
-    background-color: #f4f6f9;
+    background-color: var(--bg-body);
     margin: 0;
     padding: 0;
     font-family: 'Inter', sans-serif;
-    color: #334155;
+    color: var(--text-body);
     overflow-x: hidden;
     padding-bottom: 50px;
 }
@@ -20,7 +22,7 @@ h1, h2, h3, h4 {
     margin: 0;
 }
 
-.text-primary { color: #2563eb; }
+.text-primary { color: var(--color-primary); }
 
 /* =========================================
    2. HEADER & NAVIGAZIONE
@@ -30,10 +32,10 @@ h1, h2, h3, h4 {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid #f1f5f9;
+    border-bottom: 1px solid var(--border-color-light);
     position: sticky;
     top: 0;
-    background: rgba(255, 255, 255, 0.95);
+    background: var(--bg-header-blur);
     backdrop-filter: blur(8px);
     z-index: 1000;
     width: 100%;
@@ -60,11 +62,11 @@ h1, h2, h3, h4 {
 
 .nav-links a {
     text-decoration: none;
-    color: #64748b;
+    color: var(--text-secondary);
     transition: color 0.2s;
 }
 
-.nav-links a:hover { color: #2563eb; }
+.nav-links a:hover { color: var(--color-primary); }
 
 .header-buttons { display: flex; gap: 10px; }
 
@@ -85,19 +87,19 @@ h1, h2, h3, h4 {
 .btn:active { transform: scale(0.98); }
 
 .btn-outline {
-    border: 1px solid #e2e8f0;
-    color: #0f172a;
-    background: white;
+    border: 1px solid var(--border-color);
+    color: var(--text-heading);
+    background: var(--color-white);
 }
-.btn-outline:hover { background-color: #f8fafc; border-color: #cbd5e1; }
+.btn-outline:hover { background-color: var(--bg-light); border-color: var(--border-color-hover); }
 
 .btn-solid {
-    background: #2563eb;
-    color: #fff;
+    background: var(--color-primary);
+    color: var(--color-white);
     border: none;
-    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+    box-shadow: var(--shadow-btn-primary);
 }
-.btn-solid:hover { background: #1d4ed8; }
+.btn-solid:hover { background: var(--color-primary-dark); }
 
 /* =========================================
    3. CONTENUTO PAGINA CONTATTI
@@ -105,7 +107,7 @@ h1, h2, h3, h4 {
 .page-title {
     text-align: center;
     margin: 40px 0;
-    color: #0f172a;
+    color: var(--text-heading);
     font-weight: 700;
     font-size: 32px;
 }
@@ -120,17 +122,17 @@ h1, h2, h3, h4 {
 
 .info-section {
     width: 100%;
-    background: white;
+    background: var(--color-white);
     padding: 40px;
     border-radius: 16px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-    border: 1px solid #e2e8f0;
+    box-shadow: var(--shadow-card);
+    border: 1px solid var(--border-color);
 }
 
 .section-title {
     margin-bottom: 30px;
-    color: #334155;
-    border-bottom: 2px solid #f1f5f9;
+    color: var(--text-body);
+    border-bottom: 2px solid var(--border-color-light);
     padding-bottom: 15px;
     font-size: 24px;
     font-weight: 600;
@@ -147,10 +149,10 @@ h1, h2, h3, h4 {
     display: flex;
     flex-direction: column;
     align-items: center;
-    background: #fff;
+    background: var(--color-white);
     padding: 30px;
     border-radius: 12px;
-    border: 1px solid #e2e8f0;
+    border: 1px solid var(--border-color);
     transition: transform 0.3s, box-shadow 0.3s;
     text-align: center;
     height: 100%;
@@ -158,7 +160,7 @@ h1, h2, h3, h4 {
 
 .info-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+    box-shadow: var(--shadow-card-hover);
 }
 
 .icon-box {
@@ -169,20 +171,20 @@ h1, h2, h3, h4 {
     align-items: center;
     justify-content: center;
     font-size: 24px;
-    color: white;
+    color: var(--color-white);
     margin-bottom: 20px;
     flex-shrink: 0;
 }
 
 /* Gradienti */
-.bg-phone { background: linear-gradient(135deg, #3498db, #2980b9); }
-.bg-email { background: linear-gradient(135deg, #e67e22, #d35400); }
-.bg-insta { background: linear-gradient(135deg, #833ab4, #fd1d1d, #fcb045); }
+.bg-phone { background: var(--gradient-phone); }
+.bg-email { background: var(--gradient-email); }
+.bg-insta { background: var(--gradient-insta); }
 
 .info-card h4 {
     margin-bottom: 20px;
     font-size: 1.1rem;
-    color: #0f172a;
+    color: var(--text-heading);
     text-transform: uppercase;
     font-weight: 700;
 }
@@ -197,10 +199,10 @@ h1, h2, h3, h4 {
 .contact-item {
     display: block;
     padding: 10px;
-    background-color: #f8fafc;
+    background-color: var(--bg-light);
     border-radius: 8px;
     text-decoration: none;
-    color: #475569;
+    color: var(--text-muted);
     font-weight: 500;
     font-size: 0.95rem;
     transition: all 0.2s;
@@ -208,8 +210,8 @@ h1, h2, h3, h4 {
 }
 
 .contact-item:hover {
-    background-color: #f1f5f9;
-    color: #2563eb;
+    background-color: var(--border-color-light);
+    color: var(--color-primary);
     transform: translateX(3px);
 }
 
@@ -218,17 +220,19 @@ h1, h2, h3, h4 {
     position: relative;
     border-radius: 16px;
     overflow: hidden;
-    border: 1px solid #e2e8f0;
+    border: 1px solid var(--border-color);
     display: flex;
     flex-direction: column;
     height: 100%;
     min-height: 350px;
-    background: white;
+    background: var(--color-white);
 }
 
 .map-label {
-    background: #1e293b;
-    color: white;
+    background: #1e293b; /* Questo sembra un colore specifico per la mappa, magari lo lascio o uso var(--text-heading) se simile? 1e293b è molto scuro, simile a heading 0f172a. */
+    /* Creo una variabile locale o uso heading scuro? Lasciamo hardcoded se specifico, o usiamo text-heading. 1e293b is slate-800. text-heading is slate-900. */
+    background: #1e293b; 
+    color: var(--color-white);
     padding: 12px 20px;
     font-size: 0.9rem;
     display: flex;
@@ -245,11 +249,11 @@ h1, h2, h3, h4 {
 
 /* Footer */
 footer {
-    background: #f8fafc;
+    background: var(--bg-light);
     padding: 40px 0;
     text-align: center;
-    border-top: 1px solid #e2e8f0;
-    color: #64748b;
+    border-top: 1px solid var(--border-color);
+    color: var(--text-secondary);
     font-size: 14px;
     margin-top: 60px;
 }

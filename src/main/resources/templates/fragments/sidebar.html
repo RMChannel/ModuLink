@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<nav th:fragment="sidebar" id="sidebar">
+    <!-- ====================================
+         SECTION UP: Azienda Logo / Name
+         ==================================== -->
+    <div class="sidebar-header">
+        <a th:href="@{/dashboard}" class="d-flex align-items-center text-decoration-none">
+            <!-- Caso 1: Logo Azienda Esistente -->
+            <img th:if="${utente != null and utente.azienda != null and utente.azienda.logo != null and !utente.azienda.logo.isEmpty()}"
+                 th:src="@{${utente.azienda.logo}}"
+                 alt="Logo Azienda"
+                 class="company-logo-img">
+
+            <!-- Caso 2: Nessun Logo, mostriamo il Nome -->
+            <span th:if="${(utente == null or utente.azienda == null or utente.azienda.logo == null or utente.azienda.logo.isEmpty()) and utente != null and utente.azienda != null}"
+                  class="company-name"
+                  th:text="${utente.azienda.nome}">Nome Azienda</span>
+
+            <!-- Fallback estremo -->
+            <span th:if="${utente == null}" class="company-name">ModuLink</span>
+        </a>
+    </div>
+
+    <!-- ====================================
+         SECTION CENTER: Menu Navigation
+         ==================================== -->
+    <div class="sidebar-menu">
+        <ul>
+            <li>
+                <a th:href="@{'/user/' + ${utente.id_utente} + '/dashboard'}" class="active">
+                    <i class="bi bi-grid-fill"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{'/user/' + ${utente.id_utente} + '/moduli'}">
+                    <i class="bi bi-box-seam"></i>
+                    <span>Moduli</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{'/user/' + ${utente.id_utente} + '/impostazioni'}">
+                    <i class="bi bi-gear"></i>
+                    <span>Impostazioni</span>
+                </a>
+            </li>
+            <!-- Aggiungi altre voci di menu qui -->
+        </ul>
+    </div>
+
+    <!-- ====================================
+         SECTION DOWN: User, Theme, Collapse
+         ==================================== -->
+    <div class="sidebar-footer">
+
+        <!-- New Theme Toggle (Segmented Control) -->
+        <div class="theme-switch-container">
+            <div class="theme-switch-track" id="themeToggleBtn">
+                <div class="theme-switch-thumb"></div>
+                <div class="theme-switch-option light" data-theme-value="light">
+                    <i class="bi bi-sun-fill"></i>
+                    <span class="theme-label">Chiaro</span>
+                </div>
+                <div class="theme-switch-option dark" data-theme-value="dark">
+                    <i class="bi bi-moon-fill"></i>
+                    <span class="theme-label">Scuro</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- User Profile -->
+        <div class="user-profile" th:if="${utente != null}">
+            <!-- Immagine Profilo -->
+            <img th:if="${utente.path_immagine_profilo != null and !utente.path_immagine_profilo.isEmpty()}"
+                 th:src="@{${utente.path_immagine_profilo}}"
+                 alt="User"
+                 class="user-avatar">
+
+            <!-- Iniziali (Se immagine manca) -->
+            <div th:if="${utente.path_immagine_profilo == null or utente.path_immagine_profilo.isEmpty()}"
+                 class="user-avatar">
+                <span th:text="${#strings.substring(utente.nome,0,1) + #strings.substring(utente.cognome,0,1)}">AB</span>
+            </div>
+
+            <!-- User Info (Nome completo) -->
+            <div class="user-info">
+                <span class="user-name" th:text="${utente.nome + ' ' + utente.cognome}">Utente Demo</span>
+                <span class="user-role" th:text="${utente.ruoli != null and !utente.ruoli.isEmpty() ? utente.ruoli.iterator().next().nome : 'Utente'}">Ruolo</span>
+            </div>
+        </div>
+
+        <!-- Sidebar Collapse Toggle (Pin) -->
+        <button id="sidebarCollapse" class="sidebar-toggler" title="Espandi/Riduci">
+            <i class="bi bi-pin-angle-fill"></i>
+        </button>
+    </div>
+</nav>
+
+</body>
+</html>

@@ -1,0 +1,120 @@
+:root {
+    /* =========================================
+       BASE COLORS
+       ========================================= */
+    --color-white: #ffffff;
+    --color-black: #000000;
+    
+    /* =========================================
+       PRIMARY BRAND COLORS
+       ========================================= */
+    --color-primary: #2563eb;
+    --color-primary-dark: #1d4ed8;
+    --color-primary-light: #dbeafe;       /* Icon box background */
+    --color-primary-lighter: #60a5fa;     /* Module icons */
+    
+    /* =========================================
+       TEXT COLORS
+       ========================================= */
+    --text-body: #334155;                 /* Main body text */
+    --text-heading: #0f172a;              /* Headings */
+    --text-secondary: #64748b;            /* Secondary text, nav links, footer text */
+    --text-muted: #94a3b8;                /* Contact items */
+    --text-light: #ffffff;                /* Text on dark backgrounds */
+    --text-danger: #dc3545;               /* Error text */
+    --text-danger-dark: #991b1b;          /* Alert danger text */
+
+    /* =========================================
+       BACKGROUND COLORS
+       ========================================= */
+    --bg-body: #f4f6f9;                   /* Default body background */
+    --bg-body-alt: #f0f2f5;               /* Login/Register body background */
+    --bg-light: #f8fafc;                  /* Footer, feature cards, btn-outline hover */
+    --bg-white: #ffffff;
+    --bg-dark-section: #0f172a;           /* Modules section background */
+    
+    /* Overlay Backgrounds */
+    --bg-header-blur: rgba(255, 255, 255, 0.95);
+    --bg-module-card: rgba(255, 255, 255, 0.03);
+    --bg-module-card-hover: rgba(255, 255, 255, 0.08);
+
+    /* Alert Backgrounds */
+    --bg-alert-danger: #fef2f2;
+
+    /* =========================================
+       BORDER COLORS
+       ========================================= */
+    --border-color: #e2e8f0;              /* Default borders */
+    --border-color-light: #f1f5f9;        /* Lighter borders, dividers */
+    --border-color-hover: #cbd5e1;        /* Hover state for borders */
+    --border-module-card: rgba(255, 255, 255, 0.08);
+    --border-module-card-hover: rgba(255, 255, 255, 0.2);
+    --border-alert-danger: #fecaca;
+    --border-focus: rgba(37, 99, 235, 0.1);
+
+    /* =========================================
+       GRADIENTS
+       ========================================= */
+    --gradient-hero: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);
+    --gradient-register-header: linear-gradient(180deg, #2563eb 0%, #1d4ed8 100%);
+
+    /* =========================================
+       SHADOWS
+       ========================================= */
+    --shadow-btn-primary: 0 4px 12px rgba(37, 99, 235, 0.2);
+    --shadow-card: 0 10px 30px rgba(0, 0, 0, 0.05);
+    --shadow-card-hover: 0 12px 30px rgba(0, 0, 0, 0.08);
+}
+
+/* =========================================
+   DARK MODE OVERRIDES
+   ========================================= */
+[data-theme='dark'] {
+    /* Base Colors */
+    --color-white: #0f172a;               /* Invert white to dark blue/slate */
+    --color-black: #ffffff;               /* Invert black to white */
+
+    /* Text Colors */
+    --text-body: #cbd5e1;                 /* Light gray for body text */
+    --text-heading: #f1f5f9;              /* White/Off-white for headings */
+    --text-secondary: #94a3b8;            /* Muted blue-gray */
+    --text-muted: #64748b;
+    --text-danger: #f87171;               /* Lighter red for dark mode */
+    --text-danger-dark: #fecaca;
+
+    /* Backgrounds */
+    --bg-body: #020617;                   /* Very dark blue/black for main background */
+    --bg-body-alt: #0f172a;               /* Slightly lighter for alt sections */
+    --bg-light: #1e293b;                  /* Card backgrounds, etc. */
+    --bg-white: #1e293b;                  /* Sidebar/Card background in dark mode */
+    --bg-dark-section: #020617;
+
+    /* Overlay Backgrounds */
+    --bg-header-blur: rgba(15, 23, 42, 0.95);
+    --bg-module-card: rgba(0, 0, 0, 0.2);
+    --bg-module-card-hover: rgba(0, 0, 0, 0.3);
+
+    /* Alert Backgrounds */
+    --bg-alert-danger: #450a0a;
+
+    /* Borders */
+    --border-color: #334155;
+    --border-color-light: #1e293b;
+    --border-color-hover: #475569;
+    --border-module-card: rgba(255, 255, 255, 0.05);
+    --border-module-card-hover: rgba(255, 255, 255, 0.1);
+    --border-alert-danger: #7f1d1d;
+
+    /* Primary Brand Colors Adjustments */
+    --color-primary-light: #1e3a8a;       /* Darker blue for backgrounds */
+    --color-primary-lighter: #3b82f6;
+
+    /* Gradients */
+    --gradient-hero: linear-gradient(180deg, #020617 0%, #0f172a 100%);
+    --gradient-register-header: linear-gradient(180deg, #1d4ed8 0%, #1e40af 100%);
+
+    /* Shadows */
+    --shadow-card: 0 10px 30px rgba(0, 0, 0, 0.3);
+    --shadow-card-hover: 0 12px 30px rgba(0, 0, 0, 0.5);
+    --shadow-btn-primary: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
