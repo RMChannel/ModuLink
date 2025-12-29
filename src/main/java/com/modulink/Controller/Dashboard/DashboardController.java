@@ -19,7 +19,7 @@ public class DashboardController {
 
     /**
      * Dispatcher endpoint.
-     * Reindirizza l'utente alla sua dashboard personale basata sull'ID.
+     * Reindirizza l'utente alla sua dashboard personale con ID formattato (000000001).
      */
     @GetMapping("/dashboard")
     public String dashboardDispatcher(Principal principal) {
@@ -31,8 +31,9 @@ public class DashboardController {
         Optional<UtenteEntity> utenteOpt = userRepository.findByEmail(email);
 
         if (utenteOpt.isPresent()) {
-            // Redirect alla dashboard specifica dell'utente
-            return "redirect:/user/" + utenteOpt.get().getId_utente() + "/dashboard";
+            // Formatta l'ID a 9 cifre con zeri iniziali
+            String formattedId = String.format("%09d", utenteOpt.get().getId_utente());
+            return "redirect:/" + formattedId + "/dashboard";
         } else {
             return "redirect:/logout";
         }
@@ -40,10 +41,10 @@ public class DashboardController {
 
     /**
      * Endpoint specifico per la dashboard utente.
-     * Include un controllo di sicurezza per evitare che l'utente A acceda alla dashboard dell'utente B.
+     * URL pattern: /{id-9-cifre}/dashboard (es. /000000001/dashboard)
      */
-    @GetMapping("/user/{id}/dashboard")
-    public String userDashboard(@PathVariable("id") int id, Principal principal, Model model) {
+    @GetMapping("/{id}/dashboard")
+    public String userDashboard(@PathVariable("id") String idStr, Principal principal, Model model) {
         if(principal == null) {
             return "redirect:/";
         }
@@ -53,11 +54,23 @@ public class DashboardController {
 
         if (utenteOpt.isPresent()) {
             UtenteEntity utente = utenteOpt.get();
+            int id;
 
-            // IDOR SECURITY CHECK: Verifica che l'ID nell'URL corrisponda all'utente loggato
-            if(utente.getId_utente() != id) {
-                // Se non corrispondono, reindirizza alla dashboard corretta
-                return "redirect:/user/" + utente.getId_utente() + "/dashboard";
+            // Tenta il parsing dell'ID
+            try {
+                id = Integer.parseInt(idStr);
+            } catch (NumberFormatException e) {
+                // Se l'ID non è un numero, reindirizza alla dashboard corretta
+                String correctId = String.format("%09d", utente.getId_utente());
+                return "redirect:/" + correctId + "/dashboard";
+            }
+
+            // IDOR SECURITY CHECK & FORMAT CHECK
+            // Verifica che l'ID numerico corrisponda E che la stringa sia formattata correttamente (9 cifre)
+            String expectedIdStr = String.format("%09d", utente.getId_utente());
+            
+            if (id != utente.getId_utente() || !idStr.equals(expectedIdStr)) {
+                return "redirect:/" + expectedIdStr + "/dashboard";
             }
 
             model.addAttribute("utente", utente);

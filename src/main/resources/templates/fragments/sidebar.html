@@ -41,12 +41,7 @@
                     <span>Moduli</span>
                 </a>
             </li>
-            <li>
-                <a th:href="@{'/user/' + ${utente.id_utente} + '/impostazioni'}">
-                    <i class="bi bi-gear"></i>
-                    <span>Impostazioni</span>
-                </a>
-            </li>
+
             <!-- Aggiungi altre voci di menu qui -->
         </ul>
     </div>
@@ -92,11 +87,13 @@
             </div>
         </div>
 
+
         <!-- Sidebar Collapse Toggle (Pin) -->
         <button id="sidebarCollapse" class="sidebar-toggler" title="Espandi/Riduci">
             <i class="bi bi-pin-angle-fill"></i>
         </button>
     </div>
+
 </nav>
 
 </body>
