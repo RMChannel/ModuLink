@@ -34,17 +34,6 @@ public interface AziendaRepository extends JpaRepository<AziendaEntity, Integer>
     Optional<AziendaEntity> findByPiva(String piva);
 
     /**
-     * Trova il valore massimo dell'ID presente nella tabella Azienda.
-     * <p>
-     * Utilizza una query JPQL personalizzata per aggregare i dati direttamente sul database,
-     * risultando molto performante.
-     *
-     * @return L'ID più alto registrato (Integer). Restituisce null se la tabella è vuota.
-     */
-    @Query("SELECT MAX(a.id_azienda) FROM AziendaEntity a")
-    Integer findMaxId();
-
-    /**
      * Recupera un'istanza di {@link AziendaEntity} basandosi sul numero di telefono.
      * <p>
      * Metodo utilizzato principalmente in fase di registrazione per verificare che il
