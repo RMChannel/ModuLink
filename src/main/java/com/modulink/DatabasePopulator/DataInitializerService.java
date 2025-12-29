@@ -37,7 +37,7 @@ public class DataInitializerService {
 
     @Transactional // Qui la transazione funzionerà correttamente!
     public void runInitialization() {
-        AziendaEntity azienda = new AziendaEntity("Test","12345678901","Via Nazionale","Santa Maria a Vico","81028","+393471304385","");
+        AziendaEntity azienda = new AziendaEntity("Test","12345678901","Via Nazionale","Santa Maria a Vico","81028","+393205397560","");
         UtenteEntity utente = new UtenteEntity(azienda, "robbencito@gmail.com", PasswordUtility.hashPassword("ciaociao"), "Roberto", "Cito", "+393471304385", "");
 
         // Importante: riassegna sempre l'oggetto restituito dal save/registrazione
