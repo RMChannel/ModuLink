@@ -30,19 +30,12 @@
     <div class="sidebar-menu">
         <ul>
             <li>
-                <a th:href="@{'/user/' + ${utente.id_utente} + '/dashboard'}" class="active">
+                <a th:href="@{'/dashboard'}" class="active">
                     <i class="bi bi-grid-fill"></i>
                     <span>Dashboard</span>
                 </a>
             </li>
-            <li>
-                <a th:href="@{'/user/' + ${utente.id_utente} + '/moduli'}">
-                    <i class="bi bi-box-seam"></i>
-                    <span>Moduli</span>
-                </a>
-            </li>
 
-            <!-- Aggiungi altre voci di menu qui -->
         </ul>
     </div>
 

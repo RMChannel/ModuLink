@@ -302,12 +302,12 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Show only the ACTIVE theme icon (or the one to toggle TO, but usually current state is shown) */
 /* Here we show the current state icon to indicate status */
-#sidebar.collapsed [data-theme='light'] .theme-switch-option.light {
+[data-theme='light'] #sidebar.collapsed .theme-switch-option.light {
     display: flex;
     color: var(--color-primary); /* Highlight active */
 }
 
-#sidebar.collapsed [data-theme='dark'] .theme-switch-option.dark {
+[data-theme='dark'] #sidebar.collapsed .theme-switch-option.dark {
     display: flex;
     color: var(--color-primary); /* Highlight active */
 }
