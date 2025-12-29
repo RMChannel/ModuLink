@@ -23,10 +23,11 @@ public class ModuloEntity {
 
     public ModuloEntity(){}
 
-    public ModuloEntity(int id_modulo, String nome, String descrizione, String url_icona) {
+    public ModuloEntity(int id_modulo, String nome, String descrizione, String url_modulo, String url_icona) {
         this.id_modulo = id_modulo;
         this.nome = nome;
         this.descrizione = descrizione;
+        this.url_modulo = url_modulo;
         this.url_icona = url_icona;
     }
 
@@ -52,6 +53,14 @@ public class ModuloEntity {
 
     public void setDescrizione(String descrizione) {
         this.descrizione = descrizione;
+    }
+
+    public String getUrl_modulo() {
+        return url_modulo;
+    }
+
+    public void setUrl_modulo(String url_modulo) {
+        this.url_modulo = url_modulo;
     }
 
     public String getUrl_icona() {
