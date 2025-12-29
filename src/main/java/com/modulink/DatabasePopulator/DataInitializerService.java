@@ -4,6 +4,8 @@ import com.modulink.Model.Azienda.AziendaEntity;
 import com.modulink.Model.Azienda.AziendaService;
 import com.modulink.Model.Modulo.ModuloEntity;
 import com.modulink.Model.Modulo.ModuloRepository;
+import com.modulink.Model.Relazioni.Affiliazione.AffiliazioneEntity;
+import com.modulink.Model.Relazioni.Affiliazione.AffiliazioneRepository;
 import com.modulink.Model.Relazioni.Associazione.AssociazioneEntity;
 import com.modulink.Model.Relazioni.Associazione.AssociazioneRepository;
 import com.modulink.Model.Relazioni.Attivazione.AttivazioneEntity;
@@ -25,14 +27,16 @@ public class DataInitializerService {
     private final AssociazioneRepository associazioneRepository;
     private final ModuloRepository moduloRepository;
     private final AttivazioneRepository attivazioneRepository;
+    private final AffiliazioneRepository affiliazioneRepository;
 
-    public DataInitializerService(AziendaService aziendaService, CustomUserDetailsService customUserDetailsService, RuoloRepository ruoloRepository, AssociazioneRepository associazioneRepository, ModuloRepository moduloRepository, AttivazioneRepository attivazioneRepository) {
+    public DataInitializerService(AziendaService aziendaService, CustomUserDetailsService customUserDetailsService, RuoloRepository ruoloRepository, AssociazioneRepository associazioneRepository, ModuloRepository moduloRepository, AttivazioneRepository attivazioneRepository, AffiliazioneRepository affiliazioneRepository) {
         this.aziendaService = aziendaService;
         this.customUserDetailsService = customUserDetailsService;
         this.ruoloRepository = ruoloRepository;
         this.associazioneRepository = associazioneRepository;
         this.moduloRepository = moduloRepository;
         this.attivazioneRepository = attivazioneRepository;
+        this.affiliazioneRepository = affiliazioneRepository;
     }
 
     @Transactional // Qui la transazione funzionerà correttamente!
@@ -56,5 +60,8 @@ public class DataInitializerService {
         // Ora azienda e modulo sono MANAGED nella stessa transazione
         AttivazioneEntity attivazione = new AttivazioneEntity(modulo, azienda);
         attivazioneRepository.save(attivazione);
+
+        AffiliazioneEntity affiliazioneEntity=new AffiliazioneEntity(ruoloResponsabile.getId_ruolo(),modulo.getId_modulo(),azienda.getId_azienda());
+        affiliazioneRepository.save(affiliazioneEntity);
     }
 }
