@@ -18,10 +18,13 @@ import java.util.Optional;
 
 @Controller
 public class GDUController {
-    @Autowired
-    private ModuloRepository moduloRepository;
-    @Autowired
-    private UserRepository userRepository;
+    private final ModuloRepository moduloRepository;
+    private final UserRepository userRepository;
+
+    public GDUController(ModuloRepository moduloRepository, UserRepository userRepository) {
+        this.moduloRepository=moduloRepository;
+        this.userRepository=userRepository;
+    }
 
     @GetMapping("dashboard/gdu/")
     public String dashboardDispatcher(Principal principal, Model model) {
