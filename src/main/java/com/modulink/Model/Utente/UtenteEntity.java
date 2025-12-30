@@ -92,9 +92,9 @@ public class UtenteEntity {
     private String cognome;
 
     /**
-     * Numero di telefono dell'utente (opzionale).
+     * Numero di telefono dell'utente.
      */
-    @Column(name="Telefono")
+    @Column(name="Telefono", nullable = false)
     private String telefono;
 
     /**
@@ -118,7 +118,7 @@ public class UtenteEntity {
      * @param hash_password         La password cifrata dell'utente.
      * @param nome                  Il nome dell'utente.
      * @param cognome               Il cognome dell'utente.
-     * @param telefono              Il numero di telefono (può essere null).
+     * @param telefono              Il numero di telefono.
      * @param path_immagine_profilo Il percorso dell'immagine profilo (può essere null).
      */
     public UtenteEntity(AziendaEntity azienda, String email, String hash_password, String nome, String cognome, String telefono, String path_immagine_profilo) {
@@ -231,7 +231,7 @@ public class UtenteEntity {
 
     /**
      * Restituisce il numero di telefono.
-     * @return La stringa del telefono o null se non presente.
+     * @return La stringa del telefono.
      */
     public String getTelefono() {
         return telefono;

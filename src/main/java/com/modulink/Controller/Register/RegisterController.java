@@ -199,6 +199,8 @@ public class RegisterController {
                 return "/register/RegistraUtente";
             }
             else {
+                // Normalizza il telefono rimuovendo gli spazi
+                registerUtenteForm.setTelefonoutente(registerUtenteForm.getTelefonoutente().replaceAll(" ",""));
                 try {
                     userDetailsService.loadUserByUsername(registerUtenteForm.getEmail());
                     bindingResult.rejectValue("email","mail.found","La mail inserita risulta già registrata");

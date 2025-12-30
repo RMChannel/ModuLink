@@ -75,14 +75,14 @@
 
                             <div class="col-md-6 mb-4">
                                 <label for="telefono" class="form-label">
-                                    <i class="bi bi-telephone-fill text-primary"></i> Telefono
+                                    <i class="bi bi-telephone-fill text-primary"></i> Telefono *
                                 </label>
                                 <input type="tel"
                                        class="form-control"
                                        id="telefono"
                                        th:field="*{telefonoutente}"
                                        th:classappend="${#fields.hasErrors('telefonoutente')} ? 'is-invalid' : ''"
-                                       placeholder="+39 ...">
+                                       placeholder="+39 333 1234567">
                                 <div class="invalid-feedback" th:if="${#fields.hasErrors('telefonoutente')}" th:errors="*{telefonoutente}"></div>
                             </div>
                         </div>
