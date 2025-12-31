@@ -10,12 +10,16 @@
     <link rel="stylesheet" th:href="@{/css/user/dashboard-layout.css}">
     <link rel="stylesheet" th:href="@{/css/moduli/GDU/gdu.css}">
     <link rel="stylesheet" th:href="@{/css/moduli/GDU/gdu-modals.css}">
+    <link rel="stylesheet" th:href="@{/css/common/alerts.css}">
     <script th:src="@{/javascript/theme.js}"></script>
 </head>
 <body>
 <div class="dashboard-wrapper">
     <!-- Sidebar Fragment -->
     <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+    
+    <!-- Alerts Fragment -->
+    <div th:replace="~{fragments/messages :: alerts}"></div>
 
     <!-- Main Content -->
     <div id="content">
@@ -100,7 +104,7 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary-custom" data-bs-dismiss="modal">Annulla</button>
                     <form th:action="@{/dashboard/gdu/remove-user}" method="post">
-                        <input type="hidden" name="email" id="deleteEmailInput">
+                        <input type="hidden" name="email" id="deleteEmailInput" placeholder="Inserisci il nome">
                         <button type="submit" class="btn btn-confirm-delete" id="confirmDeleteBtn" disabled>
                             Elimina Definitivamente
                         </button>
@@ -122,19 +126,19 @@
                     <div class="modal-body">
                         <div class="mb-3">
                             <label for="nome" class="form-label">Nome</label>
-                            <input type="text" class="form-control" id="nome" name="nome" required>
+                            <input type="text" class="form-control" id="nome" name="nome" placeholder="Nome" required>
                         </div>
                         <div class="mb-3">
                             <label for="cognome" class="form-label">Cognome</label>
-                            <input type="text" class="form-control" id="cognome" name="cognome" required>
+                            <input type="text" class="form-control" id="cognome" name="cognome" placeholder="Rossi" required>
                         </div>
                         <div class="mb-3">
                             <label for="email" class="form-label">Email</label>
-                            <input type="email" class="form-control" id="email" name="email" required>
+                            <input type="email" class="form-control" id="email" name="email" placeholder="mario.rossi@email.com" required>
                         </div>
                         <div class="mb-3">
                             <label for="telefono" class="form-label">Telefono</label>
-                            <input type="tel" class="form-control" id="telefono" name="telefono">
+                            <input type="tel" class="form-control" id="telefono" name="telefono" placeholder="+39 3733676635">
                         </div>
                     </div>
                     <div class="modal-footer">

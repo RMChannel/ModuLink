@@ -71,50 +71,52 @@
    ========================================= */
 [data-theme='dark'] {
     /* Base Colors */
-    --color-white: #0f172a;               /* Invert white to dark blue/slate */
-    --color-black: #ffffff;               /* Invert black to white */
+    --color-white: #0f172a;               /* Backgrounds turn dark */
+    --color-black: #ffffff;               /* Text turns light */
 
     /* Text Colors */
-    --text-body: #cbd5e1;                 /* Light gray for body text */
-    --text-heading: #f1f5f9;              /* White/Off-white for headings */
-    --text-secondary: #94a3b8;            /* Muted blue-gray */
-    --text-muted: #64748b;
-    --text-danger: #f87171;               /* Lighter red for dark mode */
-    --text-danger-dark: #fecaca;
+    --text-body: #e2e8f0;                 /* Brighter gray/white for better readability */
+    --text-heading: #f8fafc;              /* Pure white for headings */
+    --text-secondary: #cbd5e1;            /* Lighter gray for secondary text (was too dark) */
+    --text-muted: #94a3b8;                /* Previous secondary color is now muted */
+    --text-danger: #fca5a5;               /* Pastel red for better readability on dark */
+    --text-danger-dark: #fee2e2;
+    --text-light: #ffffff;                /* Keep white text white (for buttons etc) */
 
     /* Backgrounds */
-    --bg-body: #020617;                   /* Very dark blue/black for main background */
-    --bg-body-alt: #0f172a;               /* Slightly lighter for alt sections */
-    --bg-light: #1e293b;                  /* Card backgrounds, etc. */
-    --bg-white: #1e293b;                  /* Sidebar/Card background in dark mode */
+    --bg-body: #020617;                   /* Deep dark blue/black */
+    --bg-body-alt: #0f172a;               /* Slightly lighter */
+    --bg-light: #1e293b;                  /* Card/Panel background */
+    --bg-white: #1e293b;                  /* Main content areas */
     --bg-dark-section: #020617;
 
     /* Overlay Backgrounds */
-    --bg-header-blur: rgba(15, 23, 42, 0.95);
-    --bg-module-card: rgba(0, 0, 0, 0.2);
-    --bg-module-card-hover: rgba(0, 0, 0, 0.3);
+    --bg-header-blur: rgba(2, 6, 23, 0.95);
+    --bg-module-card: rgba(255, 255, 255, 0.05);
+    --bg-module-card-hover: rgba(255, 255, 255, 0.1);
 
     /* Alert Backgrounds */
     --bg-alert-danger: #450a0a;
 
     /* Borders */
-    --border-color: #334155;
+    --border-color: #334155;              /* Slate-700 */
     --border-color-light: #1e293b;
-    --border-color-hover: #475569;
-    --border-module-card: rgba(255, 255, 255, 0.05);
-    --border-module-card-hover: rgba(255, 255, 255, 0.1);
+    --border-color-hover: #475569;        /* Lighter on hover */
+    --border-module-card: rgba(255, 255, 255, 0.1);
+    --border-module-card-hover: rgba(255, 255, 255, 0.2);
     --border-alert-danger: #7f1d1d;
+    --border-focus: rgba(96, 165, 250, 0.3);
 
     /* Primary Brand Colors Adjustments */
-    --color-primary-light: #1e3a8a;       /* Darker blue for backgrounds */
-    --color-primary-lighter: #3b82f6;
+    --color-primary-light: #172554;       /* Deep blue for icon backgrounds */
+    --color-primary-lighter: #3b82f6;     /* Brighter blue for text/icons */
 
     /* Gradients */
     --gradient-hero: linear-gradient(180deg, #020617 0%, #0f172a 100%);
-    --gradient-register-header: linear-gradient(180deg, #1d4ed8 0%, #1e40af 100%);
+    --gradient-register-header: linear-gradient(180deg, #1e40af 0%, #1e3a8a 100%);
 
     /* Shadows */
-    --shadow-card: 0 10px 30px rgba(0, 0, 0, 0.3);
-    --shadow-card-hover: 0 12px 30px rgba(0, 0, 0, 0.5);
-    --shadow-btn-primary: 0 4px 12px rgba(0, 0, 0, 0.4);
+    --shadow-card: 0 10px 30px rgba(0, 0, 0, 0.5);
+    --shadow-card-hover: 0 12px 30px rgba(0, 0, 0, 0.7);
+    --shadow-btn-primary: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
