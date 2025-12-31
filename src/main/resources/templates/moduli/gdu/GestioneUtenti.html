@@ -48,10 +48,11 @@
                         <td th:text="${utente.email}">email@example.com</td>
                         <td th:text="${utente.telefono}">-</td>
                         <td>
-                            <span th:each="ruolo : ${utente.ruoli}" 
-                                  th:text="${ruolo.nome}" 
+                            <span th:each="ruolo : ${utente.ruoli}"
+                                  th:text="${ruolo.nome}"
                                   class="badge rounded-pill bg-secondary me-1"
-                                  th:style="'background-color: ' + ${ruolo.colore} + ' !important;'">
+                                  th:style="'background-color: ' + ${ruolo.colore} + ' !important; color:white; text-shadow: -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000;'"
+                            >
                                 Ruolo
                             </span>
                         </td>

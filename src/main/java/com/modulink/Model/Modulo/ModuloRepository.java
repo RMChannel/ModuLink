@@ -13,4 +13,7 @@ public interface ModuloRepository extends JpaRepository<ModuloEntity, Integer> {
            "JOIN AssociazioneEntity ass ON aff.ruolo = ass.ruolo " +
            "WHERE ass.utente = :utente")
     List<ModuloEntity> findModuliByUtente(@Param("utente") UtenteEntity utente);
+
+    @Query("SELECT m FROM ModuloEntity m WHERE :url LIKE CONCAT(m.url_modulo, '%') ORDER BY LENGTH(m.url_modulo) DESC")
+    List<ModuloEntity> findMatchingModuli(@Param("url") String url);
 }
