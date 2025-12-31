@@ -16,4 +16,8 @@ public class ModuloService {
     public List<ModuloEntity> findModuliByUtente(UtenteEntity utente) {
         return moduloRepository.findModuliByUtente(utente);
     }
+
+    public boolean isAccessibleModulo(int id, UtenteEntity utente) {
+        return !moduloRepository.isModuloAccessible(id, utente).isEmpty();
+    }
 }

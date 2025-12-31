@@ -1,5 +1,6 @@
 package com.modulink.Model.Azienda;
 
+import com.modulink.Model.Utente.UtenteEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

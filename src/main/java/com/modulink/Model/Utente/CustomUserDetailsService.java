@@ -2,6 +2,7 @@ package com.modulink.Model.Utente;
 
 import com.modulink.Model.Azienda.AziendaEntity;
 import com.modulink.Model.Azienda.AziendaRepository;
+import com.modulink.Model.Relazioni.Associazione.AssociazioneRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -42,6 +43,7 @@ public class CustomUserDetailsService implements UserDetailsService {
      * Necessario per associare correttamente l'utente al suo contesto aziendale.
      */
     private final AziendaRepository aziendaRepository;
+    private final AssociazioneRepository associazioneRepository;
 
     /**
      * Costruttore per l'iniezione delle dipendenze (Dependency Injection).
@@ -52,9 +54,10 @@ public class CustomUserDetailsService implements UserDetailsService {
      * @param userRepository    L'istanza del repository Utente gestita dal container.
      * @param aziendaRepository L'istanza del repository Azienda gestita dal container.
      */
-    public CustomUserDetailsService(UserRepository userRepository, AziendaRepository aziendaRepository) {
+    public CustomUserDetailsService(UserRepository userRepository, AziendaRepository aziendaRepository, AssociazioneRepository associazioneRepository) {
         this.userRepository = userRepository;
         this.aziendaRepository = aziendaRepository;
+        this.associazioneRepository = associazioneRepository;
     }
 
     /**
@@ -123,5 +126,10 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     public List<UtenteEntity> getAllByAzienda(AziendaEntity aziendaEntity) {
         return userRepository.getAllByAziendaIs(aziendaEntity);
+    }
+
+    public void rimuoviUtente(UtenteEntity utente) {
+        associazioneRepository.removeAllByUtente(utente);
+        userRepository.delete(utente);
     }
 }
