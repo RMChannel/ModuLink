@@ -49,7 +49,11 @@ public class DataInitializerService {
         customUserDetailsService.registraUtente(utente, azienda.getId_azienda());
 
         RuoloEntity ruoloResponsabile = new RuoloEntity(0, azienda, "Responsabile", "#000000", "Responsabile dell'azienda");
+        RuoloEntity ruoloNewUser = new RuoloEntity(1,azienda,"Utente Nuovo","blue","Utente non ancora ufficialmente registrato");
+        RuoloEntity ruoloStandard = new RuoloEntity(2,azienda,"Utente","grey","Utente Standard");
         ruoloRepository.save(ruoloResponsabile);
+        ruoloRepository.save(ruoloNewUser);
+        ruoloRepository.save(ruoloStandard);
 
         AssociazioneEntity associazione = new AssociazioneEntity(utente, ruoloResponsabile);
         associazioneRepository.save(associazione);
