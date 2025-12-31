@@ -2,7 +2,9 @@ package com.modulink.Controller.Dashboard;
 
 import com.modulink.Model.Modulo.ModuloEntity;
 import com.modulink.Model.Modulo.ModuloRepository;
+import com.modulink.Model.Modulo.ModuloService;
 import com.modulink.Model.Relazioni.Affiliazione.AffiliazioneRepository;
+import com.modulink.Model.Utente.CustomUserDetailsService;
 import com.modulink.Model.Utente.UtenteEntity;
 import com.modulink.Model.Utente.UserRepository;
 import org.springframework.stereotype.Controller;
@@ -15,14 +17,12 @@ import java.util.Optional;
 
 @Controller
 public class DashboardController {
-    private final UserRepository userRepository;
-    private final AffiliazioneRepository affiliazioneRepository;
-    private final ModuloRepository moduloRepository;
+    private final CustomUserDetailsService customUserDetailsService;
+    private final ModuloService moduloService;
 
-    public DashboardController(UserRepository userRepository, AffiliazioneRepository affiliazioneRepository, ModuloRepository moduloRepository) {
-        this.userRepository = userRepository;
-        this.affiliazioneRepository = affiliazioneRepository;
-        this.moduloRepository = moduloRepository;
+    public DashboardController(CustomUserDetailsService customUserDetailsService, ModuloService moduloService) {
+        this.customUserDetailsService=customUserDetailsService;
+        this.moduloService=moduloService;
     }
 
     @GetMapping("/dashboard")
@@ -32,7 +32,7 @@ public class DashboardController {
         }
 
         String email = principal.getName();
-        Optional<UtenteEntity> utenteOpt = userRepository.findByEmail(email);
+        Optional<UtenteEntity> utenteOpt = customUserDetailsService.findByEmail(email);
 
 
         if (utenteOpt.isPresent()) {
@@ -42,7 +42,7 @@ public class DashboardController {
             //moduli = affiliazioneRepository.findModuliByRuolo(utente.getRuoli().stream().findFirst().get());
 
 
-            List<ModuloEntity> moduli = moduloRepository.findModuliByUtente(utente);
+            List<ModuloEntity> moduli = moduloService.findModuliByUtente(utente);
 
             //per non far gestire al th le eccezioni perchè se succede è una bestemia
             model.addAttribute("moduli", moduli != null ? moduli : List.of());

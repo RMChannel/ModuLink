@@ -163,7 +163,7 @@
     <div class="modal fade gdu-modal" id="modifyUserModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
-                <form id="modifyUserForm" th:action="@{/dashboard/gdu/modify-user}" method="post">
+                <form id="modifyUserForm" th:action="@{/dashboard/gdu/modify-user}" th:object="${editUserForm}" method="post">
                     <div class="modal-header">
                         <h5 class="modal-title">Modifica Utente</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -175,30 +175,37 @@
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="modifyNome" class="form-label">Nome</label>
-                                <input type="text" class="form-control" id="modifyNome" name="nome" required>
+                                <input type="text" class="form-control" id="modifyNome" name="nome" th:value="*{nome}" th:classappend="${#fields.hasErrors('nome')} ? 'is-invalid'" required>
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('nome')}" th:errors="*{nome}"></div>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="modifyCognome" class="form-label">Cognome</label>
-                                <input type="text" class="form-control" id="modifyCognome" name="cognome" required>
+                                <input type="text" class="form-control" id="modifyCognome" name="cognome" th:value="*{cognome}" th:classappend="${#fields.hasErrors('cognome')} ? 'is-invalid'" required>
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('cognome')}" th:errors="*{cognome}"></div>
                             </div>
                         </div>
                         <div class="mb-3">
                             <label for="modifyEmail" class="form-label">Email</label>
-                            <input type="email" class="form-control" id="modifyEmail" name="email" required>
+                            <input type="hidden" name="oldmail" id="oldModifyMail" th:value="*{oldmail}" required>
+                            <input type="email" class="form-control" id="modifyEmail" name="email" th:value="*{email}" th:classappend="${#fields.hasErrors('email')} ? 'is-invalid'" required>
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
                         </div>
                         <div class="mb-3">
                             <label for="modifyTelefono" class="form-label">Telefono</label>
-                            <input type="tel" class="form-control" id="modifyTelefono" name="telefono">
+                            <input type="tel" class="form-control" id="modifyTelefono" name="telefono" th:value="*{telefono}" th:classappend="${#fields.hasErrors('telefono')} ? 'is-invalid'">
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('telefono')}" th:errors="*{telefono}"></div>
                         </div>
                         <hr class="my-4" style="border-color: var(--border-color-light);">
                         <p class="text-muted small mb-3">Lascia la password vuota se non desideri cambiarla.</p>
                         <div class="mb-3">
                             <label for="modifyPassword" class="form-label">Nuova Password</label>
-                            <input type="password" class="form-control" id="modifyPassword" name="password">
+                            <input type="password" class="form-control" id="modifyPassword" name="newPassword" th:value="*{newPassword}" th:classappend="${#fields.hasErrors('newPassword')} ? 'is-invalid'">
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('newPassword')}" th:errors="*{newPassword}"></div>
                         </div>
                         <div class="mb-3">
                             <label for="modifyConfirmPassword" class="form-label">Conferma Password</label>
-                            <input type="password" class="form-control" id="modifyConfirmPassword">
+                            <input type="password" class="form-control" id="modifyConfirmPassword" name="confirmNewPassword" th:value="*{confirmNewPassword}" th:classappend="${#fields.hasErrors('confirmNewPassword')} ? 'is-invalid'">
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('confirmNewPassword')}" th:errors="*{confirmNewPassword}"></div>
                             <div class="invalid-feedback">Le password non corrispondono.</div>
                         </div>
                     </div>
@@ -219,6 +226,13 @@
         document.addEventListener('DOMContentLoaded', function() {
             var addUserModal = new bootstrap.Modal(document.getElementById('addUserModal'));
             addUserModal.show();
+        });
+    </script>
+    
+    <script th:if="${#fields.hasErrors('editUserForm.*')}">
+        document.addEventListener('DOMContentLoaded', function() {
+            var modifyUserModal = new bootstrap.Modal(document.getElementById('modifyUserModal'));
+            modifyUserModal.show();
         });
     </script>
 
