@@ -8,8 +8,11 @@
     <link rel="stylesheet" th:href="@{/css/login.css}">
     <link rel="icon" type="image/x-icon" th:href="@{/favicon.ico}">
 </head>
-<header th:replace="~{fragments/header :: mainHeader}"></header>
+
 <body>
+
+<header th:replace="~{fragments/header :: mainHeader}"></header>
+
 <div class="login-container">
     <div class="login-box">
         <div class="logo-container">
@@ -38,4 +41,7 @@
     </div>
 </div>
 </body>
+<!--aggiunta del footer nella pagina di login-->
+<footer th:replace="~{fragments/footer :: mainFooter}"></footer>
+
 </html>

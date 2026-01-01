@@ -8,7 +8,7 @@
 }
 
 body {
-    background-color: var(--color-white);
+    background-color: var(--bg-body-alt);
     margin: 0;
     padding: 0;
     font-family: 'Inter', sans-serif;
@@ -62,7 +62,7 @@ h1, h2, h3, h4 {
 .btn-solid:hover {
     background: var(--color-primary-dark);
     border-color: var(--color-primary-dark);
-    box-shadow: var(--shadow-btn-primary-hover);
+
 }
 
 /* =========================================
@@ -201,6 +201,8 @@ h1, h2, h3, h4 {
 
 /* Footer */
 footer {
+    width: 100%;/*larghezza del footer*/
+    margin: 0;/*controllo dei margini pèr occupare tutto lo spazio*/
     background: var(--bg-light);
     padding: 40px 0;
     text-align: center;
