@@ -30,11 +30,8 @@ public class DashboardController {
         if (principal == null) {
             return "redirect:/";
         }
-
         String email = principal.getName();
         Optional<UtenteEntity> utenteOpt = customUserDetailsService.findByEmail(email);
-
-
         if (utenteOpt.isPresent()) {
             UtenteEntity utente = utenteOpt.get();
 
