@@ -10,18 +10,18 @@
     <link rel="stylesheet" th:href="@{/css/common/alerts.css}">
 </head>
 <body>
+
 <header th:replace="~{fragments/header :: mainHeader}"></header>
-<div th:replace="~{fragments/messageFromParam :: alerts}"></div>
+
+<div th:replace="~{fragments/messageFromParam :: alertsFromParam}"></div>
+
+
 <div class="login-container">
     <div class="login-box">
         <div class="logo-container">
             <img th:src="@{/photo/logo.png}" alt="ModuLink Logo" class="logo">
         </div>
         <p class="subtitle">Accedi al tuo account</p>
-
-        <div th:if="${param.error}" class="alert alert-danger">
-            Nome utente o password non validi.
-        </div>
 
         <form th:action="@{/login}" method="post">
             <div class="input-group">

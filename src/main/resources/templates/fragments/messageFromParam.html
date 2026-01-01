@@ -1,30 +1,46 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <body>
-<!-- Error Alert -->
-<div th:if="${param.error}" class="floating-alert alert-danger" role="alert">
-    <div class="floating-alert-icon">
-        <i class="bi bi-exclamation-circle-fill"></i>
-    </div>
-    <div class="floating-alert-content">
-        <span th:text="${param.message != null} ? ${param.message} : 'Si è verificato un errore durante l\'operazione.'">Errore generico</span>
-    </div>
-    <button type="button" class="floating-alert-close" onclick="this.parentElement.remove()" aria-label="Close">
-        <i class="bi bi-x"></i>
-    </button>
-</div>
 
-<!-- Success Alert (Optional, proactive addition) -->
-<div th:if="${param.success}" class="floating-alert alert-success" role="alert">
-    <div class="floating-alert-icon">
-        <i class="bi bi-check-circle-fill"></i>
+<div th:fragment="alertsFromParam" class="floating-alert-container">
+    <!-- Error Alert -->
+    <div th:if="${param.error != null}" class="floating-alert alert-danger" role="alert">
+        <div class="floating-alert-icon">
+            <i class="bi bi-exclamation-circle-fill"></i>
+        </div>
+        <div class="floating-alert-content">
+            <span th:text="${param.message != null} ? ${param.message} : 'Si è verificato un errore durante l\'operazione.'">Errore generico</span>
+        </div>
+        <button type="button" class="floating-alert-close" onclick="this.parentElement.remove()" aria-label="Close">
+            <i class="bi bi-x"></i>
+        </button>
     </div>
-    <div class="floating-alert-content">
-        <span th:text="${param.message != null} ? ${param.message} : 'Operazione completata con successo.'">Successo</span>
+
+    <!-- Success Alert -->
+    <div th:if="${param.success != null}" class="floating-alert alert-success" role="alert">
+        <div class="floating-alert-icon">
+            <i class="bi bi-check-circle-fill"></i>
+        </div>
+        <div class="floating-alert-content">
+            <span th:text="${param.message != null} ? ${param.message} : 'Operazione completata con successo.'">Successo</span>
+        </div>
+        <button type="button" class="floating-alert-close" onclick="this.parentElement.remove()" aria-label="Close">
+            <i class="bi bi-x"></i>
+        </button>
     </div>
-    <button type="button" class="floating-alert-close" onclick="this.parentElement.remove()" aria-label="Close">
-        <i class="bi bi-x"></i>
-    </button>
+
+    <script th:if="${param.error != null or param.success != null}">
+        setTimeout(() => {
+            const container = document.querySelector('.floating-alert-container');
+            if (container) {
+                const alerts = container.querySelectorAll('.floating-alert');
+                alerts.forEach(alert => {
+                    alert.classList.add('fading-out');
+                    setTimeout(() => alert.remove(), 500);
+                });
+            }
+        }, 3000);
+    </script>
 </div>
 
 </body>
