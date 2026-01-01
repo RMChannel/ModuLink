@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="it" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/head :: mainHead(pageTitle='Login', additionalCss=${ {'/css/login.css'} })}"></head>
+<head th:replace="~{fragments/head :: mainHead(pageTitle='Login', additionalCss=${ {'/css/login.css'} })}">
+    <link rel="stylesheet" th:href="@{/css/common/alerts.css}">
+</head>
 
 <body>
 
