@@ -31,8 +31,8 @@
             </div>
 
             <!-- Grid -->
-            <div class="store-grid" th:if="${not #lists.isEmpty(moduli)}">
-                <div class="module-card" th:each="modulo : ${moduli}">
+            <div class="store-grid" th:if="${not #lists.isEmpty(moduliNon)}">
+                <div class="module-card" th:each="modulo : ${moduliNon}">
                     <div class="module-icon-wrapper">
                         <!-- Use th:classappend to add the bootstrap icon class dynamically -->
                         <i class="bi" th:classappend="${modulo.url_icona}"></i>

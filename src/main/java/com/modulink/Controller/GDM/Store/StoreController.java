@@ -2,6 +2,8 @@ package com.modulink.Controller.GDM.Store;
 
 import com.modulink.Alert;
 import com.modulink.Model.Modulo.ModuloEntity;
+import com.modulink.Model.Modulo.ModuloRepository;
+import com.modulink.Model.Modulo.ModuloService;
 import com.modulink.Model.Relazioni.Attivazione.AttivazioneService;
 import com.modulink.Model.Utente.CustomUserDetailsService;
 import com.modulink.Model.Utente.UtenteEntity;
@@ -20,11 +22,13 @@ public class StoreController {
 
     private final CustomUserDetailsService customUserDetailsService;
     private final AttivazioneService attivazioneService;
+    private final ModuloService moduloService;
 
     public StoreController(CustomUserDetailsService customUserDetailsService,
-                           AttivazioneService attivazioneService) {
+                           AttivazioneService attivazioneService, ModuloService moduloService) {
         this.customUserDetailsService = customUserDetailsService;
         this.attivazioneService = attivazioneService;
+        this.moduloService = moduloService;
     }
 
     @GetMapping({"/dashboard/store/", "/dashboard/store"})
@@ -38,7 +42,10 @@ public class StoreController {
 
         if (utenteOpt.isPresent()) {
             List<ModuloEntity> moduliNonAcquistati = attivazioneService.getNotPurchased(utenteOpt.get().getAzienda());
-            model.addAttribute("moduli", moduliNonAcquistati);
+            List<ModuloEntity> moduli = moduloService.findModuliByUtente(utenteOpt.get());
+            model.addAttribute("moduliNon", moduliNonAcquistati);
+            model.addAttribute("utente", utenteOpt.get());
+            model.addAttribute("moduli", moduli);
         }
 
         return "moduli/gdm/store/StoreModuli";
