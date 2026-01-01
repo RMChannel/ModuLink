@@ -14,5 +14,8 @@ public interface AttivazioneRepository extends JpaRepository<AttivazioneEntity,A
     @Query("SELECT a.modulo FROM AttivazioneEntity a WHERE a.azienda = :azienda")
     public List<ModuloEntity> findModuliByAzienda(@Param("azienda") AziendaEntity azienda);
 
+    @Query("SELECT m FROM ModuloEntity m WHERE m NOT IN (SELECT a.modulo FROM AttivazioneEntity a WHERE a.azienda = :azienda)")
+    public List<ModuloEntity> getAllNotPurchased(@Param("azienda") AziendaEntity azienda);
+
     boolean existsByAziendaAndModulo(AziendaEntity azienda, ModuloEntity modulo);
 }

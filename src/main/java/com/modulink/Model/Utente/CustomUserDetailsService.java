@@ -2,14 +2,19 @@ package com.modulink.Model.Utente;
 
 import com.modulink.Model.Azienda.AziendaEntity;
 import com.modulink.Model.Azienda.AziendaRepository;
+import com.modulink.Model.Relazioni.Associazione.AssociazioneEntity;
+import com.modulink.Model.Ruolo.RuoloEntity;
+import com.modulink.Model.Ruolo.RuoloService;
 import jakarta.transaction.Transactional;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * Servizio core per la gestione dell'autenticazione e registrazione utenti.
@@ -43,6 +48,8 @@ public class CustomUserDetailsService implements UserDetailsService {
      */
     private final AziendaRepository aziendaRepository;
 
+    private final RuoloService ruoloService;
+
     /**
      * Costruttore per l'iniezione delle dipendenze (Dependency Injection).
      * <p>
@@ -52,9 +59,10 @@ public class CustomUserDetailsService implements UserDetailsService {
      * @param userRepository    L'istanza del repository Utente gestita dal container.
      * @param aziendaRepository L'istanza del repository Azienda gestita dal container.
      */
-    public CustomUserDetailsService(UserRepository userRepository, AziendaRepository aziendaRepository) {
+    public CustomUserDetailsService(UserRepository userRepository, AziendaRepository aziendaRepository, RuoloService ruoloService) {
         this.userRepository = userRepository;
         this.aziendaRepository = aziendaRepository;
+        this.ruoloService = ruoloService;
     }
 
     /**
@@ -123,5 +131,44 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     public List<UtenteEntity> getAllByAzienda(AziendaEntity aziendaEntity) {
         return userRepository.getAllByAziendaIs(aziendaEntity);
+    }
+
+    @Transactional
+    public void rimuoviUtente(UtenteEntity utente) {
+        // Disaccoppia le associazioni dai ruoli per mantenere la coerenza del grafo oggetti
+        if (utente.getAssociazioni() != null) {
+            List<AssociazioneEntity> associazioni = new ArrayList<>(utente.getAssociazioni());
+            for (AssociazioneEntity assoc : associazioni) {
+                RuoloEntity ruolo = assoc.getRuolo();
+                if (ruolo != null) {
+                    ruolo.getAssociazioni().remove(assoc);
+                }
+            }
+        }
+        userRepository.delete(utente);
+    }
+
+    @Transactional
+    public void aggiornaUtente(UtenteEntity utente) {
+        userRepository.save(utente);
+    }
+
+    public boolean isThisaNewUtente(UtenteEntity utente) {
+        Set<RuoloEntity> ruoli=utente.getRuoli();
+        return  ruoli.contains(ruoloService.getNewUser(utente.getAzienda()));
+    }
+
+    public List<UtenteEntity> getAllUsersFromIDs(List<Integer> ids, int id_azienda) throws UserNotFoundException {
+        List<UtenteEntity> utenti=new ArrayList<>();
+        for(int id:ids) {
+            Optional<UtenteEntity> utenteOpt=userRepository.findById(new UtenteID(id,id_azienda));
+            if(utenteOpt.isEmpty()) throw new UserNotFoundException();
+            else utenti.add(utenteOpt.get());
+        }
+        return utenti;
+    }
+
+    public List<UtenteEntity> getAllByAziendaIs(AziendaEntity azienda) {
+        return userRepository.getAllByAziendaIs(azienda);
     }
 }

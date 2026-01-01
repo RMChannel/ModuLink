@@ -237,7 +237,7 @@ public class RegisterController {
                 UtenteEntity utenteEntity = new UtenteEntity(aziendaEntity,registerUtenteForm.getEmail(), PasswordUtility.hashPassword(registerUtenteForm.getPassword()),registerUtenteForm.getNome(),registerUtenteForm.getCognome(),registerUtenteForm.getTelefonoutente(),filename);
                 userDetailsService.registraUtente(utenteEntity,aziendaEntity.getId_azienda());
 
-                //Creo il ruolo default del Responsabile
+                //Creo i ruoli default e mi prendo il ruolo del responsabile
                 RuoloEntity ruoloEntity= ruoloService.attivazioneDefault(aziendaEntity);
 
                 //Creo l'associazione tra Utente e Ruolo Responsabile
@@ -252,7 +252,7 @@ public class RegisterController {
 
                 //La sessione viene svuotata visto che l'azienda è stata registrata correttamente e anche il responsabile
                 sessionStatus.setComplete();
-                return "redirect:/login";
+                return "redirect:/login?success&message=Registrazione effettuata con successo!! Ora effettua il Login";
             }
         }
     }

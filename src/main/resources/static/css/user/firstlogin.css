@@ -1,0 +1,60 @@
+.first-login-card {
+    background-color: var(--bg-white);
+    border-radius: 16px;
+    padding: 40px;
+    box-shadow: var(--shadow-card);
+    max-width: 600px;
+    margin: 40px auto;
+    border: 1px solid var(--border-color);
+    transition: background-color 0.4s ease, border-color 0.4s ease;
+}
+
+.first-login-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.first-login-header h2 {
+    font-weight: 700;
+    color: var(--text-heading);
+    margin-bottom: 10px;
+}
+
+.first-login-header p {
+    color: var(--text-muted);
+}
+
+.form-label {
+    font-weight: 500;
+    color: var(--text-body);
+}
+
+.form-control {
+    background-color: var(--bg-body-alt);
+    border: 1px solid var(--border-color);
+    color: var(--text-heading);
+    padding: 12px;
+    border-radius: 10px;
+}
+
+.form-control:focus {
+    background-color: var(--bg-white);
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 4px var(--border-focus);
+    color: var(--text-heading);
+}
+
+.btn-primary {
+    background-color: var(--color-primary);
+    border: none;
+    padding: 12px;
+    border-radius: 10px;
+    font-weight: 600;
+    box-shadow: var(--shadow-btn-primary);
+    transition: all 0.2s ease;
+}
+
+.btn-primary:hover {
+    background-color: var(--color-primary-dark);
+    transform: translateY(-2px);
+}
