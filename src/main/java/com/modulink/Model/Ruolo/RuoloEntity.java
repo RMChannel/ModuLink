@@ -98,6 +98,14 @@ public class RuoloEntity {
      */
     public RuoloEntity(){}
 
+    public RuoloEntity(AziendaEntity azienda, String nome, String colore, String descrizione) {
+        this.id_ruolo = 0;
+        this.azienda = azienda;
+        this.nome = nome;
+        this.colore = colore;
+        this.descrizione = descrizione;
+    }
+
     /**
      * Costruttore completo per inizializzare un nuovo Ruolo.
      *

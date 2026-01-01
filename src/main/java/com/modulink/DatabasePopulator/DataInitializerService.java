@@ -58,14 +58,16 @@ public class DataInitializerService {
         AssociazioneEntity associazione = new AssociazioneEntity(utente, ruoloResponsabile);
         associazioneRepository.save(associazione);
 
-        ModuloEntity modulo = new ModuloEntity(0, "Gestione Utenti", "Permette la gestione di tutti gli utenti della propria azienda", "/dashboard/gdu/", "bi bi-person-lines-fill");
-        modulo = moduloRepository.save(modulo);
+        ModuloEntity GDU = new ModuloEntity(0, "Gestione Utenti", "Permette la gestione di tutti gli utenti della propria azienda", "/dashboard/gdu/", "bi bi-person-lines-fill");
+        ModuloEntity GDR = new ModuloEntity(1, "Gestione Ruoli", "Permette la gestione e l'assegnazione dei ruoli", "/dashboard/gdr/", "bi bi-award-fill");
+        GDU = moduloRepository.save(GDU);
+        GDR = moduloRepository.save(GDR);
 
         // Ora azienda e modulo sono MANAGED nella stessa transazione
-        AttivazioneEntity attivazione = new AttivazioneEntity(modulo, azienda);
-        attivazioneRepository.save(attivazione);
+        attivazioneRepository.save(new AttivazioneEntity(GDU, azienda));
+        attivazioneRepository.save(new AttivazioneEntity(GDR, azienda));
 
-        AffiliazioneEntity affiliazioneEntity=new AffiliazioneEntity(ruoloResponsabile.getId_ruolo(),modulo.getId_modulo(),azienda.getId_azienda());
-        affiliazioneRepository.save(affiliazioneEntity);
+        affiliazioneRepository.save(new AffiliazioneEntity(ruoloResponsabile.getId_ruolo(),GDU.getId_modulo(),azienda.getId_azienda()));
+        affiliazioneRepository.save(new AffiliazioneEntity(ruoloResponsabile.getId_ruolo(),GDR.getId_modulo(),azienda.getId_azienda()));
     }
 }

@@ -56,7 +56,7 @@ public class GDUController {
         return moduloService.isAccessibleModulo(0, utente);
     }
 
-    @GetMapping("dashboard/gdu/")
+    @GetMapping({"dashboard/gdu/","dashboard/gdu"})
     public String dashboardDispatcher(Principal principal, Model model, @ModelAttribute NewUserForm newUserForm, @ModelAttribute EditUserForm editUserForm) {
         if (principal == null) {
             return "redirect:/";
