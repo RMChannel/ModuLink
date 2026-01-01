@@ -1,10 +1,8 @@
 package com.modulink.Controller.GDM.Store;
 
+import com.modulink.Alert;
 import com.modulink.Model.Modulo.ModuloEntity;
-import com.modulink.Model.Modulo.ModuloRepository;
-import com.modulink.Model.Modulo.ModuloService;
-import com.modulink.Model.Relazioni.Attivazione.AttivazioneEntity;
-import com.modulink.Model.Relazioni.Attivazione.AttivazioneRepository;
+import com.modulink.Model.Relazioni.Attivazione.AttivazioneService;
 import com.modulink.Model.Utente.CustomUserDetailsService;
 import com.modulink.Model.Utente.UtenteEntity;
 import org.springframework.stereotype.Controller;
@@ -20,32 +18,26 @@ import java.util.Optional;
 @Controller
 public class StoreController {
 
-    private final ModuloService moduloService;
     private final CustomUserDetailsService customUserDetailsService;
-    private final AttivazioneRepository attivazioneRepository;
-    private final ModuloRepository moduloRepository;
+    private final AttivazioneService attivazioneService;
 
-    public StoreController(ModuloService moduloService, 
-                           CustomUserDetailsService customUserDetailsService, 
-                           AttivazioneRepository attivazioneRepository, 
-                           ModuloRepository moduloRepository) {
-        this.moduloService = moduloService;
+    public StoreController(CustomUserDetailsService customUserDetailsService,
+                           AttivazioneService attivazioneService) {
         this.customUserDetailsService = customUserDetailsService;
-        this.attivazioneRepository = attivazioneRepository;
-        this.moduloRepository = moduloRepository;
+        this.attivazioneService = attivazioneService;
     }
 
-    @GetMapping("/dashboard/store")
+    @GetMapping({"/dashboard/store/", "/dashboard/store"})
     public String Store(Principal principal, Model model) {
         if (principal == null) {
             return "redirect:/login";
         }
-        
+
         String email = principal.getName();
         Optional<UtenteEntity> utenteOpt = customUserDetailsService.findByEmail(email);
-        
+
         if (utenteOpt.isPresent()) {
-            List<ModuloEntity> moduliNonAcquistati = attivazioneRepository.getAllNotPurchased(utenteOpt.get().getAzienda());
+            List<ModuloEntity> moduliNonAcquistati = attivazioneService.getNotPurchased(utenteOpt.get().getAzienda());
             model.addAttribute("moduli", moduliNonAcquistati);
         }
 
@@ -60,20 +52,14 @@ public class StoreController {
 
         String email = principal.getName();
         Optional<UtenteEntity> utenteOpt = customUserDetailsService.findByEmail(email);
-        Optional<ModuloEntity> moduloOpt = moduloRepository.findById(moduloId);
 
-        if (utenteOpt.isPresent() && moduloOpt.isPresent()) {
-            UtenteEntity utente = utenteOpt.get();
-            ModuloEntity modulo = moduloOpt.get();
-
-            // Check if already purchased to avoid duplicates
-            if (!attivazioneRepository.existsByAziendaAndModulo(utente.getAzienda(), modulo)) {
-                AttivazioneEntity nuovaAttivazione = new AttivazioneEntity(modulo, utente.getAzienda());
-                attivazioneRepository.save(nuovaAttivazione);
-                return "redirect:/dashboard/store?success&message=Modulo acquistato con successo!";
+        if (utenteOpt.isPresent()) {
+            boolean success = attivazioneService.purchaseModulo(utenteOpt.get().getAzienda(), moduloId);
+            if (success) {
+                return "redirect:/dashboard/store" + Alert.success("Modulo acquistato con successo!");
             }
         }
 
-        return "redirect:/dashboard/store?error&message=Errore durante l'acquisto del modulo.";
+        return "redirect:/dashboard/store" + Alert.error("Errore durante l'acquisto del modulo.");
     }
 }

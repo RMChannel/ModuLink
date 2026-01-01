@@ -25,7 +25,7 @@ public class DashboardController {
         this.moduloService=moduloService;
     }
 
-    @GetMapping("/dashboard")
+    @GetMapping({"/dashboard","/dashboard/"})
     public String dashboardDispatcher(Principal principal, Model model) {
         if (principal == null) {
             return "redirect:/";
