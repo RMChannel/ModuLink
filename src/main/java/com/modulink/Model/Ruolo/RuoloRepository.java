@@ -1,7 +1,12 @@
 package com.modulink.Model.Ruolo;
 
+import com.modulink.Model.Azienda.AziendaEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 /**
  * Interfaccia di repository per gestire la persistenza e l'accesso ai dati dell'entità {@link RuoloEntity}.
@@ -25,4 +30,8 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface RuoloRepository extends JpaRepository<RuoloEntity, RuoloID> {
+    List<RuoloEntity> findAllByAzienda(AziendaEntity azienda);
+
+    @Query("SELECT COALESCE(MAX(r.id_ruolo), 0) FROM RuoloEntity r WHERE r.azienda.id_azienda = :idAzienda")
+    int findMaxIdByAzienda(@Param("idAzienda") int idAzienda);
 }

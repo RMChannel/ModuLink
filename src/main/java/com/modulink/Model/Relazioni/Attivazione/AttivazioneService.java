@@ -5,9 +5,9 @@ import com.modulink.Model.Modulo.ModuloEntity;
 import com.modulink.Model.Modulo.ModuloRepository;
 import com.modulink.Model.Relazioni.Affiliazione.AffiliazioneEntity;
 import com.modulink.Model.Relazioni.Affiliazione.AffiliazioneRepository;
+import com.modulink.Model.Relazioni.Affiliazione.AffiliazioneService;
 import com.modulink.Model.Ruolo.RuoloEntity;
 import com.modulink.Model.Ruolo.RuoloService;
-import com.modulink.Model.Utente.UtenteEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,22 +21,19 @@ public class AttivazioneService {
     private final AffiliazioneRepository affiliazioneRepository;
     private final RuoloService ruoloService;
 
-    public AttivazioneService(AttivazioneRepository attivazioneRepository,
-                              ModuloRepository moduloRepository,
-                              AffiliazioneRepository affiliazioneRepository,
-                              RuoloService ruoloService) {
-        this.attivazioneRepository = attivazioneRepository;
-        this.moduloRepository = moduloRepository;
-        this.affiliazioneRepository = affiliazioneRepository;
-        this.ruoloService = ruoloService;
+    public AttivazioneService(AttivazioneRepository attivazioneRepository, ModuloRepository moduloRepository, AffiliazioneRepository affiliazioneRepository, RuoloService ruoloService) {
+        this.attivazioneRepository=attivazioneRepository;
+        this.moduloRepository=moduloRepository;
+        this.affiliazioneRepository=affiliazioneRepository;
+        this.ruoloService=ruoloService;
     }
 
     @Transactional
     public void attivazioneDefault(AziendaEntity aziendaEntity) {
-        List<AttivazioneEntity> attivazioni = new ArrayList<>();
+        List<AttivazioneEntity> attivazioni=new ArrayList<>();
 
-        AttivazioneEntity attivazione1 = new AttivazioneEntity(moduloRepository.getReferenceById(0), aziendaEntity);
-
+        AttivazioneEntity attivazione1=new AttivazioneEntity(moduloRepository.getReferenceById(0),aziendaEntity);
+        attivazioni.add(new AttivazioneEntity(moduloRepository.getReferenceById(1),aziendaEntity));
         attivazioni.add(attivazione1);
         attivazioneRepository.saveAll(attivazioni);
     }
