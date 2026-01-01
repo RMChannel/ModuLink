@@ -5,6 +5,7 @@ import com.modulink.Model.Modulo.ModuloService;
 import com.modulink.Model.Ruolo.RuoloEntity;
 import com.modulink.Model.Ruolo.RuoloService;
 import com.modulink.Model.Utente.CustomUserDetailsService;
+import com.modulink.Model.Utente.UserNotFoundException;
 import com.modulink.Model.Utente.UtenteEntity;
 import com.modulink.Model.Utente.UserRepository;
 import org.springframework.stereotype.Controller;
@@ -167,18 +168,34 @@ public class GDRController {
 
     @PostMapping("dashboard/gdr/assign-role")
     public String assignRole(@RequestParam int idRuolo, @RequestParam(required = false) List<Integer> userIds, Principal principal, Model model, @ModelAttribute("newRoleForm") NewRoleForm newRoleForm) {
-        if (principal == null) return "redirect:/";
         Optional<UtenteEntity> utenteOpt = customUserDetailsService.findByEmail(principal.getName());
-        
         if (isAccessibleModulo(utenteOpt)) {
+            UtenteEntity utente=utenteOpt.get();
+            List<ModuloEntity> moduli = moduloService.findModuliByUtente(utente);
+            model.addAttribute("utente", utente);
+            model.addAttribute("moduli", moduli != null ? moduli : List.of());
+            model.addAttribute("ruoli",ruoloService.getAllRolesByAzienda(utente.getAzienda()));
             List<UtenteEntity> usersToAssign;
             if (userIds == null || userIds.isEmpty()) {
                 usersToAssign = Collections.emptyList();
             } else {
-                usersToAssign = null;
+                try {
+                    usersToAssign=customUserDetailsService.getAllUsersFromIDs(userIds,utente.getAzienda().getId_azienda());
+                } catch (UserNotFoundException ue) {
+                    model.addAttribute("allUsers", userRepository.getAllByAziendaIs(utente.getAzienda()));
+                    model.addAttribute("error",true);
+                    model.addAttribute("message","Uno degli utenti selezionati non è stato trovato");
+                    return "moduli/gdr/GestioneRuoli";
+                }
             }
-            ruoloService.updateRoleAssociations(utenteOpt.get().getAzienda(), idRuolo, usersToAssign);
+            ruoloService.updateRoleAssociations(utente.getAzienda(), idRuolo, usersToAssign);
+            model.addAttribute("success",true);
+            model.addAttribute("message","Assegnazione completata con successo");
+            model.addAttribute("allUsers", userRepository.getAllByAziendaIs(utente.getAzienda()));
+            return "moduli/gdr/GestioneRuoli";
         }
-        return "redirect:/dashboard/gdr";
+        else {
+            return "redirect:/dashboard/gdr";
+        }
     }
 }
