@@ -72,12 +72,20 @@ public class RuoloService {
 
     @Transactional
     public void deleteRole(AziendaEntity azienda, int idRole) {
-        // Optional: Add check to prevent deleting system roles (e.g. 0, 1, 2)
-        // if (idRole <= 2) throw new IllegalArgumentException("Cannot delete system roles");
         if(idRole<=2) {
             throw new IllegalArgumentException("Cannot delete system roles");
         }
         RuoloEntity role = getRoleById(idRole, azienda);
+
+        // Remove associations from users to prevent TransientObjectException
+        for (AssociazioneEntity assoc : new ArrayList<>(role.getAssociazioni())) {
+            UtenteEntity utente = assoc.getUtente();
+            if (utente != null) {
+                utente.getAssociazioni().remove(assoc);
+            }
+        }
+        role.getAssociazioni().clear();
+
         ruoloRepository.delete(role);
     }
 

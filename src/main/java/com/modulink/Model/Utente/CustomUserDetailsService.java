@@ -167,4 +167,8 @@ public class CustomUserDetailsService implements UserDetailsService {
         }
         return utenti;
     }
+
+    public List<UtenteEntity> getAllByAziendaIs(AziendaEntity azienda) {
+        return userRepository.getAllByAziendaIs(azienda);
+    }
 }
