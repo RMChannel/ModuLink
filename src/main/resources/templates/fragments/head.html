@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="it" xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="mainHead(pageTitle, additionalCss)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${pageTitle} + ' - ModuLink'"></title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+    <link rel="icon" type="image/x-icon" th:href="@{/favicon.ico}">
+
+    <!-- Additional page-specific CSS -->
+    <th:block th:if="${additionalCss != null}">
+        <link th:each="css : ${additionalCss}" rel="stylesheet" th:href="@{${css}}">
+    </th:block>
+</head>
+<body>
+</body>
+</html>
