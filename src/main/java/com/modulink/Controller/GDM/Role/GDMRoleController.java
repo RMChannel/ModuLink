@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -49,7 +50,7 @@ public class GDMRoleController extends ModuloController {
         }
     }
 
-    @PostMapping("dashboard/edit-modulo")
+    @PostMapping("dashboard/gdr/edit-modulo")
     public String editModulo(Principal principal, Model model, @RequestParam int idModulo, @RequestParam(required = false) List<Integer> roleIds) {
         String email =  principal.getName();
         Optional<UtenteEntity> utenteOpt = customUserDetailsService.findByEmail(email);
@@ -59,7 +60,8 @@ public class GDMRoleController extends ModuloController {
             model.addAttribute("utente", utente);
             List<RuoloEntity> ruoli;
             if(roleIds==null || roleIds.isEmpty()) {
-                ruoli = Collections.emptyList();
+                ruoli = new ArrayList<>();
+                ruoli.add(ruoloService.getResponsabile(utente.getAzienda())); //Fallback nel caso in cui rimuovi il responsabile da un modulo
             } else {
                 try {
                     ruoli = ruoloService.getAllRolesFromIds(roleIds,utente.getAzienda().getId_azienda());
