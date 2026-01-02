@@ -2,6 +2,7 @@ package com.modulink.Controller.Register;
 
 import com.modulink.Model.Azienda.AziendaEntity;
 import com.modulink.Model.Azienda.AziendaService;
+import com.modulink.Model.Relazioni.Affiliazione.AffiliazioneService;
 import com.modulink.Model.Relazioni.Attivazione.AttivazioneService;
 import com.modulink.Model.Ruolo.RuoloEntity;
 import com.modulink.Model.Ruolo.RuoloRepository;
@@ -52,6 +53,7 @@ public class RegisterController {
     private final RuoloRepository ruoloRepository;
     private final AssociazioneRepository associazioneRepository;
     private final AttivazioneService attivazioneService;
+    private final AffiliazioneService affiliazioneService;
 
     /**
      * Costruttore per l'iniezione delle dipendenze.
@@ -61,12 +63,13 @@ public class RegisterController {
      * @param ruoloRepository        Repository per la persistenza dei ruoli.
      * @param associazioneRepository Repository per collegare utenti e ruoli.
      */
-    public RegisterController(CustomUserDetailsService userDetailsService, AziendaService aziendaService, RuoloRepository ruoloRepository, AssociazioneRepository associazioneRepository, AttivazioneService attivazioneService) {
+    public RegisterController(CustomUserDetailsService userDetailsService, AziendaService aziendaService, RuoloRepository ruoloRepository, AssociazioneRepository associazioneRepository, AttivazioneService attivazioneService, AffiliazioneService affiliazioneService) {
         this.userDetailsService = userDetailsService;
         this.aziendaService = aziendaService;
         this.ruoloRepository = ruoloRepository;
         this.associazioneRepository = associazioneRepository;
         this.attivazioneService = attivazioneService;
+        this.affiliazioneService = affiliazioneService;
     }
 
     /**
@@ -238,8 +241,11 @@ public class RegisterController {
                 AssociazioneEntity associazioneResponsabile = new AssociazioneEntity(utenteEntity,ruoloResponsabile);
                 associazioneRepository.save(associazioneResponsabile);
 
-                //Creo i moduli di default e le loro attivazioni
+                //Attivo tutti i moduli di default
                 attivazioneService.attivazioneDefault(aziendaEntity);
+
+                //Affilio tutti i moduli di default per il Responsabile
+                affiliazioneService.attivazioneDefault(aziendaEntity);
 
                 //La sessione viene svuotata visto che l'azienda è stata registrata correttamente e anche il responsabile
                 sessionStatus.setComplete();
