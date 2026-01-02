@@ -1,3 +1,5 @@
+@import 'user/colors.css';
+
 /* ============================
    1. CONFIGURAZIONE GLOBALE
    ============================ */
@@ -16,10 +18,10 @@ body {
     align-items: center;
     min-height: 100vh;
     /* Grigio chiaro (come Login) per contrasto con la card bianca */
-    background-color: #f0f2f5;
+    background-color: var(--bg-body-alt);
     margin: 0;
     font-family: 'Inter', sans-serif;
-    color: #334155;
+    color: var(--text-body);
 }
 
 /* ============================
@@ -42,23 +44,23 @@ body {
 .btn:active { transform: scale(0.98); }
 
 .btn-outline {
-    border: 1px solid #e2e8f0;
-    color: #0f172a;
-    background: white;
+    border: 1px solid var(--border-color);
+    color: var(--text-heading);
+    background: var(--color-white);
 }
-.btn-outline:hover { background-color: #f8fafc; border-color: #cbd5e1; }
+.btn-outline:hover { background-color: var(--bg-light); border-color: var(--border-color-hover); }
 
 .btn-solid {
-    background: #2563eb;
-    color: #fff;
+    background: var(--color-primary);
+    color: var(--color-white);
     /* Fix altezza bordi identico al Main */
-    border: 1px solid #2563eb;
-    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+    border: 1px solid var(--color-primary);
+    box-shadow: var(--shadow-btn-primary);
 }
 .btn-solid:hover {
-    background: #1d4ed8;
-    border-color: #1d4ed8;
-    box-shadow: 0 6px 16px rgba(37, 99, 235, 0.3);
+    background: var(--color-primary-dark);
+    border-color: var(--color-primary-dark);
+    box-shadow: var(--shadow-btn-primary-hover);
 }
 
 /* ============================
@@ -69,10 +71,10 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid #f1f5f9;
+    border-bottom: 1px solid var(--border-color-light);
     position: sticky;
     top: 0;
-    background: #ffffff; /* Bianco solido come Main */
+    background: var(--color-white); /* Bianco solido come Main */
     z-index: 1000;
     max-width: 1440px;
     margin: 0 auto;
@@ -102,8 +104,8 @@ body {
 }
 
 .nav-links { display: flex; gap: 40px; font-weight: 500; font-size: 16px; }
-.nav-links a { text-decoration: none; color: #64748b; transition: color 0.2s; }
-.nav-links a:hover { color: #2563eb; }
+.nav-links a { text-decoration: none; color: var(--text-secondary); transition: color 0.2s; }
+.nav-links a:hover { color: var(--color-primary); }
 
 /* ============================
    4. LAYOUT REGISTRAZIONE
@@ -118,17 +120,17 @@ body {
 }
 
 .registration-card {
-    background: white;
+    background: var(--color-white);
     border-radius: 16px;
-    box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+    box-shadow: var(--shadow-card-strong);
     overflow: hidden;
-    border: 1px solid #e2e8f0;
+    border: 1px solid var(--border-color);
 }
 
 /* --- HEADER CARD --- */
 .card-header {
-    background: linear-gradient(180deg, #2563eb 0%, #1d4ed8 100%);
-    color: white;
+    background: var(--gradient-register-header);
+    color: var(--color-white);
     padding: 40px 30px;
     text-align: center;
 }
@@ -149,7 +151,7 @@ body {
 /* --- FORM ELEMENTS --- */
 .form-label {
     font-weight: 500;
-    color: #0f172a;
+    color: var(--text-heading);
     margin-bottom: 8px;
     font-size: 14px;
     display: block;
@@ -158,49 +160,49 @@ body {
 .form-control, .form-select {
     width: 100%;
     border-radius: 8px;
-    border: 1px solid #e2e8f0;
+    border: 1px solid var(--border-color);
     padding: 12px 15px;
     transition: all 0.2s ease;
     font-family: 'Inter', sans-serif;
-    color: #334155;
+    color: var(--text-body);
     font-size: 16px;
 }
 
 .form-control:focus, .form-select:focus {
-    border-color: #2563eb;
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px var(--border-focus);
     outline: none;
 }
 
 .invalid-feedback {
     font-size: 0.875rem;
     margin-top: 5px;
-    color: #dc3545;
+    color: var(--text-danger);
 }
 
 .is-invalid {
-    border-color: #dc3545;
+    border-color: var(--text-danger);
 }
 
 /* --- BOTTONE SUBMIT FORM (Primario) --- */
 .btn-primary {
-    background: #2563eb;
+    background: var(--color-primary);
     border: none;
     border-radius: 8px;
     padding: 12px 40px;
     font-weight: 600;
     transition: all 0.2s ease;
-    color: white;
+    color: var(--color-white);
     cursor: pointer;
-    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+    box-shadow: var(--shadow-btn-primary);
     width: 100%;
     font-size: 16px;
 }
 
 .btn-primary:hover {
-    background: #1d4ed8;
+    background: var(--color-primary-dark);
     transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(37, 99, 235, 0.3);
+    box-shadow: var(--shadow-btn-primary-hover);
 }
 
 .btn-primary:active {
@@ -214,7 +216,7 @@ body {
     margin-top: 10px;
     border-radius: 8px;
     display: none;
-    border: 1px solid #e2e8f0;
+    border: 1px solid var(--border-color);
 }
 
 .file-upload-wrapper {
@@ -224,21 +226,21 @@ body {
 .file-upload-label {
     display: inline-block;
     padding: 20px;
-    background-color: #f8fafc;
-    border: 2px dashed #cbd5e1;
+    background-color: var(--bg-light);
+    border: 2px dashed var(--border-color-hover);
     border-radius: 8px;
     cursor: pointer;
     transition: all 0.2s ease;
     text-align: center;
     width: 100%;
-    color: #64748b;
+    color: var(--text-secondary);
     font-weight: 500;
 }
 
 .file-upload-label:hover {
-    background-color: #dbeafe;
-    border-color: #2563eb;
-    color: #2563eb;
+    background-color: var(--color-primary-light);
+    border-color: var(--color-primary);
+    color: var(--color-primary);
 }
 
 .file-upload-input {
@@ -248,18 +250,18 @@ body {
 /* --- DIVISORI SEZIONE --- */
 .section-divider {
     margin: 30px 0;
-    border-top: 1px solid #e2e8f0;
+    border-top: 1px solid var(--border-color);
     position: relative;
     text-align: center;
 }
 
 .section-title {
-    background: white;
+    background: var(--color-white);
     padding: 0 15px;
     position: relative;
     top: -12px;
     display: inline-block;
-    color: #2563eb;
+    color: var(--color-primary);
     font-weight: 600;
     font-family: 'Poppins', sans-serif;
     font-size: 16px;
