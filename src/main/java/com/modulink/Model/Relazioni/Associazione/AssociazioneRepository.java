@@ -1,6 +1,12 @@
 package com.modulink.Model.Relazioni.Associazione;
 
+import com.modulink.Model.Modulo.ModuloEntity;
+import com.modulink.Model.Ruolo.RuoloEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
+import java.util.List;
 
 /**
  * Interfaccia <strong>Repository</strong> per la gestione della persistenza dell'entità {@link AssociazioneEntity}.
@@ -19,4 +25,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @version 1.0
  */
 public interface AssociazioneRepository extends JpaRepository<AssociazioneEntity, AssocazioneID> {
+
 }

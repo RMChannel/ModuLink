@@ -30,9 +30,17 @@
     <div class="sidebar-menu">
         <ul>
             <li>
-                <a th:href="@{'/dashboard'}" class="active">
+                <a th:href="@{'/dashboard'}">
                     <i class="bi bi-grid-fill"></i>
                     <span>Dashboard</span>
+                </a>
+            </li>
+
+            <li th:each="modulo : ${moduli}">
+                <a th:href="@{${modulo.url_modulo}}">
+                    <i th:if="${modulo.url_icona != null and !modulo.url_icona.contains('/')}" th:class="${modulo.url_icona}"></i>
+                    <img th:if="${modulo.url_icona != null and modulo.url_icona.contains('/')}" th:src="@{${modulo.url_icona}}" alt="Icon" class="nav-icon" style="width: 20px; height: 20px; margin-right: 10px;">
+                    <span th:text="${modulo.nome}">Modulo</span>
                 </a>
             </li>
 

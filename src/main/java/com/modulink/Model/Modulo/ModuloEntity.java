@@ -70,4 +70,16 @@ public class ModuloEntity {
     public void setUrl_icona(String url_icona) {
         this.url_icona = url_icona;
     }
+
+
+    @Override
+    public String toString() {
+        return "ModuloEntity{" +
+                "id_modulo=" + id_modulo +
+                ", nome='" + nome + '\'' +
+                ", descrizione='" + descrizione + '\'' +
+                ", url_modulo='" + url_modulo + '\'' +
+                ", url_icona='" + url_icona + '\'' +
+                '}';
+    }
 }
