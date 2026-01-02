@@ -20,8 +20,8 @@ WORKDIR /app
 # Copiamo il file .jar generato nello stage precedente
 COPY --from=build /app/target/*.jar app.jar
 
-# Esponiamo la porta 8080
-EXPOSE 8080
+# Esponiamo la porta 80
+EXPOSE 80
 
 # Comando di avvio
 ENTRYPOINT ["java", "-jar", "app.jar"]
