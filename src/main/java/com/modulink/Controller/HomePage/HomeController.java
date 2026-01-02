@@ -13,7 +13,7 @@ public class HomeController {
     @GetMapping("/")
     public String homepage(Model model, Principal principal) {
         if(principal != null) {
-            return "redirect:/home";
+            return "redirect:/dashboard";
         }
         else {
             return "index";
