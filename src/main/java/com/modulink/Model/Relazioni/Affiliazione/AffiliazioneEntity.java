@@ -1,6 +1,8 @@
 package com.modulink.Model.Relazioni.Affiliazione;
 
+import com.modulink.Model.Azienda.AziendaEntity;
 import com.modulink.Model.Modulo.ModuloEntity;
+import com.modulink.Model.Relazioni.Attivazione.AttivazioneEntity;
 import com.modulink.Model.Ruolo.RuoloEntity;
 import jakarta.persistence.*;
 
@@ -32,7 +34,7 @@ public class AffiliazioneEntity {
             @JoinColumn(name = "ID_Modulo", referencedColumnName = "ID_Modulo", insertable = false, updatable = false),
             @JoinColumn(name = "ID_Azienda", referencedColumnName = "ID_Azienda", insertable = false, updatable = false)
     })
-    private ModuloEntity modulo;
+    private AttivazioneEntity attivazione;
 
     public AffiliazioneEntity(){}
 
@@ -64,5 +66,29 @@ public class AffiliazioneEntity {
 
     public void setId_azienda(int id_azienda) {
         this.id_azienda = id_azienda;
+    }
+
+    public RuoloEntity getRuolo() {
+        return ruolo;
+    }
+
+    public void setRuolo(RuoloEntity ruolo) {
+        this.ruolo = ruolo;
+    }
+
+    public AttivazioneEntity getAttivazione() {
+        return attivazione;
+    }
+
+    public void setAttivazione(AttivazioneEntity attivazione) {
+        this.attivazione = attivazione;
+    }
+
+    public AziendaEntity getAzienda() {
+        return attivazione.getAzienda();
+    }
+
+    public ModuloEntity getModulo() {
+        return attivazione.getModulo();
     }
 }
