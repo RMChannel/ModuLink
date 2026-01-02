@@ -4,6 +4,7 @@ import com.modulink.Model.Azienda.AziendaEntity;
 import com.modulink.Model.Azienda.AziendaService;
 import com.modulink.Model.Modulo.ModuloEntity;
 import com.modulink.Model.Modulo.ModuloRepository;
+import com.modulink.Model.Modulo.ModuloService;
 import com.modulink.Model.Relazioni.Affiliazione.AffiliazioneEntity;
 import com.modulink.Model.Relazioni.Affiliazione.AffiliazioneRepository;
 import com.modulink.Model.Relazioni.Associazione.AssociazioneEntity;
@@ -60,18 +61,23 @@ public class DataInitializerService {
 
         ModuloEntity GDU = new ModuloEntity(0, "Gestione Utenti", "Permette la gestione di tutti gli utenti della propria azienda", "/dashboard/gdu/", "bi bi-person-lines-fill");
         ModuloEntity GDR = new ModuloEntity(1, "Gestione Ruoli", "Permette la gestione e l'assegnazione dei ruoli", "/dashboard/gdr/", "bi bi-award-fill");
-        ModuloEntity store = new ModuloEntity(2,"Store","Store dei moduli","/dashboard/store/","bi bi-cart-dash");
+        ModuloEntity GDM = new ModuloEntity(2, "Gestione Moduli", "Permette la gestione di tutti i moduli integrati nella propria azienda","/dashboard/gdm/","bi bi-database-gear");
+        ModuloEntity store = new ModuloEntity(3,"Store","Store dei moduli","/dashboard/store/","bi bi-cart-dash");
+
         GDU = moduloRepository.save(GDU);
         GDR = moduloRepository.save(GDR);
+        GDM = moduloRepository.save(GDM);
         store = moduloRepository.save(store);
 
         // Ora azienda e modulo sono MANAGED nella stessa transazione
         attivazioneRepository.save(new AttivazioneEntity(GDU, azienda));
         attivazioneRepository.save(new AttivazioneEntity(GDR, azienda));
+        attivazioneRepository.save(new AttivazioneEntity(GDM, azienda));
         attivazioneRepository.save(new AttivazioneEntity(store, azienda));
 
         affiliazioneRepository.save(new AffiliazioneEntity(ruoloResponsabile.getId_ruolo(),GDU.getId_modulo(),azienda.getId_azienda()));
         affiliazioneRepository.save(new AffiliazioneEntity(ruoloResponsabile.getId_ruolo(),GDR.getId_modulo(),azienda.getId_azienda()));
+        affiliazioneRepository.save(new AffiliazioneEntity(ruoloResponsabile.getId_ruolo(),GDM.getId_modulo(),azienda.getId_azienda()));
         affiliazioneRepository.save(new AffiliazioneEntity(ruoloResponsabile.getId_ruolo(),store.getId_modulo(),azienda.getId_azienda()));
     }
 }

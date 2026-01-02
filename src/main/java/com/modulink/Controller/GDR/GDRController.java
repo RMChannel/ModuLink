@@ -3,7 +3,6 @@ package com.modulink.Controller.GDR;
 import com.modulink.Controller.ModuloController;
 import com.modulink.Model.Modulo.ModuloEntity;
 import com.modulink.Model.Modulo.ModuloService;
-import com.modulink.Model.Relazioni.Associazione.AssociazioneService;
 import com.modulink.Model.Ruolo.RuoloEntity;
 import com.modulink.Model.Ruolo.RuoloService;
 import com.modulink.Model.Utente.CustomUserDetailsService;
@@ -25,21 +24,16 @@ public class GDRController extends ModuloController {
     private final ModuloService moduloService;
     private final CustomUserDetailsService customUserDetailsService;
     private final RuoloService ruoloService;
-    private final AssociazioneService associazioneService;
 
-    public GDRController(ModuloService moduloService, CustomUserDetailsService customUserDetailsService, RuoloService ruoloService, AssociazioneService associazioneService) {
+    public GDRController(ModuloService moduloService, CustomUserDetailsService customUserDetailsService, RuoloService ruoloService) {
         super(moduloService, 1);
         this.moduloService = moduloService;
         this.customUserDetailsService = customUserDetailsService;
         this.ruoloService = ruoloService;
-        this.associazioneService = associazioneService;
     }
 
     @GetMapping({"dashboard/gdr/","dashboard/gdr"})
     public String dashboardDispatcher(Principal principal, Model model) {
-        if(principal==null) {
-            return "redirect:/";
-        }
         String email =  principal.getName();
         Optional<UtenteEntity> utenteOpt = customUserDetailsService.findByEmail(email);
         if(isAccessibleModulo(utenteOpt)) {
@@ -66,10 +60,8 @@ public class GDRController extends ModuloController {
 
     @PostMapping("dashboard/gdr/add-role")
     public String addRole(@ModelAttribute("newRoleForm") @Valid NewRoleForm newRoleForm, BindingResult bindingResult, Principal principal, Model model) {
-        if (principal == null) return "redirect:/";
         String email = principal.getName();
         Optional<UtenteEntity> utenteOpt = customUserDetailsService.findByEmail(email);
-        
         if (isAccessibleModulo(utenteOpt)) {
             UtenteEntity utente=utenteOpt.get();
             List<ModuloEntity> moduli = moduloService.findModuliByUtente(utente);

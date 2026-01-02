@@ -19,13 +19,11 @@ public class AffiliazioneService {
     public void attivazioneDefault(AziendaEntity aziendaEntity) {
         List<AffiliazioneEntity> affiliazioni=new ArrayList<>();
 
-        AffiliazioneEntity affiliazione1=new AffiliazioneEntity(0,0,aziendaEntity.getId_azienda());
-        AffiliazioneEntity affiliazione2=new AffiliazioneEntity(0,1,aziendaEntity.getId_azienda());
-        AffiliazioneEntity affiliazione3=new AffiliazioneEntity(0,3,aziendaEntity.getId_azienda());
+        affiliazioni.add(new AffiliazioneEntity(0,0,aziendaEntity.getId_azienda()));
+        affiliazioni.add(new AffiliazioneEntity(0,1,aziendaEntity.getId_azienda()));
+        affiliazioni.add(new AffiliazioneEntity(0,2,aziendaEntity.getId_azienda()));
+        affiliazioni.add(new AffiliazioneEntity(0,3,aziendaEntity.getId_azienda()));
 
-        affiliazioni.add(affiliazione1);
-        affiliazioni.add(affiliazione2);
-        affiliazioni.add(affiliazione3);
         affiliazioneRepository.saveAll(affiliazioni);
     }
 }
