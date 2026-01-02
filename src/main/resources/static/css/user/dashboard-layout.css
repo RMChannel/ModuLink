@@ -441,6 +441,38 @@ h1, h2, h3, h4, h5, h6 {
     justify-content: center;
 }
 
+/* Logout Link */
+.logout-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 16px;
+    color: #dc3545; /* Bootstrap danger color */
+    text-decoration: none;
+    font-weight: 500;
+    border-radius: 10px;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.logout-link:hover {
+    background-color: rgba(220, 53, 69, 0.1);
+    color: #b02a37;
+}
+
+.logout-link i {
+    font-size: 1.2rem;
+}
+
+#sidebar.collapsed .logout-link {
+    justify-content: center;
+    padding: 10px 0;
+}
+
+#sidebar.collapsed .logout-link span {
+    display: none;
+}
+
 /* Sidebar Toggler (Pin) */
 .sidebar-toggler {
     background: none;
