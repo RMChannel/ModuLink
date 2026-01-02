@@ -8,6 +8,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Optional;
+
 /**
  * Servizio core per la gestione dell'autenticazione e registrazione utenti.
  * <p>
@@ -112,5 +115,13 @@ public class CustomUserDetailsService implements UserDetailsService {
 
         // 4. Salva le modifiche
         userRepository.save(nuovoUtente);
+    }
+
+    public Optional<UtenteEntity> findByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+
+    public List<UtenteEntity> getAllByAzienda(AziendaEntity aziendaEntity) {
+        return userRepository.getAllByAziendaIs(aziendaEntity);
     }
 }

@@ -3,11 +3,13 @@ package com.modulink.Controller.Register;
 import com.modulink.Model.Azienda.AziendaEntity;
 import com.modulink.Model.Azienda.AziendaService;
 import com.modulink.Model.Relazioni.Affiliazione.AffiliazioneService;
+import com.modulink.Model.Relazioni.Associazione.AssociazioneService;
 import com.modulink.Model.Relazioni.Attivazione.AttivazioneService;
 import com.modulink.Model.Ruolo.RuoloEntity;
 import com.modulink.Model.Ruolo.RuoloRepository;
 import com.modulink.Model.Relazioni.Associazione.AssociazioneEntity;
 import com.modulink.Model.Relazioni.Associazione.AssociazioneRepository;
+import com.modulink.Model.Ruolo.RuoloService;
 import com.modulink.Model.Utente.CustomUserDetailsService;
 import com.modulink.Model.Utente.PasswordUtility;
 import com.modulink.Model.Utente.UtenteEntity;
@@ -50,8 +52,8 @@ import java.security.Principal;
 public class RegisterController {
     private final CustomUserDetailsService userDetailsService;
     private final AziendaService aziendaService;
-    private final RuoloRepository ruoloRepository;
-    private final AssociazioneRepository associazioneRepository;
+    private final RuoloService ruoloService;
+    private final AssociazioneService associazioneService;
     private final AttivazioneService attivazioneService;
     private final AffiliazioneService affiliazioneService;
 
@@ -60,14 +62,14 @@ public class RegisterController {
      *
      * @param userDetailsService     Servizio per la gestione degli utenti e autenticazione.
      * @param aziendaService         Servizio per la logica di business relativa alle aziende.
-     * @param ruoloRepository        Repository per la persistenza dei ruoli.
-     * @param associazioneRepository Repository per collegare utenti e ruoli.
+     * @param ruoloService        Repository per la persistenza dei ruoli.
+     * @param associazioneService Repository per collegare utenti e ruoli.
      */
-    public RegisterController(CustomUserDetailsService userDetailsService, AziendaService aziendaService, RuoloRepository ruoloRepository, AssociazioneRepository associazioneRepository, AttivazioneService attivazioneService, AffiliazioneService affiliazioneService) {
+    public RegisterController(CustomUserDetailsService userDetailsService, AziendaService aziendaService, RuoloService ruoloService, AssociazioneService associazioneService, AttivazioneService attivazioneService, AffiliazioneService affiliazioneService) {
         this.userDetailsService = userDetailsService;
         this.aziendaService = aziendaService;
-        this.ruoloRepository = ruoloRepository;
-        this.associazioneRepository = associazioneRepository;
+        this.ruoloService = ruoloService;
+        this.associazioneService = associazioneService;
         this.attivazioneService = attivazioneService;
         this.affiliazioneService = affiliazioneService;
     }
@@ -234,12 +236,11 @@ public class RegisterController {
                 userDetailsService.registraUtente(utenteEntity,aziendaEntity.getId_azienda());
 
                 //Creo il ruolo default del Responsabile
-                RuoloEntity ruoloResponsabile = new RuoloEntity(0,aziendaEntity,"Responsabile","#000000","Responsabile dell'azienda");
-                ruoloRepository.save(ruoloResponsabile);
+                RuoloEntity ruoloEntity= ruoloService.attivazioneDefault(aziendaEntity);
 
                 //Creo l'associazione tra Utente e Ruolo Responsabile
-                AssociazioneEntity associazioneResponsabile = new AssociazioneEntity(utenteEntity,ruoloResponsabile);
-                associazioneRepository.save(associazioneResponsabile);
+                AssociazioneEntity associazioneResponsabile = new AssociazioneEntity(utenteEntity,ruoloEntity);
+                associazioneService.save(associazioneResponsabile);
 
                 //Attivo tutti i moduli di default
                 attivazioneService.attivazioneDefault(aziendaEntity);
