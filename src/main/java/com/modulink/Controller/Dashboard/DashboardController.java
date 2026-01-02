@@ -17,14 +17,15 @@ import java.util.Optional;
 
 @Controller
 public class DashboardController {
+    private final UserRepository userRepository;
+    private final AffiliazioneRepository affiliazioneRepository;
+    private final ModuloRepository moduloRepository;
 
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private AffiliazioneRepository affiliazioneRepository;
-    @Autowired
-    private ModuloRepository moduloRepository;
-
+    public DashboardController(UserRepository userRepository, AffiliazioneRepository affiliazioneRepository, ModuloRepository moduloRepository) {
+        this.userRepository = userRepository;
+        this.affiliazioneRepository = affiliazioneRepository;
+        this.moduloRepository = moduloRepository;
+    }
 
     @GetMapping("/dashboard")
     public String dashboardDispatcher(Principal principal, Model model) {
