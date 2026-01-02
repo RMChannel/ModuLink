@@ -1,0 +1,230 @@
+/* =========================================
+   GDM MODULE STYLES
+   ========================================= */
+
+.gdm-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+}
+
+.module-card {
+    background-color: var(--bg-white);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    position: relative;
+    overflow: hidden;
+    height: 100%;
+}
+
+.module-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-card-hover);
+    border-color: var(--color-primary-lighter);
+}
+
+.module-icon-wrapper {
+    width: 80px;
+    height: 80px;
+    background-color: var(--bg-body-alt);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+    transition: all 0.3s ease;
+    color: var(--color-primary);
+    font-size: 2.5rem;
+}
+
+.module-card:hover .module-icon-wrapper {
+    background-color: var(--color-primary);
+    color: var(--color-white);
+    transform: scale(1.1) rotate(5deg);
+}
+
+.module-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+    color: var(--text-heading);
+}
+
+.module-description {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin-bottom: 2rem;
+    flex-grow: 1;
+}
+
+.module-actions {
+    width: 100%;
+}
+
+.btn-manage {
+    width: 100%;
+    padding: 0.75rem;
+    border-radius: 10px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    background-color: var(--bg-body);
+    color: var(--text-heading);
+    border: 1px solid var(--border-color-hover);
+}
+
+.btn-manage:hover {
+    background-color: var(--color-primary);
+    color: var(--color-white);
+    border-color: var(--color-primary);
+    box-shadow: 0 4px 12px var(--border-focus);
+}
+
+.btn-manage i {
+    margin-right: 8px;
+}
+
+/* Empty State */
+.empty-store {
+    text-align: center;
+    padding: 4rem 2rem;
+    background-color: var(--bg-white);
+    border-radius: 16px;
+    border: 1px dashed var(--border-color-hover);
+    color: var(--text-secondary);
+}
+
+.empty-store i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+}
+
+/* Modal Styles */
+.role-badge {
+    display: inline-block;
+    padding: 0.35em 0.65em;
+    font-size: 0.75em;
+    font-weight: 700;
+    line-height: 1;
+    color: #fff;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    border-radius: 0.25rem;
+    text-shadow: 1px 1px 1px rgba(0,0,0,0.2);
+}
+
+/* =========================================
+   MODAL THEME OVERRIDES
+   ========================================= */
+.modal-content {
+    background-color: var(--bg-white);
+    border: 1px solid var(--border-color);
+    color: var(--text-body);
+}
+
+.modal-header {
+    border-bottom: 1px solid var(--border-color-light);
+}
+
+.modal-title {
+    color: var(--text-heading);
+}
+
+.modal-footer {
+    border-top: 1px solid var(--border-color-light);
+}
+
+.modal-body p.text-muted {
+    color: var(--text-secondary) !important;
+}
+
+/* Close button dark mode fix */
+[data-theme='dark'] .btn-close {
+    filter: invert(1) grayscale(100%) brightness(200%);
+}
+
+/* =========================================
+   TABLE THEME OVERRIDES (Specific for Modal)
+   ========================================= */
+.modal-content .table {
+    --bs-table-color: var(--text-body);
+    --bs-table-bg: var(--bg-white);
+    --bs-table-border-color: var(--border-color-light);
+    --bs-table-striped-bg: var(--bg-body-alt);
+    --bs-table-striped-color: var(--text-body);
+    --bs-table-active-bg: var(--bg-light);
+    --bs-table-active-color: var(--text-body);
+    --bs-table-hover-bg: var(--bg-body-alt);
+    --bs-table-hover-color: var(--text-body);
+    color: var(--text-body);
+    border-color: var(--border-color);
+}
+
+.modal-content .table-hover tbody tr:hover {
+    color: var(--text-body);
+    background-color: var(--bg-body-alt);
+}
+
+/* Force table cells to inherit color */
+.modal-content .table tbody td, 
+.modal-content .table tbody th {
+    color: var(--text-body);
+    border-color: var(--border-color-light);
+}
+
+/* Header overrides */
+.modal-content .table-light {
+    --bs-table-bg: var(--bg-body-alt);
+    --bs-table-color: var(--text-heading);
+    background-color: var(--bg-body-alt);
+    color: var(--text-heading);
+    border-color: var(--border-color);
+}
+.modal-content .table-light th {
+    background-color: var(--bg-body-alt);
+    color: var(--text-heading);
+    border-bottom-color: var(--border-color);
+}
+
+/* Form Inputs inside Modal */
+.modal-content .form-check-input {
+    background-color: var(--bg-body);
+    border-color: var(--border-color);
+}
+
+.modal-content .form-check-input:checked {
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
+}
+
+/* Buttons inside Modal */
+.modal-content .btn-secondary {
+    background-color: var(--bg-body-alt);
+    border-color: var(--border-color);
+    color: var(--text-body);
+}
+.modal-content .btn-secondary:hover {
+    background-color: var(--border-color);
+    color: var(--text-heading);
+}
+
+/* Scrollbar for table responsive container */
+.table-responsive::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+.table-responsive::-webkit-scrollbar-track {
+    background: transparent;
+}
+.table-responsive::-webkit-scrollbar-thumb {
+    background-color: var(--border-color-hover);
+    border-radius: 3px;
+}

@@ -1,6 +1,10 @@
 package com.modulink.Model.Modulo;
 
+import com.modulink.Model.Relazioni.Affiliazione.AffiliazioneEntity;
 import jakarta.persistence.*;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "modulo",schema = "modulink")
@@ -20,6 +24,10 @@ public class ModuloEntity {
 
     @Column(name = "url_icona")
     private String url_icona;
+
+    @OneToMany(mappedBy = "id_modulo", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<AffiliazioneEntity> affiliazioni = new HashSet<>();
+
 
     public ModuloEntity(){}
 
@@ -71,6 +79,13 @@ public class ModuloEntity {
         this.url_icona = url_icona;
     }
 
+    public Set<AffiliazioneEntity> getAffiliazioni() {
+        return affiliazioni;
+    }
+
+    public void setAffiliazioni(Set<AffiliazioneEntity> affiliazioni) {
+        this.affiliazioni = affiliazioni;
+    }
 
     @Override
     public String toString() {

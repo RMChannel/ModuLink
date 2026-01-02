@@ -1,6 +1,7 @@
 package com.modulink.Model.Relazioni.Affiliazione;
 
 import com.modulink.Model.Modulo.ModuloEntity;
+import com.modulink.Model.Relazioni.Attivazione.AttivazioneEntity;
 import com.modulink.Model.Ruolo.RuoloEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -15,4 +16,6 @@ public interface AffiliazioneRepository extends JpaRepository<AffiliazioneEntity
 
     @Query("SELECT a.attivazione.modulo FROM AffiliazioneEntity a WHERE a.id_ruolo = :idRuolo AND a.id_azienda = :idAzienda")
     List<ModuloEntity> findModuliByRuoloId(@Param("idRuolo") int idRuolo, @Param("idAzienda") int idAzienda);
+
+    List<AffiliazioneEntity> findAllByAttivazione(AttivazioneEntity attivazione);
 }

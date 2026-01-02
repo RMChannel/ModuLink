@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Gestione Moduli Ruoli - ModuLink</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/user/colors.css}">
+    <link rel="stylesheet" th:href="@{/css/user/dashboard-layout.css}">
+    <link rel="stylesheet" th:href="@{/css/moduli/GDM/gdm.css}">
+    <link rel="stylesheet" th:href="@{/css/common/alerts.css}">
+    <script th:src="@{/javascript/theme.js}"></script>
+</head>
+<body>
+<div class="dashboard-wrapper">
+    <!-- Sidebar Fragment -->
+    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+    <!-- Alerts Fragment -->
+    <div th:replace="~{fragments/messages :: alerts}"></div>
+
+    <!-- Main Content -->
+    <div id="content">
+        <div class="container-fluid">
+            <!-- Header -->
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-4 border-bottom">
+                <div>
+                    <h1 class="h2">Gestione Ruoli Moduli</h1>
+                    <p class="text-muted">Assegna i ruoli che possono accedere a ciascun modulo.</p>
+                </div>
+            </div>
+
+            <!-- Grid -->
+            <div class="gdm-grid" th:if="${not #lists.isEmpty(moduli)}">
+                <div class="module-card" th:each="modulo : ${moduli}">
+                    <div class="module-icon-wrapper">
+                        <i class="bi" th:classappend="${modulo.url_icona}"></i>
+                    </div>
+                    <h3 class="module-title" th:text="${modulo.nome}">Nome Modulo</h3>
+                    <p class="module-description" th:text="${modulo.descrizione}">
+                        Descrizione del modulo.
+                    </p>
+                    <div class="module-actions">
+                        <button class="btn btn-manage"
+                                th:data-id="${modulo.id_modulo}"
+                                th:data-nome="${modulo.nome}"
+                                th:data-assigned-roles="${modulo.affiliazioni.![id_ruolo]}"
+                                onclick="openManageRolesModal(this)">
+                            <i class="bi bi-gear-fill"></i> Gestisci Ruoli
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Empty State -->
+            <div class="empty-store" th:if="${#lists.isEmpty(moduli)}">
+                <i class="bi bi-box-seam"></i>
+                <h3>Nessun modulo attivo</h3>
+                <p>Non hai ancora attivato nessun modulo per la tua azienda.</p>
+                <a th:href="@{/dashboard/store}" class="btn btn-primary-custom mt-3">Vai allo Store</a>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- Manage Roles Modal -->
+<div class="modal fade" id="manageRolesModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <form th:action="@{/dashboard/edit-modulo}" method="post">
+                <div class="modal-header">
+                    <h5 class="modal-title">Gestisci Accesso: <span id="editModuloName"></span></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="editModuloId" name="idModulo">
+                    <p class="text-muted">Seleziona i ruoli che avranno accesso a questo modulo.</p>
+                    
+                    <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+                        <table class="table table-hover align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th scope="col" style="width: 50px;">
+                                        <input class="form-check-input" type="checkbox" id="selectAllRoles">
+                                    </th>
+                                    <th scope="col">Ruolo</th>
+                                    <th scope="col">Descrizione</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="ruolo : ${ruoli}">
+                                    <td>
+                                        <input class="form-check-input role-checkbox" type="checkbox" 
+                                               name="roleIds" 
+                                               th:value="${ruolo.id_ruolo}"
+                                               th:id="'role-' + ${ruolo.id_ruolo}">
+                                    </td>
+                                    <td>
+                                        <label th:for="'role-' + ${ruolo.id_ruolo}" style="cursor: pointer; width: 100%; display: block;">
+                                            <span class="role-badge"
+                                                  th:style="'background-color: ' + ${ruolo.colore}"
+                                                  th:text="${ruolo.nome}">Admin</span>
+                                        </label>
+                                    </td>
+                                    <td>
+                                        <label th:for="'role-' + ${ruolo.id_ruolo}" 
+                                               th:text="${ruolo.descrizione}" 
+                                               style="cursor: pointer; width: 100%; display: block;" 
+                                               class="text-muted small"></label>
+                                    </td>
+                                </tr>
+                                <tr th:if="${#lists.isEmpty(ruoli)}">
+                                    <td colspan="3" class="text-center text-muted py-3">
+                                        <em>Nessun ruolo disponibile. Crea prima dei ruoli nella sezione GDR.</em>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
+                    <button type="submit" class="btn btn-primary-custom">Salva Modifiche</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap JavaScript Bundle -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/javascript/gdm.js}"></script>
+
+</body>
+</html>
