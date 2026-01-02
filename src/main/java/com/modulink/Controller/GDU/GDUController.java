@@ -1,4 +1,4 @@
-package com.modulink.Controller.Dashboard;
+package com.modulink.Controller.GDU;
 
 import com.modulink.Model.Modulo.ModuloEntity;
 import com.modulink.Model.Modulo.ModuloRepository;
@@ -15,44 +15,36 @@ import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
 
-@Controller
-public class DashboardController {
 
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private AffiliazioneRepository affiliazioneRepository;
+@Controller
+public class GDUController {
     @Autowired
     private ModuloRepository moduloRepository;
+    @Autowired
+    private UserRepository userRepository;
 
-
-    @GetMapping("/dashboard")
+    @GetMapping("dashboard/gdu/")
     public String dashboardDispatcher(Principal principal, Model model) {
+
         if (principal == null) {
             return "redirect:/";
         }
 
-        String email = principal.getName();
+        String email =  principal.getName();
         Optional<UtenteEntity> utenteOpt = userRepository.findByEmail(email);
-
-
         if (utenteOpt.isPresent()) {
+
             UtenteEntity utente = utenteOpt.get();
-
-            //List<ModuloEntity> moduli;
-            //moduli = affiliazioneRepository.findModuliByRuolo(utente.getRuoli().stream().findFirst().get());
-
-
             List<ModuloEntity> moduli = moduloRepository.findModuliByUtente(utente);
 
             //per non far gestire al th le eccezioni perchè se succede è una bestemia
             model.addAttribute("moduli", moduli != null ? moduli : List.of());
             model.addAttribute("utente", utente);
+            model.addAttribute("utenti", userRepository.getAllByAziendaIs(utente.getAzienda()));
+            return "moduli/gdu/GestioneUtenti";
 
-
-            return "user/dashboard";
-        } else {
-            return "redirect:/logout";
+        }else  {
+            return "redirect:/";
         }
     }
 }

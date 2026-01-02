@@ -1,5 +1,6 @@
 package com.modulink.Model.Utente;
 
+import com.modulink.Model.Azienda.AziendaEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -52,4 +53,7 @@ public interface UserRepository extends JpaRepository<UtenteEntity, UtenteID> {
      */
     @Query("SELECT COALESCE(MAX(u.id_utente), 0) FROM UtenteEntity u WHERE u.azienda.id_azienda = :idAzienda")
     int findMaxIdByAzienda(@Param("idAzienda") int idAzienda);
+
+
+    Object getAllByAziendaIs(AziendaEntity azienda);
 }

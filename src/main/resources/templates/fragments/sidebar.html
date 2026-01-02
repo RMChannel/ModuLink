@@ -35,14 +35,12 @@
                     <span>Dashboard</span>
                 </a>
             </li>
-
             <li th:each="modulo : ${moduli}">
                 <a th:href="@{${modulo.url_modulo}}">
                     <i th:class="${modulo.url_icona}"></i>
                     <span th:text="${modulo.nome}">Modulo</span>
                 </a>
             </li>
-
         </ul>
     </div>
 
