@@ -1,6 +1,7 @@
 package com.modulink.Controller.GDM.Store;
 
 import com.modulink.Alert;
+import com.modulink.Controller.ModuloController;
 import com.modulink.Model.Modulo.ModuloEntity;
 import com.modulink.Model.Modulo.ModuloRepository;
 import com.modulink.Model.Modulo.ModuloService;
@@ -18,14 +19,13 @@ import java.util.List;
 import java.util.Optional;
 
 @Controller
-public class StoreController {
-
+public class StoreController extends ModuloController {
     private final CustomUserDetailsService customUserDetailsService;
     private final AttivazioneService attivazioneService;
     private final ModuloService moduloService;
 
-    public StoreController(CustomUserDetailsService customUserDetailsService,
-                           AttivazioneService attivazioneService, ModuloService moduloService) {
+    public StoreController(CustomUserDetailsService customUserDetailsService, AttivazioneService attivazioneService, ModuloService moduloService) {
+        super(moduloService,2);
         this.customUserDetailsService = customUserDetailsService;
         this.attivazioneService = attivazioneService;
         this.moduloService = moduloService;

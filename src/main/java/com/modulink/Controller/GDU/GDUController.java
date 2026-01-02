@@ -1,6 +1,7 @@
 package com.modulink.Controller.GDU;
 
 import com.modulink.Alert;
+import com.modulink.Controller.ModuloController;
 import com.modulink.Model.Azienda.AziendaEntity;
 import com.modulink.Model.Modulo.ModuloEntity;
 import com.modulink.Model.Modulo.ModuloService;
@@ -33,7 +34,7 @@ import java.util.Random;
 
 
 @Controller
-public class GDUController {
+public class GDUController extends ModuloController {
     private final ModuloService moduloService;
     private final CustomUserDetailsService customUserDetailsService;
     private final RuoloService ruoloService;
@@ -42,18 +43,13 @@ public class GDUController {
     private final String senderEmail;
 
     public GDUController(ModuloService moduloService, CustomUserDetailsService customUserDetailsService, RuoloService ruoloService, AssociazioneService associazioneService, JavaMailSenderImpl mailSender, @Value("${spring.mail.username}") String senderEmail) {
+        super(moduloService, 0);
         this.moduloService=moduloService;
         this.customUserDetailsService=customUserDetailsService;
         this.ruoloService=ruoloService;
         this.associazioneService=associazioneService;
         this.mailSender=mailSender;
         this.senderEmail=senderEmail;
-    }
-
-    private boolean isAccessibleModulo(Optional<UtenteEntity> user) {
-        if(user.isEmpty()) return false;
-        UtenteEntity utente=user.get();
-        return moduloService.isAccessibleModulo(0, utente);
     }
 
     @GetMapping({"dashboard/gdu/","dashboard/gdu"})
