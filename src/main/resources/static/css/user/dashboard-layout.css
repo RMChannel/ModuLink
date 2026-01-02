@@ -268,53 +268,52 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 #sidebar.collapsed .theme-switch-track {
-    width: 60px; /* Specific width for compact toggle */
-    height: 36px;
+    width: 40px;
+    height: 40px;
     background-color: var(--bg-body-alt);
-    border-radius: 20px;
-    justify-content: space-between; /* Space out the hidden options */
+    border-radius: 12px;
+    justify-content: center;
     padding: 0;
-    overflow: visible; /* Ensure nothing is clipped incorrectly */
+    /* Hide thumb in collapsed mode */
+    overflow: hidden; 
+}
+
+#sidebar.collapsed .theme-switch-thumb {
+    display: none;
 }
 
 #sidebar.collapsed .theme-switch-option span {
     display: none;
 }
 
-#sidebar.collapsed .theme-switch-thumb {
-    width: 28px;
-    height: 28px;
-    top: 4px;
-    left: 4px;
-    border-radius: 50%; /* Circle thumb */
-    transform: translateX(0); /* Default position */
-    background-color: var(--bg-white);
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-}
-
 #sidebar.collapsed .theme-switch-option {
-    width: 50%; /* Take half space each */
+    display: none; /* Hide all by default */
+    width: 100%;
     height: 100%;
-    opacity: 0; /* Hide icons behind or make them invisible if using thumb as indicator? */
-    /* Let's keep icons visible inside the track for visual feedback */
-    opacity: 1;
-    pointer-events: auto;
-    position: relative;
-    z-index: 2;
-    padding: 0;
-    display: flex;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
+    color: var(--text-secondary);
+    transition: color 0.3s ease;
 }
 
-/* Specific icon sizing for compact mode */
+#sidebar.collapsed .theme-switch-option:hover {
+    color: var(--color-primary);
+}
+
+/* Show only the ACTIVE theme icon (or the one to toggle TO, but usually current state is shown) */
+/* Here we show the current state icon to indicate status */
+#sidebar.collapsed [data-theme='light'] .theme-switch-option.light {
+    display: flex;
+    color: var(--color-primary); /* Highlight active */
+}
+
+#sidebar.collapsed [data-theme='dark'] .theme-switch-option.dark {
+    display: flex;
+    color: var(--color-primary); /* Highlight active */
+}
+
 #sidebar.collapsed .theme-switch-option i {
-    font-size: 1rem;
-}
-
-/* Adjust Thumb Position for Dark Mode in Collapsed State */
-#sidebar.collapsed [data-theme='dark'] .theme-switch-thumb {
-    transform: translateX(24px); /* Slide to the right (60px width - 4px pad - 28px thumb - 4px pad = 24px) */
+    font-size: 1.2rem;
 }
 
 /* User Profile */
