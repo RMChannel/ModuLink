@@ -11,7 +11,7 @@ public class LoginController {
 
     @GetMapping("/login")
     public String login(Model model, Principal principal) {
-        if(principal != null) {return "redirect:/home";}
+        if(principal != null) {return "redirect:/dashboard";}
         else return "login/login";
     }
 }
