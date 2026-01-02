@@ -9,6 +9,8 @@ public class AttivazioneID {
     private ModuloEntity modulo;
     private AziendaEntity azienda;
 
+    public AttivazioneID() {}
+
     public AttivazioneID(ModuloEntity modulo, AziendaEntity azienda) {
         this.modulo = modulo;
         this.azienda = azienda;
