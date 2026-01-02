@@ -38,8 +38,7 @@
 
             <li th:each="modulo : ${moduli}">
                 <a th:href="@{${modulo.url_modulo}}">
-                    <i th:if="${modulo.url_icona != null and !modulo.url_icona.contains('/')}" th:class="${modulo.url_icona}"></i>
-                    <img th:if="${modulo.url_icona != null and modulo.url_icona.contains('/')}" th:src="@{${modulo.url_icona}}" alt="Icon" class="nav-icon" style="width: 20px; height: 20px; margin-right: 10px;">
+                    <i th:class="${modulo.url_icona}"></i>
                     <span th:text="${modulo.nome}">Modulo</span>
                 </a>
             </li>
