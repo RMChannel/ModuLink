@@ -8,6 +8,8 @@ import com.modulink.Model.Relazioni.Attivazione.AttivazioneID;
 import com.modulink.Model.Relazioni.Attivazione.AttivazioneService;
 import com.modulink.Model.Ruolo.RuoloEntity;
 import com.modulink.Model.Utente.UtenteEntity;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,19 +29,23 @@ public class ModuloService {
         this.attivazioneService = attivazioneService;
     }
 
+    @Cacheable(value = "moduliByUtente", key = "#utente.email")
     public List<ModuloEntity> findModuliByUtente(UtenteEntity utente) {
         return moduloRepository.findModuliByUtente(utente);
     }
 
+    @Cacheable(value = "moduloAccess", key = "{#id, #utente.email}")
     public boolean isAccessibleModulo(int id, UtenteEntity utente) {
         return !moduloRepository.isModuloAccessible(id, utente).isEmpty();
     }
 
+    @Cacheable(value = "modulo", key = "#idModulo")
     public ModuloEntity getModuloById(int idModulo) {
         return moduloRepository.findById(idModulo).orElseThrow(() -> new IllegalArgumentException("Modulo non trovato"));
     }
 
     @Transactional
+    @CacheEvict(value = {"moduliByUtente", "moduloAccess", "modulo"}, allEntries = true)
     public void updateModuloAffiliations(AziendaEntity azienda, int idModulo, List<RuoloEntity> ruoli) {
         ModuloEntity modulo = getModuloById(idModulo);
 
