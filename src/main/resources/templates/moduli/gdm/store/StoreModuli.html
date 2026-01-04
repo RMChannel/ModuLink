@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Dashboard - ModuLink</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/user/colors.css}">
+    <link rel="stylesheet" th:href="@{/css/user/dashboard-layout.css}">
+    <link rel="stylesheet" th:href="@{/css/moduli/store/store.css}">
+    <link rel="stylesheet" th:href="@{/css/common/alerts.css}">
+    <script th:src="@{/javascript/theme.js}"></script>
+</head>
+<body>
+<div class="dashboard-wrapper">
+    <!-- Sidebar Fragment -->
+    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+    <!-- Alerts Fragment -->
+    <div th:replace="~{fragments/messages :: alerts}"></div>
+
+    <!-- Main Content -->
+    <div id="content">
+        <div class="container-fluid">
+            <!-- Header -->
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-4 border-bottom">
+                <div>
+                    <h1 class="h2">Store Moduli</h1>
+                    <p class="text-muted">Esplora e attiva nuovi moduli per potenziare la tua azienda.</p>
+                </div>
+            </div>
+
+            <!-- Grid -->
+            <div class="store-grid" th:if="${not #lists.isEmpty(moduli)}">
+                <div class="module-card" th:each="modulo : ${moduli}">
+                    <div class="module-icon-wrapper">
+                        <!-- Use th:classappend to add the bootstrap icon class dynamically -->
+                        <i class="bi" th:classappend="${modulo.url_icona}"></i>
+                    </div>
+                    <h3 class="module-title" th:text="${modulo.nome}">Nome Modulo</h3>
+                    <p class="module-description" th:text="${modulo.descrizione}">
+                        Descrizione breve del modulo e delle sue funzionalità principali.
+                    </p>
+                    <div class="module-actions">
+                        <form th:action="@{/dashboard/store/buy}" method="post">
+                            <input type="hidden" name="moduloId" th:value="${modulo.id_modulo}">
+                            <button type="submit" class="btn btn-buy">
+                                <i class="bi bi-cart-plus"></i> Acquista
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Empty State -->
+            <div class="empty-store" th:if="${#lists.isEmpty(moduli)}">
+                <i class="bi bi-shop-window"></i>
+                <h3>Nessun modulo disponibile</h3>
+                <p>Al momento non ci sono nuovi moduli disponibili per l'acquisto.</p>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap JavaScript Bundle (include Popper) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

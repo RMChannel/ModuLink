@@ -4,39 +4,39 @@
        ========================================= */
     --color-white: #ffffff;
     --color-black: #000000;
-    
+
     /* =========================================
        PRIMARY BRAND COLORS
        ========================================= */
-    --color-primary: #2563eb;
-    --color-primary-dark: #1d4ed8;
-    --color-primary-light: #dbeafe;       /* Icon box background */
-    --color-primary-lighter: #60a5fa;     /* Module icons */
-    
+    --color-primary: #1e5eff;
+    --color-primary-dark: #1a4fd6;
+    --color-primary-light: #e0ebff;       /* Icon box background */
+    --color-primary-lighter: #3b82f6;     /* Module icons */
+
     /* =========================================
        TEXT COLORS
        ========================================= */
-    --text-body: #334155;                 /* Main body text */
+    --text-body: #9ba5b6;                 /* Main body text */
     --text-heading: #0f172a;              /* Headings */
-    --text-secondary: #64748b;            /* Secondary text, nav links, footer text */
-    --text-muted: #94a3b8;                /* Contact items */
+    --text-secondary: #475569;            /* Secondary text */
+    --text-muted: #64748b;                /* Muted / helper text */
     --text-light: #ffffff;                /* Text on dark backgrounds */
-    --text-danger: #dc3545;               /* Error text */
+    --text-danger: #dc2626;               /* Error text */
     --text-danger-dark: #991b1b;          /* Alert danger text */
 
     /* =========================================
        BACKGROUND COLORS
        ========================================= */
-    --bg-body: #f4f6f9;                   /* Default body background */
-    --bg-body-alt: #f0f2f5;               /* Login/Register body background */
-    --bg-light: #f8fafc;                  /* Footer, feature cards, btn-outline hover */
+    --bg-body: #f1f5f9;                   /* Default body background */
+    --bg-body-alt: #eaeef3;               /* Login/Register body background */
+    --bg-light: #ffffff;                  /* Cards / panels */
     --bg-white: #ffffff;
-    --bg-dark-section: #0f172a;           /* Modules section background */
-    
+    --bg-dark-section: #0f172a;           /* Dark sections */
+
     /* Overlay Backgrounds */
     --bg-header-blur: rgba(255, 255, 255, 0.95);
-    --bg-module-card: rgba(255, 255, 255, 0.03);
-    --bg-module-card-hover: rgba(255, 255, 255, 0.08);
+    --bg-module-card: rgba(255, 255, 255, 0.04);
+    --bg-module-card-hover: rgba(255, 255, 255, 0.1);
 
     /* Alert Backgrounds */
     --bg-alert-danger: #fef2f2;
@@ -44,26 +44,26 @@
     /* =========================================
        BORDER COLORS
        ========================================= */
-    --border-color: #e2e8f0;              /* Default borders */
-    --border-color-light: #f1f5f9;        /* Lighter borders, dividers */
-    --border-color-hover: #cbd5e1;        /* Hover state for borders */
-    --border-module-card: rgba(255, 255, 255, 0.08);
-    --border-module-card-hover: rgba(255, 255, 255, 0.2);
+    --border-color: #d1d9e6;
+    --border-color-light: #e5eaf1;
+    --border-color-hover: #b6c2d2;
+    --border-module-card: rgba(255, 255, 255, 0.1);
+    --border-module-card-hover: rgba(255, 255, 255, 0.25);
     --border-alert-danger: #fecaca;
-    --border-focus: rgba(37, 99, 235, 0.1);
+    --border-focus: rgba(30, 94, 255, 0.2);
 
     /* =========================================
        GRADIENTS
        ========================================= */
     --gradient-hero: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);
-    --gradient-register-header: linear-gradient(180deg, #2563eb 0%, #1d4ed8 100%);
+    --gradient-register-header: linear-gradient(180deg, #1e5eff 0%, #1a4fd6 100%);
 
     /* =========================================
        SHADOWS
        ========================================= */
-    --shadow-btn-primary: 0 4px 12px rgba(37, 99, 235, 0.2);
-    --shadow-card: 0 10px 30px rgba(0, 0, 0, 0.05);
-    --shadow-card-hover: 0 12px 30px rgba(0, 0, 0, 0.08);
+    --shadow-btn-primary: 0 4px 12px rgba(30, 94, 255, 0.25);
+    --shadow-card: 0 10px 30px rgba(0, 0, 0, 0.06);
+    --shadow-card-hover: 0 14px 36px rgba(0, 0, 0, 0.1);
 }
 
 /* =========================================
@@ -71,52 +71,64 @@
    ========================================= */
 [data-theme='dark'] {
     /* Base Colors */
-    --color-white: #0f172a;               /* Backgrounds turn dark */
-    --color-black: #ffffff;               /* Text turns light */
+    --color-white: #020617;
+    --color-black: #ffffff;
 
-    /* Text Colors */
-    --text-body: #e2e8f0;                 /* Brighter gray/white for better readability */
-    --text-heading: #f8fafc;              /* Pure white for headings */
-    --text-secondary: #cbd5e1;            /* Lighter gray for secondary text (was too dark) */
-    --text-muted: #94a3b8;                /* Previous secondary color is now muted */
-    --text-danger: #fca5a5;               /* Pastel red for better readability on dark */
+    /* =========================================
+       TEXT COLORS
+       ========================================= */
+    --text-body: #e5e7eb;                 /* Main text */
+    --text-heading: #f8fafc;              /* Headings */
+    --text-secondary: #c7d2fe;            /* Secondary text (bluish for hierarchy) */
+    --text-muted: #9ca3af;                /* Muted text */
+    --text-light: #ffffff;
+    --text-danger: #fca5a5;
     --text-danger-dark: #fee2e2;
-    --text-light: #ffffff;                /* Keep white text white (for buttons etc) */
 
-    /* Backgrounds */
-    --bg-body: #020617;                   /* Deep dark blue/black */
-    --bg-body-alt: #0f172a;               /* Slightly lighter */
-    --bg-light: #1e293b;                  /* Card/Panel background */
-    --bg-white: #1e293b;                  /* Main content areas */
+    /* =========================================
+       BACKGROUND COLORS
+       ========================================= */
+    --bg-body: #020617;
+    --bg-body-alt: #020617;
+    --bg-light: #111827;                  /* Cards / panels */
+    --bg-white: #111827;
     --bg-dark-section: #020617;
 
     /* Overlay Backgrounds */
     --bg-header-blur: rgba(2, 6, 23, 0.95);
-    --bg-module-card: rgba(255, 255, 255, 0.05);
-    --bg-module-card-hover: rgba(255, 255, 255, 0.1);
+    --bg-module-card: rgba(255, 255, 255, 0.07);
+    --bg-module-card-hover: rgba(255, 255, 255, 0.14);
 
     /* Alert Backgrounds */
     --bg-alert-danger: #450a0a;
 
-    /* Borders */
-    --border-color: #334155;              /* Slate-700 */
-    --border-color-light: #1e293b;
-    --border-color-hover: #475569;        /* Lighter on hover */
-    --border-module-card: rgba(255, 255, 255, 0.1);
-    --border-module-card-hover: rgba(255, 255, 255, 0.2);
+    /* =========================================
+       BORDER COLORS
+       ========================================= */
+    --border-color: #1f2937;
+    --border-color-light: #111827;
+    --border-color-hover: #334155;
+    --border-module-card: rgba(255, 255, 255, 0.15);
+    --border-module-card-hover: rgba(255, 255, 255, 0.3);
     --border-alert-danger: #7f1d1d;
-    --border-focus: rgba(96, 165, 250, 0.3);
+    --border-focus: rgba(96, 165, 250, 0.35);
 
-    /* Primary Brand Colors Adjustments */
-    --color-primary-light: #172554;       /* Deep blue for icon backgrounds */
-    --color-primary-lighter: #3b82f6;     /* Brighter blue for text/icons */
+    /* =========================================
+       PRIMARY BRAND ADJUSTMENTS
+       ========================================= */
+    --color-primary-light: #1e3a8a;
+    --color-primary-lighter: #60a5fa;
 
-    /* Gradients */
+    /* =========================================
+       GRADIENTS
+       ========================================= */
     --gradient-hero: linear-gradient(180deg, #020617 0%, #0f172a 100%);
     --gradient-register-header: linear-gradient(180deg, #1e40af 0%, #1e3a8a 100%);
 
-    /* Shadows */
-    --shadow-card: 0 10px 30px rgba(0, 0, 0, 0.5);
-    --shadow-card-hover: 0 12px 30px rgba(0, 0, 0, 0.7);
-    --shadow-btn-primary: 0 4px 12px rgba(0, 0, 0, 0.5);
+    /* =========================================
+       SHADOWS
+       ========================================= */
+    --shadow-card: 0 10px 30px rgba(0, 0, 0, 0.55);
+    --shadow-card-hover: 0 14px 36px rgba(0, 0, 0, 0.75);
+    --shadow-btn-primary: 0 4px 12px rgba(0, 0, 0, 0.6);
 }
