@@ -38,9 +38,6 @@ public class GDMRoleController extends ModuloController {
         Optional<UtenteEntity> utenteOpt = customUserDetailsService.findByEmail(email);
         if (isAccessibleModulo(utenteOpt)) {
             UtenteEntity utente = utenteOpt.get();
-            List<ModuloEntity> moduli = moduloService.findModuliByUtente(utente);
-            model.addAttribute("moduli", moduli != null ? moduli : List.of());
-            model.addAttribute("utente", utente);
             model.addAttribute("ruoli", ruoloService.getAllRolesByAzienda(utente.getAzienda()));
             return "moduli/gdm/role/RoleModuli";
         }
@@ -55,8 +52,6 @@ public class GDMRoleController extends ModuloController {
         Optional<UtenteEntity> utenteOpt = customUserDetailsService.findByEmail(email);
         if (isAccessibleModulo(utenteOpt)) {
             UtenteEntity utente = utenteOpt.get();
-            List<ModuloEntity> moduli = moduloService.findModuliByUtente(utente);
-            model.addAttribute("utente", utente);
             List<RuoloEntity> ruoli;
             if(roleIds==null || roleIds.isEmpty()) {
                 ruoli = new ArrayList<>();
@@ -65,7 +60,6 @@ public class GDMRoleController extends ModuloController {
                 try {
                     ruoli = ruoloService.getAllRolesFromIds(roleIds,utente.getAzienda().getId_azienda());
                 } catch (RuoloNotFoundException re) {
-                    model.addAttribute("moduli", moduli != null ? moduli : List.of());
                     model.addAttribute("ruoli", ruoloService.getAllRolesByAzienda(utente.getAzienda()));
                     model.addAttribute("error",true);
                     model.addAttribute("message","Uno dei ruoli selezionati non è stato trovato");
@@ -76,8 +70,6 @@ public class GDMRoleController extends ModuloController {
             model.addAttribute("success",true);
             model.addAttribute("message","Assegnazione completata con successo");
             model.addAttribute("ruoli", ruoloService.getAllRolesByAzienda(utente.getAzienda()));
-            moduli = moduloService.findModuliByUtente(utente);
-            model.addAttribute("moduli", moduli != null ? moduli : List.of());
             return "moduli/gdm/role/RoleModuli";
         }
         else {

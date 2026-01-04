@@ -38,9 +38,6 @@ public class GDRController extends ModuloController {
         Optional<UtenteEntity> utenteOpt = customUserDetailsService.findByEmail(email);
         if(isAccessibleModulo(utenteOpt)) {
             UtenteEntity utente=utenteOpt.get();
-            List<ModuloEntity> moduli = moduloService.findModuliByUtente(utente);
-            model.addAttribute("moduli", moduli != null ? moduli : List.of());
-            model.addAttribute("utente", utente);
             model.addAttribute("ruoli", ruoloService.getAllRolesByAzienda(utente.getAzienda()));
             
             // For assigning users
@@ -64,9 +61,6 @@ public class GDRController extends ModuloController {
         Optional<UtenteEntity> utenteOpt = customUserDetailsService.findByEmail(email);
         if (isAccessibleModulo(utenteOpt)) {
             UtenteEntity utente=utenteOpt.get();
-            List<ModuloEntity> moduli = moduloService.findModuliByUtente(utente);
-            model.addAttribute("moduli", moduli != null ? moduli : List.of());
-            model.addAttribute("utente", utente);
             List<RuoloEntity> ruoli=ruoloService.getAllRolesByAzienda(utente.getAzienda());
             model.addAttribute("allUsers", customUserDetailsService.getAllByAzienda(utente.getAzienda()));
             if (bindingResult.hasErrors()) {
@@ -94,9 +88,6 @@ public class GDRController extends ModuloController {
         if (isAccessibleModulo(utenteOpt)) {
             UtenteEntity utente=utenteOpt.get();
             List<RuoloEntity> ruoli=ruoloService.getAllRolesByAzienda(utente.getAzienda());
-            List<ModuloEntity> moduli = moduloService.findModuliByUtente(utente);
-            model.addAttribute("moduli", moduli != null ? moduli : List.of());
-            model.addAttribute("utente", utente);
             model.addAttribute("allUsers", customUserDetailsService.getAllByAzienda(utente.getAzienda()));
             if(nome.length()<2 || nome.length()>50) {
                 model.addAttribute("error",true);
@@ -129,9 +120,6 @@ public class GDRController extends ModuloController {
         Optional<UtenteEntity> utenteOpt = customUserDetailsService.findByEmail(principal.getName());
         if (isAccessibleModulo(utenteOpt)) {
             UtenteEntity utente=utenteOpt.get();
-            List<ModuloEntity> moduli = moduloService.findModuliByUtente(utente);
-            model.addAttribute("moduli", moduli != null ? moduli : List.of());
-            model.addAttribute("utente", utente);
             List<RuoloEntity> ruoli=ruoloService.getAllRolesByAzienda(utente.getAzienda());
             model.addAttribute("allUsers", customUserDetailsService.getAllByAzienda(utente.getAzienda()));
             RuoloEntity ruolo=ruoloService.getRoleById(idRuolo,utente.getAzienda());
@@ -159,9 +147,6 @@ public class GDRController extends ModuloController {
         Optional<UtenteEntity> utenteOpt = customUserDetailsService.findByEmail(principal.getName());
         if (isAccessibleModulo(utenteOpt)) {
             UtenteEntity utente=utenteOpt.get();
-            List<ModuloEntity> moduli = moduloService.findModuliByUtente(utente);
-            model.addAttribute("utente", utente);
-            model.addAttribute("moduli", moduli != null ? moduli : List.of());
             model.addAttribute("ruoli",ruoloService.getAllRolesByAzienda(utente.getAzienda()));
             List<UtenteEntity> usersToAssign;
             if (userIds == null || userIds.isEmpty()) {
