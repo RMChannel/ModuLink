@@ -1,7 +1,6 @@
 package com.modulink.Model.Azienda;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 
 import java.util.Optional;
 
@@ -20,7 +19,6 @@ import java.util.Optional;
  * @version 1.2
  */
 public interface AziendaRepository extends JpaRepository<AziendaEntity, Integer> {
-
     /**
      * Recupera un'istanza di {@link AziendaEntity} basandosi sulla Partita IVA.
      * <p>
