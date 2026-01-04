@@ -1,8 +1,8 @@
 package com.modulink.Controller.GDR;
 
+import com.modulink.Controller.ModuloController;
 import com.modulink.Model.Modulo.ModuloEntity;
 import com.modulink.Model.Modulo.ModuloService;
-import com.modulink.Model.Relazioni.Associazione.AssociazioneService;
 import com.modulink.Model.Ruolo.RuoloEntity;
 import com.modulink.Model.Ruolo.RuoloService;
 import com.modulink.Model.Utente.CustomUserDetailsService;
@@ -20,30 +20,20 @@ import java.util.Optional;
 import java.util.Collections;
 
 @Controller
-public class GDRController {
+public class GDRController extends ModuloController {
     private final ModuloService moduloService;
     private final CustomUserDetailsService customUserDetailsService;
     private final RuoloService ruoloService;
-    private final AssociazioneService associazioneService;
 
-    public GDRController(ModuloService moduloService, CustomUserDetailsService customUserDetailsService, RuoloService ruoloService, AssociazioneService associazioneService) {
+    public GDRController(ModuloService moduloService, CustomUserDetailsService customUserDetailsService, RuoloService ruoloService) {
+        super(moduloService, 1);
         this.moduloService = moduloService;
         this.customUserDetailsService = customUserDetailsService;
         this.ruoloService = ruoloService;
-        this.associazioneService = associazioneService;
-    }
-
-    private boolean isAccessibleModulo(Optional<UtenteEntity> user) {
-        if(user.isEmpty()) return false;
-        UtenteEntity utente=user.get();
-        return moduloService.isAccessibleModulo(1, utente);
     }
 
     @GetMapping({"dashboard/gdr/","dashboard/gdr"})
     public String dashboardDispatcher(Principal principal, Model model) {
-        if(principal==null) {
-            return "redirect:/";
-        }
         String email =  principal.getName();
         Optional<UtenteEntity> utenteOpt = customUserDetailsService.findByEmail(email);
         if(isAccessibleModulo(utenteOpt)) {
@@ -54,7 +44,7 @@ public class GDRController {
             model.addAttribute("ruoli", ruoloService.getAllRolesByAzienda(utente.getAzienda()));
             
             // For assigning users
-            model.addAttribute("allUsers", customUserDetailsService.getAllByAziendaIs(utente.getAzienda()));
+            model.addAttribute("allUsers", customUserDetailsService.getAllByAzienda(utente.getAzienda()));
             
             // Form for new role
             if (!model.containsAttribute("newRoleForm")) {
@@ -70,17 +60,15 @@ public class GDRController {
 
     @PostMapping("dashboard/gdr/add-role")
     public String addRole(@ModelAttribute("newRoleForm") @Valid NewRoleForm newRoleForm, BindingResult bindingResult, Principal principal, Model model) {
-        if (principal == null) return "redirect:/";
         String email = principal.getName();
         Optional<UtenteEntity> utenteOpt = customUserDetailsService.findByEmail(email);
-        
         if (isAccessibleModulo(utenteOpt)) {
             UtenteEntity utente=utenteOpt.get();
             List<ModuloEntity> moduli = moduloService.findModuliByUtente(utente);
             model.addAttribute("moduli", moduli != null ? moduli : List.of());
             model.addAttribute("utente", utente);
             List<RuoloEntity> ruoli=ruoloService.getAllRolesByAzienda(utente.getAzienda());
-            model.addAttribute("allUsers", customUserDetailsService.getAllByAziendaIs(utente.getAzienda()));
+            model.addAttribute("allUsers", customUserDetailsService.getAllByAzienda(utente.getAzienda()));
             if (bindingResult.hasErrors()) {
                 model.addAttribute("newRoleForm",newRoleForm);
                 model.addAttribute("ruoli", ruoli);
@@ -109,7 +97,7 @@ public class GDRController {
             List<ModuloEntity> moduli = moduloService.findModuliByUtente(utente);
             model.addAttribute("moduli", moduli != null ? moduli : List.of());
             model.addAttribute("utente", utente);
-            model.addAttribute("allUsers", customUserDetailsService.getAllByAziendaIs(utente.getAzienda()));
+            model.addAttribute("allUsers", customUserDetailsService.getAllByAzienda(utente.getAzienda()));
             if(nome.length()<2 || nome.length()>50) {
                 model.addAttribute("error",true);
                 model.addAttribute("message","Il nome dev'essere compreso tra i 2 e i 50 caratteri");
@@ -145,7 +133,7 @@ public class GDRController {
             model.addAttribute("moduli", moduli != null ? moduli : List.of());
             model.addAttribute("utente", utente);
             List<RuoloEntity> ruoli=ruoloService.getAllRolesByAzienda(utente.getAzienda());
-            model.addAttribute("allUsers", customUserDetailsService.getAllByAziendaIs(utente.getAzienda()));
+            model.addAttribute("allUsers", customUserDetailsService.getAllByAzienda(utente.getAzienda()));
             RuoloEntity ruolo=ruoloService.getRoleById(idRuolo,utente.getAzienda());
             try {
                 ruoloService.deleteRole(utenteOpt.get().getAzienda(), idRuolo);
@@ -182,7 +170,7 @@ public class GDRController {
                 try {
                     usersToAssign=customUserDetailsService.getAllUsersFromIDs(userIds,utente.getAzienda().getId_azienda());
                 } catch (UserNotFoundException ue) {
-                    model.addAttribute("allUsers", customUserDetailsService.getAllByAziendaIs(utente.getAzienda()));
+                    model.addAttribute("allUsers", customUserDetailsService.getAllByAzienda(utente.getAzienda()));
                     model.addAttribute("error",true);
                     model.addAttribute("message","Uno degli utenti selezionati non è stato trovato");
                     return "moduli/gdr/GestioneRuoli";
@@ -191,7 +179,7 @@ public class GDRController {
             ruoloService.updateRoleAssociations(utente.getAzienda(), idRuolo, usersToAssign);
             model.addAttribute("success",true);
             model.addAttribute("message","Assegnazione completata con successo");
-            model.addAttribute("allUsers", customUserDetailsService.getAllByAziendaIs(utente.getAzienda()));
+            model.addAttribute("allUsers", customUserDetailsService.getAllByAzienda(utente.getAzienda()));
             return "moduli/gdr/GestioneRuoli";
         }
         else {
