@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="it" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: mainHead(pageTitle='Manuale Utente', additionalCss=${ {'/css/manuale.css'} })}">
+</head>
+<body>
+
+<header th:replace="~{fragments/header :: mainHeader}"></header>
+
+<div class="manual-container">
+    <div class="page-header">
+        <h1 class="page-title">Manuale d'Uso ModuLink</h1>
+        
+        <!-- BARRA DI RICERCA -->
+        <div class="search-wrapper">
+            <i class="fa-solid fa-magnifying-glass search-icon"></i>
+            <input type="text" id="manualSearch" class="search-input" placeholder="Cerca una guida (es. 'creare utente', 'ruoli')..." onkeyup="filterManual()">
+        </div>
+    </div>
+
+    <div class="manual-layout">
+        
+        <!-- COLONNA SOMMARIO (Sidebar) -->
+        <aside class="sommario-box">
+            <div class="sommario-title">Sommario</div>
+            <ul class="sommario-list">
+                <li><a href="#sec-account">Primo Accesso & Account</a></li>
+                <li><a href="#sec-gdu">Gestione Utenti (GDU)</a></li>
+                <li><a href="#sec-gdr">Gestione Ruoli (GDR)</a></li>
+                <li><a href="#sec-store">Store & Pagamenti</a></li>
+            </ul>
+        </aside>
+
+        <!-- COLONNA CONTENUTI -->
+        <div class="manual-content-area">
+
+            <!-- SEZIONE 1: ACCOUNT -->
+            <section id="sec-account" class="manual-section">
+                <div class="section-heading">
+                    <i class="fa-solid fa-user-shield"></i> Primo Accesso & Account
+                </div>
+
+                <div class="manual-card">
+                    <div class="manual-header" onclick="toggleManual(this)">
+                        <h3 class="manual-question">Come effettuare il primo login?</h3>
+                        <i class="fa-solid fa-chevron-down toggle-icon"></i>
+                    </div>
+                    <div class="manual-body">
+                        <p>Benvenuto su ModuLink. Al tuo primo accesso, dovrai impostare una password sicura.</p>
+                        <ol class="step-list">
+                            <li>Apri l'email di benvenuto ricevuta da <strong>no-reply@modulink.com</strong>.</li>
+                            <li>Clicca sul link o copia la <strong>Password Provvisoria</strong> indicata.</li>
+                            <li>Vai alla pagina di Login e inserisci la tua email e la password provvisoria.</li>
+                            <li>Il sistema ti chiederà di creare una nuova password. Inseriscila due volte per conferma.</li>
+                            <li>Clicca su <strong>"Imposta Password e Accedi"</strong> per entrare nella Dashboard.</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <div class="manual-card">
+                    <div class="manual-header" onclick="toggleManual(this)">
+                        <h3 class="manual-question">Come recuperare la password dimenticata?</h3>
+                        <i class="fa-solid fa-chevron-down toggle-icon"></i>
+                    </div>
+                    <div class="manual-body">
+                        <p>Se hai smarrito le credenziali, segui questa procedura:</p>
+                        <ol class="step-list">
+                            <li>Nella schermata di login, clicca sul link "Hai dimenticato la password?".</li>
+                            <li>Inserisci l'indirizzo email associato al tuo account aziendale.</li>
+                            <li>Controlla la tua casella di posta: riceverai un link temporaneo valido per 15 minuti.</li>
+                            <li>Clicca il link e imposta la nuova password.</li>
+                        </ol>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SEZIONE 2: GDU -->
+            <section id="sec-gdu" class="manual-section">
+                <div class="section-heading">
+                    <i class="fa-solid fa-users-gear"></i> Gestione Utenti (GDU)
+                </div>
+
+                <div class="manual-card">
+                    <div class="manual-header" onclick="toggleManual(this)">
+                        <h3 class="manual-question">Come aggiungere un nuovo dipendente?</h3>
+                        <i class="fa-solid fa-chevron-down toggle-icon"></i>
+                    </div>
+                    <div class="manual-body">
+                        <p>Solo i Responsabili possono aggiungere nuovi utenti al sistema.</p>
+                        <ol class="step-list">
+                            <li>Accedi alla Dashboard e clicca sul modulo <strong>"Gestione Utenti"</strong>.</li>
+                            <li>In alto a destra, clicca sul pulsante blu <strong>"+ Nuovo Utente"</strong>.</li>
+                            <li>Compila il modulo con Nome, Cognome, Email aziendale e Telefono.</li>
+                            <li>Clicca su "Crea Utente".</li>
+                            <li>Il sistema invierà automaticamente una mail al dipendente con le credenziali di primo accesso.</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <div class="manual-card">
+                    <div class="manual-header" onclick="toggleManual(this)">
+                        <h3 class="manual-question">Come eliminare o disattivare un utente?</h3>
+                        <i class="fa-solid fa-chevron-down toggle-icon"></i>
+                    </div>
+                    <div class="manual-body">
+                        <p>L'eliminazione di un utente è irreversibile.</p>
+                        <ol class="step-list">
+                            <li>Nel modulo GDU, individua l'utente nella tabella.</li>
+                            <li>Clicca sull'icona rossa del <strong>Cestino</strong> nella colonna Azioni.</li>
+                            <li>Apparirà un pop-up di sicurezza: digita il <strong>Nome Completo</strong> dell'utente per confermare.</li>
+                            <li>Clicca su "Elimina Definitivamente".</li>
+                        </ol>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SEZIONE 3: GDR -->
+            <section id="sec-gdr" class="manual-section">
+                <div class="section-heading">
+                    <i class="fa-solid fa-id-badge"></i> Gestione Ruoli (GDR)
+                </div>
+
+                <div class="manual-card">
+                    <div class="manual-header" onclick="toggleManual(this)">
+                        <h3 class="manual-question">Creare un ruolo personalizzato</h3>
+                        <i class="fa-solid fa-chevron-down toggle-icon"></i>
+                    </div>
+                    <div class="manual-body">
+                        <p>Puoi definire ruoli specifici (es. "Magazziniere", "Segretaria") per organizzare il lavoro.</p>
+                        <ol class="step-list">
+                            <li>Accedi al modulo <strong>"Gestione Ruoli"</strong> dalla Dashboard.</li>
+                            <li>Clicca su <strong>"+ Nuovo Ruolo"</strong>.</li>
+                            <li>Assegna un Nome e scegli un <strong>Colore</strong> identificativo per il badge.</li>
+                            <li>Aggiungi una descrizione opzionale e salva.</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <div class="manual-card">
+                    <div class="manual-header" onclick="toggleManual(this)">
+                        <h3 class="manual-question">Assegnare un ruolo a un utente</h3>
+                        <i class="fa-solid fa-chevron-down toggle-icon"></i>
+                    </div>
+                    <div class="manual-body">
+                        <ol class="step-list">
+                            <li>Nella lista dei ruoli (modulo GDR), clicca sull'icona azzurra <strong>"Utenti" (Omini)</strong> accanto al ruolo desiderato.</li>
+                            <li>Si aprirà un modale con la lista di tutti i dipendenti.</li>
+                            <li>Spunta le caselle accanto ai nomi delle persone che devono avere quel ruolo.</li>
+                            <li>Clicca su "Salva Assegnazioni". Le modifiche sono immediate.</li>
+                        </ol>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SEZIONE 4: STORE -->
+            <section id="sec-store" class="manual-section">
+                <div class="section-heading">
+                    <i class="fa-solid fa-cart-shopping"></i> Store & Acquisti
+                </div>
+
+                <div class="manual-card">
+                    <div class="manual-header" onclick="toggleManual(this)">
+                        <h3 class="manual-question">Acquistare un nuovo modulo</h3>
+                        <i class="fa-solid fa-chevron-down toggle-icon"></i>
+                    </div>
+                    <div class="manual-body">
+                        <p>Espandi le funzionalità della tua azienda aggiungendo nuovi moduli.</p>
+                        <ol class="step-list">
+                            <li>Vai nella sezione <strong>"Store"</strong> dalla sidebar.</li>
+                            <li>Sfoglia il catalogo dei moduli disponibili.</li>
+                            <li>Clicca su "Acquista" nel riquadro del modulo desiderato.</li>
+                            <li>Il modulo verrà attivato istantaneamente e apparirà nella tua sidebar.</li>
+                        </ol>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </div>
+</div>
+
+<footer th:replace="~{fragments/footer :: mainFooter}"></footer>
+
+<!-- JAVASCRIPT -->
+<script>
+    // 1. Funzione Accordion (Apre/Chiude le card)
+    function toggleManual(element) {
+        const card = element.parentElement;
+        
+        // Opzionale: Chiudi le altre card aperte per pulizia
+        /* 
+        document.querySelectorAll('.manual-card').forEach(c => {
+            if (c !== card) c.classList.remove('active');
+        });
+        */
+
+        card.classList.toggle('active');
+    }
+
+    // 2. Funzione Ricerca Live
+    function filterManual() {
+        const input = document.getElementById('manualSearch');
+        const filter = input.value.toLowerCase();
+        const cards = document.querySelectorAll('.manual-card');
+        const sections = document.querySelectorAll('.manual-section');
+
+        // Cicla su tutte le card
+        cards.forEach(card => {
+            const question = card.querySelector('.manual-question').textContent.toLowerCase();
+            const body = card.querySelector('.manual-body').textContent.toLowerCase();
+
+            // Cerca sia nel titolo che nel contenuto
+            if (question.includes(filter) || body.includes(filter)) {
+                card.style.display = ""; // Mostra
+                // Se c'è una corrispondenza nel body, apri la card per evidenziarla
+                if(filter.length > 2 && body.includes(filter)) {
+                    card.classList.add('active');
+                }
+            } else {
+                card.style.display = "none"; // Nascondi
+                card.classList.remove('active');
+            }
+        });
+
+        // Nascondi le sezioni vuote (Opzionale, per pulizia visiva)
+        sections.forEach(section => {
+            const visibleCards = section.querySelectorAll('.manual-card:not([style*="display: none"])');
+            if (visibleCards.length === 0) {
+                section.style.display = "none";
+            } else {
+                section.style.display = "block";
+            }
+        });
+    }
+</script>
+
+</body>
+</html>

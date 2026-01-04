@@ -49,4 +49,24 @@ public class HomeController {
         }
     }
 
+    @GetMapping("/news")
+    public String news(Model model, Principal principal){
+        return "homepage/news";
+    }
+
+    @GetMapping("/supporto")
+    public String supporto(Model model, Principal principal) {
+        return "homepage/supporto";
+    }
+
+    @GetMapping("/pacchetti")
+    public String pacchetti(Model model, Principal principal) {
+        return "homepage/pacchetti";
+    }
+
+    @GetMapping("/manuale")
+    public String manuale(Model model, Principal principal) {
+        return "homepage/manuale";
+    }
+
 }

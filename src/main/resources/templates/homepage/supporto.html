@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="it" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: mainHead(pageTitle='Centro Supporto', additionalCss=${ {'/css/support.css'} })}">
+</head>
+<body>
+
+<!-- Header -->
+<header th:replace="~{fragments/header :: mainHeader}"></header>
+
+<div class="support-container">
+    <h1 class="page-title">Centro Supporto</h1>
+    <p class="page-subtitle">
+        Hai bisogno di aiuto immediato? <a href="#contactForm">Contatta un operatore</a> a fondo pagina.
+    </p>
+
+    <!-- SEZIONE FAQ -->
+    <div class="faq-section">
+        
+        <!-- FAQ 1 -->
+        <div class="faq-card">
+            <div class="faq-header" onclick="toggleFaq(this)">
+                <h4 class="faq-question">Come posso resettare la mia password?</h4>
+                <div class="expand-icon"><i class="fa-solid fa-chevron-down"></i></div>
+            </div>
+            <div class="faq-answer">
+                <p>Se non sei loggato, clicca su "Password dimenticata" nella pagina di login. Se sei già dentro, vai nel tuo Profilo in alto a destra e seleziona "Sicurezza".</p>
+            </div>
+        </div>
+
+        <!-- FAQ 2 -->
+        <div class="faq-card">
+            <div class="faq-header" onclick="toggleFaq(this)">
+                <h4 class="faq-question">Come aggiungo un nuovo utente alla mia azienda?</h4>
+                <div class="expand-icon"><i class="fa-solid fa-chevron-down"></i></div>
+            </div>
+            <div class="faq-answer">
+                <p>Devi avere il ruolo di Responsabile o Admin. Vai nel modulo <strong>GDU (Gestione Utenti)</strong> e clicca sul pulsante "Nuovo Utente" in alto a destra.</p>
+            </div>
+        </div>
+
+        <!-- FAQ 3 -->
+        <div class="faq-card">
+            <div class="faq-header" onclick="toggleFaq(this)">
+                <h4 class="faq-question">Quali sono i requisiti di sistema?</h4>
+                <div class="expand-icon"><i class="fa-solid fa-chevron-down"></i></div>
+            </div>
+            <div class="faq-answer">
+                <p>ModuLink è una web-app cloud. Ti basta un browser moderno (Chrome, Firefox, Edge o Safari) e una connessione internet stabile. Non serve installare nulla.</p>
+            </div>
+        </div>
+
+        <!-- FAQ 4 -->
+        <div class="faq-card">
+            <div class="faq-header" onclick="toggleFaq(this)">
+                <h4 class="faq-question">Posso cambiare il logo dell'azienda?</h4>
+                <div class="expand-icon"><i class="fa-solid fa-chevron-down"></i></div>
+            </div>
+            <div class="faq-answer">
+                <p>Certamente. Contatta il supporto tecnico tramite il modulo qui sotto per richiedere l'aggiornamento del brand aziendale.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- SEZIONE FORM CONTATTO -->
+    <div id="contactForm" class="contact-form-wrapper">
+        <div class="form-header">
+            <h3><i class="fa-regular fa-paper-plane"></i> Contatta l'Assistenza</h3>
+            <p>Compila il modulo sottostante. I nostri operatori rispondono solitamente entro 24 ore.</p>
+        </div>
+
+        <!-- L'evento onsubmit chiama la funzione JS invece di inviare davvero i dati -->
+        <form id="supportForm" onsubmit="sendTicket(event)">
+            
+            <div class="form-group">
+                <label for="email" class="form-label">La tua Email</label>
+                <input type="email" id="email" class="form-control" placeholder="nome@azienda.it" required>
+            </div>
+
+            <div class="form-group">
+                <label for="category" class="form-label">Categoria Problema</label>
+                <select id="category" class="form-control" required>
+                    <option value="" disabled selected>Seleziona una categoria...</option>
+                    <option value="tech">Problema Tecnico / Errore</option>
+                    <option value="billing">Fatturazione e Pagamenti</option>
+                    <option value="account">Gestione Account e Accessi</option>
+                    <option value="feature">Richiesta Nuova Funzionalità</option>
+                    <option value="other">Altro</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="message" class="form-label">Descrizione del Problema</label>
+                <textarea id="message" class="form-control" placeholder="Descrivi qui i dettagli..." required></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-solid" style="width: 100%; padding: 15px; font-size: 1.1rem;">
+                Invia Richiesta
+            </button>
+
+        </form>
+
+        <!-- Messaggio di successo (nascosto inizialmente) -->
+        <div id="successBanner" class="success-message">
+            <i class="fa-solid fa-circle-check"></i> Messaggio inviato con successo! Ti risponderemo presto.
+        </div>
+    </div>
+
+</div>
+
+<!-- Footer -->
+<footer th:replace="~{fragments/footer :: mainFooter}"></footer>
+
+<!-- JAVASCRIPT -->
+<script>
+    // Funzione per aprire/chiudere le FAQ
+    function toggleFaq(element) {
+        const card = element.parentElement;
+        card.classList.toggle('active');
+    }
+
+    // Funzione per simulare l'invio del form
+    function sendTicket(event) {
+        event.preventDefault(); // Blocca il ricaricamento della pagina
+
+        // Simuliamo un caricamento (opzionale, ma carino)
+        const btn = event.target.querySelector('button');
+        const originalText = btn.innerText;
+        btn.innerText = "Invio in corso...";
+        btn.disabled = true;
+
+        setTimeout(() => {
+            // Nascondi il form
+            document.getElementById('supportForm').style.display = 'none';
+            document.querySelector('.form-header p').style.display = 'none';
+            
+            // Mostra il messaggio di successo
+            document.getElementById('successBanner').style.display = 'block';
+            
+            // Scrolla leggermente per mostrare il messaggio
+            document.getElementById('contactForm').scrollIntoView({behavior: 'smooth'});
+        }, 1500); // Aspetta 1.5 secondi per realismo
+    }
+</script>
+
+</body>
+</html>
