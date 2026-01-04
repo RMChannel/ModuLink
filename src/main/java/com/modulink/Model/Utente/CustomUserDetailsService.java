@@ -3,7 +3,6 @@ package com.modulink.Model.Utente;
 import com.modulink.Model.Azienda.AziendaEntity;
 import com.modulink.Model.Azienda.AziendaRepository;
 import com.modulink.Model.Relazioni.Associazione.AssociazioneEntity;
-import com.modulink.Model.Relazioni.Associazione.AssociazioneRepository;
 import com.modulink.Model.Ruolo.RuoloEntity;
 import jakarta.transaction.Transactional;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -142,5 +141,10 @@ public class CustomUserDetailsService implements UserDetailsService {
             }
         }
         userRepository.delete(utente);
+    }
+
+    @Transactional
+    public void aggiornaUtente(UtenteEntity utente) {
+        userRepository.save(utente);
     }
 }

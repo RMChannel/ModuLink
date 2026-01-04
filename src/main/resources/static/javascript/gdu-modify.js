@@ -9,6 +9,7 @@ function openModifyModal(button) {
     document.getElementById('modifyNome').value = nome;
     document.getElementById('modifyCognome').value = cognome;
     document.getElementById('modifyEmail').value = email;
+    document.getElementById('oldModifyMail').value = email;
     document.getElementById('modifyTelefono').value = telefono || '';
 
     // Reset password fields
