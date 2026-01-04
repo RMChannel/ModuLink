@@ -2,13 +2,16 @@ package com.modulink.Model.Utente;
 
 import com.modulink.Model.Azienda.AziendaEntity;
 import com.modulink.Model.Azienda.AziendaRepository;
+import com.modulink.Model.Relazioni.Associazione.AssociazioneEntity;
 import com.modulink.Model.Relazioni.Associazione.AssociazioneRepository;
+import com.modulink.Model.Ruolo.RuoloEntity;
 import jakarta.transaction.Transactional;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -43,7 +46,6 @@ public class CustomUserDetailsService implements UserDetailsService {
      * Necessario per associare correttamente l'utente al suo contesto aziendale.
      */
     private final AziendaRepository aziendaRepository;
-    private final AssociazioneRepository associazioneRepository;
 
     /**
      * Costruttore per l'iniezione delle dipendenze (Dependency Injection).
@@ -54,10 +56,9 @@ public class CustomUserDetailsService implements UserDetailsService {
      * @param userRepository    L'istanza del repository Utente gestita dal container.
      * @param aziendaRepository L'istanza del repository Azienda gestita dal container.
      */
-    public CustomUserDetailsService(UserRepository userRepository, AziendaRepository aziendaRepository, AssociazioneRepository associazioneRepository) {
+    public CustomUserDetailsService(UserRepository userRepository, AziendaRepository aziendaRepository) {
         this.userRepository = userRepository;
         this.aziendaRepository = aziendaRepository;
-        this.associazioneRepository = associazioneRepository;
     }
 
     /**
@@ -128,8 +129,18 @@ public class CustomUserDetailsService implements UserDetailsService {
         return userRepository.getAllByAziendaIs(aziendaEntity);
     }
 
+    @Transactional
     public void rimuoviUtente(UtenteEntity utente) {
-        associazioneRepository.removeAllByUtente(utente);
+        // Disaccoppia le associazioni dai ruoli per mantenere la coerenza del grafo oggetti
+        if (utente.getAssociazioni() != null) {
+            List<AssociazioneEntity> associazioni = new ArrayList<>(utente.getAssociazioni());
+            for (AssociazioneEntity assoc : associazioni) {
+                RuoloEntity ruolo = assoc.getRuolo();
+                if (ruolo != null) {
+                    ruolo.getAssociazioni().remove(assoc);
+                }
+            }
+        }
         userRepository.delete(utente);
     }
 }
