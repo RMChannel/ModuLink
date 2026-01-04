@@ -1,0 +1,70 @@
+/* =========================================
+   GDU MODAL STYLES
+   ========================================= */
+
+.gdu-modal .modal-content {
+    background-color: var(--bg-white);
+    border: 1px solid var(--border-color);
+    color: var(--text-body);
+    box-shadow: var(--shadow-card-hover);
+    border-radius: 12px;
+}
+
+.gdu-modal .modal-header {
+    border-bottom: 1px solid var(--border-color-light);
+}
+
+.gdu-modal .modal-title {
+    color: var(--text-heading);
+    font-weight: 600;
+}
+
+.gdu-modal .modal-body {
+    background-color: var(--bg-white); /* Ensures consistency */
+}
+
+.gdu-modal .modal-footer {
+    border-top: 1px solid var(--border-color-light);
+}
+
+.gdu-modal .form-label {
+    color: var(--text-heading);
+    font-weight: 500;
+}
+
+.gdu-modal .form-control {
+    background-color: var(--bg-body);
+    border-color: var(--border-color);
+    color: var(--text-body);
+}
+
+.gdu-modal .form-control:focus {
+    background-color: var(--bg-white);
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 0.25rem var(--border-focus);
+    color: var(--text-body);
+}
+
+.gdu-modal .text-danger-custom {
+    color: var(--text-danger) !important;
+}
+
+.gdu-modal .btn-confirm-delete {
+    background-color: var(--text-danger);
+    border-color: var(--text-danger);
+    color: #fff;
+}
+.gdu-modal .btn-confirm-delete:hover:not(:disabled) {
+    background-color: var(--text-danger-dark);
+    border-color: var(--text-danger-dark);
+}
+
+.gdu-modal .btn-primary-custom {
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
+    color: #fff;
+}
+.gdu-modal .btn-primary-custom:hover {
+    background-color: var(--color-primary-dark);
+    border-color: var(--color-primary-dark);
+}
