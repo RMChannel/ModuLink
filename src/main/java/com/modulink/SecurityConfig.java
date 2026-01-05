@@ -29,7 +29,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable()) // Per semplicità, ma considera di abilitarlo in produzione
                 .authorizeHttpRequests(auth -> auth
                         // Permetti l'accesso alle risorse statiche e alle pagine pubbliche
-                        .requestMatchers("/", "/login", "/register/**","/register-utente", "/css/**", "/photo/**", "/favicon.ico","/dashboard","/contactus", "/privacy", "/termini").permitAll()
+                        .requestMatchers("/", "/login", "/register/**","/register-utente", "/css/**", "/photo/**", "/favicon.ico","/dashboard","/contactus", "/privacy", "/termini", "/forgot-password", "/resend-otp", "/confirm-new-password").permitAll()
                         // Richiedi l'autenticazione per qualsiasi altra richiesta
                         .anyRequest().authenticated()
                 )
