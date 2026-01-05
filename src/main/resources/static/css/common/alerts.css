@@ -1,0 +1,103 @@
+/* =========================================
+   ALERT / TOAST NOTIFICATIONS
+   ========================================= */
+
+.floating-alert-container {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1060; /* Higher than modal backdrops */
+    width: auto;
+    max-width: 90%;
+    pointer-events: none; /* Let clicks pass through empty space */
+}
+
+.floating-alert {
+    background-color: var(--bg-white);
+    color: var(--text-body);
+    border: 1px solid var(--border-color);
+    border-left: 5px solid var(--color-primary); /* Default accent */
+    border-radius: 12px;
+    padding: 12px 20px;
+    margin-bottom: 10px;
+    box-shadow: var(--shadow-card-hover);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    pointer-events: auto;
+    animation: slideDownFade 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    backdrop-filter: blur(8px);
+}
+
+.floating-alert.alert-danger {
+    border-left-color: var(--text-danger);
+    background-color: var(--bg-alert-danger); /* Optional: tint background */
+    color: var(--text-heading);
+}
+
+.floating-alert.alert-success {
+    border-left-color: #10b981; /* Emerald 500 */
+    background-color: var(--bg-body);
+}
+
+.floating-alert-icon {
+    font-size: 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.floating-alert.alert-danger .floating-alert-icon {
+    color: var(--text-danger);
+}
+
+.floating-alert.alert-success .floating-alert-icon {
+    color: #10b981;
+}
+
+.floating-alert-content {
+    font-weight: 500;
+    font-size: 0.95rem;
+}
+
+.floating-alert-close {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: 1.1rem;
+    padding: 0;
+    margin-left: 8px;
+    transition: color 0.2s;
+}
+
+.floating-alert-close:hover {
+    color: var(--text-body);
+}
+
+@keyframes slideDownFade {
+    0% {
+        opacity: 0;
+        transform: translateY(-20px) scale(0.95);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes fadeOut {
+    0% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    100% {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+}
+
+.floating-alert.fading-out {
+    animation: fadeOut 0.5s forwards;
+}

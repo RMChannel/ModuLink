@@ -3,6 +3,7 @@ package com.modulink.Model.Utente;
 import com.modulink.Model.Azienda.AziendaEntity;
 import com.modulink.Model.Ruolo.RuoloEntity;
 import com.modulink.Model.Relazioni.Associazione.AssociazioneEntity;
+import com.modulink.Model.Ruolo.RuoloService;
 import jakarta.persistence.*;
 
 import java.util.HashSet;
@@ -310,5 +311,16 @@ public class UtenteEntity {
     public void addRuolo(RuoloEntity ruolo) {
         AssociazioneEntity assoc = new AssociazioneEntity(this, ruolo);
         this.associazioni.add(assoc);
+    }
+
+    public void rimuoviRuolo(RuoloEntity ruolo) {
+        if(associazioni!=null) {
+            for(AssociazioneEntity associazione:associazioni) {
+                if(associazione.getId_ruolo()==ruolo.getId_ruolo()) {
+                    ruolo.getAssociazioni().remove(associazione);
+                    return;
+                }
+            }
+        }
     }
 }

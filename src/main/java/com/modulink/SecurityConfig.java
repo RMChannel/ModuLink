@@ -41,7 +41,7 @@ public class SecurityConfig {
                         // Pagina di atterraggio dopo un login riuscito
                         .defaultSuccessUrl("/dashboard", true)
                         //Pagina login con errore
-                        .failureUrl("/login?error")
+                        .failureUrl("/login?error=true&message=Credenziali+non+valide")
                         // Permetti a tutti di accedere alla pagina di login
                         .permitAll()
                 )

@@ -10,12 +10,16 @@
     <link rel="stylesheet" th:href="@{/css/user/dashboard-layout.css}">
     <link rel="stylesheet" th:href="@{/css/moduli/GDU/gdu.css}">
     <link rel="stylesheet" th:href="@{/css/moduli/GDU/gdu-modals.css}">
+    <link rel="stylesheet" th:href="@{/css/common/alerts.css}">
     <script th:src="@{/javascript/theme.js}"></script>
 </head>
 <body>
 <div class="dashboard-wrapper">
     <!-- Sidebar Fragment -->
     <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+    
+    <!-- Alerts Fragment -->
+    <div th:replace="~{fragments/messages :: alerts}"></div>
 
     <!-- Main Content -->
     <div id="content">
@@ -58,7 +62,12 @@
                             </span>
                         </td>
                         <td class="text-end">
-                            <button class="btn btn-sm btn-outline-primary me-2" title="Modifica">
+                            <button class="btn btn-sm btn-outline-primary me-2" title="Modifica"
+                                    th:data-email="${utente.email}"
+                                    th:data-nome="${utente.nome}"
+                                    th:data-cognome="${utente.cognome}"
+                                    th:data-telefono="${utente.telefono}"
+                                    onclick="openModifyModal(this)">
                                 <i class="bi bi-pencil"></i>
                             </button>
                             <button class="btn btn-sm btn-outline-danger" title="Elimina"
@@ -100,7 +109,7 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary-custom" data-bs-dismiss="modal">Annulla</button>
                     <form th:action="@{/dashboard/gdu/remove-user}" method="post">
-                        <input type="hidden" name="email" id="deleteEmailInput">
+                        <input type="hidden" name="email" id="deleteEmailInput" placeholder="Inserisci il nome">
                         <button type="submit" class="btn btn-confirm-delete" id="confirmDeleteBtn" disabled>
                             Elimina Definitivamente
                         </button>
@@ -114,7 +123,7 @@
     <div class="modal fade gdu-modal" id="addUserModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
-                <form th:action="@{/dashboard/gdu/add-user}" method="post">
+                <form th:action="@{/dashboard/gdu/add-user}" th:object="${newUserForm}" method="post">
                     <div class="modal-header">
                         <h5 class="modal-title">Nuovo Utente</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -122,19 +131,23 @@
                     <div class="modal-body">
                         <div class="mb-3">
                             <label for="nome" class="form-label">Nome</label>
-                            <input type="text" class="form-control" id="nome" name="nome" required>
+                            <input type="text" class="form-control" id="nome" th:field="*{nome}" th:classappend="${#fields.hasErrors('nome')} ? 'is-invalid'" placeholder="Nome">
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('nome')}" th:errors="*{nome}"></div>
                         </div>
                         <div class="mb-3">
                             <label for="cognome" class="form-label">Cognome</label>
-                            <input type="text" class="form-control" id="cognome" name="cognome" required>
+                            <input type="text" class="form-control" id="cognome" th:field="*{cognome}" th:classappend="${#fields.hasErrors('cognome')} ? 'is-invalid'" placeholder="Rossi">
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('cognome')}" th:errors="*{cognome}"></div>
                         </div>
                         <div class="mb-3">
                             <label for="email" class="form-label">Email</label>
-                            <input type="email" class="form-control" id="email" name="email" required>
+                            <input type="email" class="form-control" id="email" th:field="*{email}" th:classappend="${#fields.hasErrors('email')} ? 'is-invalid'" placeholder="mario.rossi@email.com">
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
                         </div>
                         <div class="mb-3">
                             <label for="telefono" class="form-label">Telefono</label>
-                            <input type="tel" class="form-control" id="telefono" name="telefono">
+                            <input type="tel" class="form-control" id="telefono" th:field="*{telefono}" th:classappend="${#fields.hasErrors('telefono')} ? 'is-invalid'" placeholder="+39 3733676635">
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('telefono')}" th:errors="*{telefono}"></div>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -146,8 +159,83 @@
         </div>
     </div>
 
+    <!-- Modify User Modal -->
+    <div class="modal fade gdu-modal" id="modifyUserModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <form id="modifyUserForm" th:action="@{/dashboard/gdu/modify-user}" th:object="${editUserForm}" method="post">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Modifica Utente</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <!-- Identification field (old email) -->
+                        <input type="hidden" name="oldEmail" id="modifyOldEmail">
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="modifyNome" class="form-label">Nome</label>
+                                <input type="text" class="form-control" id="modifyNome" name="nome" th:value="*{nome}" th:classappend="${#fields.hasErrors('nome')} ? 'is-invalid'" required>
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('nome')}" th:errors="*{nome}"></div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="modifyCognome" class="form-label">Cognome</label>
+                                <input type="text" class="form-control" id="modifyCognome" name="cognome" th:value="*{cognome}" th:classappend="${#fields.hasErrors('cognome')} ? 'is-invalid'" required>
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('cognome')}" th:errors="*{cognome}"></div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="modifyEmail" class="form-label">Email</label>
+                            <input type="hidden" name="oldmail" id="oldModifyMail" th:value="*{oldmail}" required>
+                            <input type="email" class="form-control" id="modifyEmail" name="email" th:value="*{email}" th:classappend="${#fields.hasErrors('email')} ? 'is-invalid'" required>
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="modifyTelefono" class="form-label">Telefono</label>
+                            <input type="tel" class="form-control" id="modifyTelefono" name="telefono" th:value="*{telefono}" th:classappend="${#fields.hasErrors('telefono')} ? 'is-invalid'">
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('telefono')}" th:errors="*{telefono}"></div>
+                        </div>
+                        <hr class="my-4" style="border-color: var(--border-color-light);">
+                        <p class="text-muted small mb-3">Lascia la password vuota se non desideri cambiarla.</p>
+                        <div class="mb-3">
+                            <label for="modifyPassword" class="form-label">Nuova Password</label>
+                            <input type="password" class="form-control" id="modifyPassword" name="newPassword" th:value="*{newPassword}" th:classappend="${#fields.hasErrors('newPassword')} ? 'is-invalid'">
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('newPassword')}" th:errors="*{newPassword}"></div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="modifyConfirmPassword" class="form-label">Conferma Password</label>
+                            <input type="password" class="form-control" id="modifyConfirmPassword" name="confirmNewPassword" th:value="*{confirmNewPassword}" th:classappend="${#fields.hasErrors('confirmNewPassword')} ? 'is-invalid'">
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('confirmNewPassword')}" th:errors="*{confirmNewPassword}"></div>
+                            <div class="invalid-feedback">Le password non corrispondono.</div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary-custom" data-bs-dismiss="modal">Annulla</button>
+                        <button type="submit" class="btn btn-primary-custom">Salva Modifiche</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <script th:src="@{/javascript/gdu-delete.js}"></script>
     <script th:src="@{/javascript/gdu-add.js}"></script>
+    <script th:src="@{/javascript/gdu-modify.js}"></script>
+
+    <script th:if="${#fields.hasErrors('newUserForm.*')}">
+        document.addEventListener('DOMContentLoaded', function() {
+            var addUserModal = new bootstrap.Modal(document.getElementById('addUserModal'));
+            addUserModal.show();
+        });
+    </script>
+    
+    <script th:if="${#fields.hasErrors('editUserForm.*')}">
+        document.addEventListener('DOMContentLoaded', function() {
+            var modifyUserModal = new bootstrap.Modal(document.getElementById('modifyUserModal'));
+            modifyUserModal.show();
+        });
+    </script>
+
     <!-- Bootstrap JavaScript Bundle (include Popper) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script></body>
 </html>

@@ -59,6 +59,11 @@
     border-color: var(--text-danger-dark);
 }
 
+.gdu-modal .invalid-feedback {
+    color: var(--text-danger);
+    font-weight: 500;
+}
+
 .gdu-modal .btn-primary-custom {
     background-color: var(--color-primary);
     border-color: var(--color-primary);
