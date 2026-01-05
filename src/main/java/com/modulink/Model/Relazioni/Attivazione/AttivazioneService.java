@@ -33,8 +33,12 @@ public class AttivazioneService {
         List<AttivazioneEntity> attivazioni=new ArrayList<>();
 
         AttivazioneEntity attivazione1=new AttivazioneEntity(moduloRepository.getReferenceById(0),aziendaEntity);
-        attivazioni.add(new AttivazioneEntity(moduloRepository.getReferenceById(1),aziendaEntity));
+        AttivazioneEntity attivazione2=new AttivazioneEntity(moduloRepository.getReferenceById(1),aziendaEntity);
+        AttivazioneEntity attivazione3=new AttivazioneEntity(moduloRepository.getReferenceById(2),aziendaEntity);
+
         attivazioni.add(attivazione1);
+        attivazioni.add(attivazione2);
+        attivazioni.add(attivazione3);
         attivazioneRepository.saveAll(attivazioni);
     }
 
