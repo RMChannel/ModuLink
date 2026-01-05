@@ -4,6 +4,7 @@ import com.modulink.Model.Azienda.AziendaEntity;
 import com.modulink.Model.Azienda.AziendaRepository;
 import com.modulink.Model.Relazioni.Associazione.AssociazioneEntity;
 import com.modulink.Model.Ruolo.RuoloEntity;
+import com.modulink.Model.Ruolo.RuoloService;
 import jakarta.transaction.Transactional;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * Servizio core per la gestione dell'autenticazione e registrazione utenti.
@@ -46,6 +48,8 @@ public class CustomUserDetailsService implements UserDetailsService {
      */
     private final AziendaRepository aziendaRepository;
 
+    private final RuoloService ruoloService;
+
     /**
      * Costruttore per l'iniezione delle dipendenze (Dependency Injection).
      * <p>
@@ -55,9 +59,10 @@ public class CustomUserDetailsService implements UserDetailsService {
      * @param userRepository    L'istanza del repository Utente gestita dal container.
      * @param aziendaRepository L'istanza del repository Azienda gestita dal container.
      */
-    public CustomUserDetailsService(UserRepository userRepository, AziendaRepository aziendaRepository) {
+    public CustomUserDetailsService(UserRepository userRepository, AziendaRepository aziendaRepository, RuoloService ruoloService) {
         this.userRepository = userRepository;
         this.aziendaRepository = aziendaRepository;
+        this.ruoloService = ruoloService;
     }
 
     /**
@@ -146,5 +151,10 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Transactional
     public void aggiornaUtente(UtenteEntity utente) {
         userRepository.save(utente);
+    }
+
+    public boolean isThisaNewUtente(UtenteEntity utente) {
+        Set<RuoloEntity> ruoli=utente.getRuoli();
+        return  ruoli.contains(ruoloService.getNewUser(utente.getAzienda()));
     }
 }

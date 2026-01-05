@@ -1,5 +1,6 @@
 package com.modulink.Controller.GDU;
 
+import com.modulink.Alert;
 import com.modulink.Model.Azienda.AziendaEntity;
 import com.modulink.Model.Modulo.ModuloEntity;
 import com.modulink.Model.Modulo.ModuloService;
@@ -231,6 +232,39 @@ public class GDUController {
             model.addAttribute("message","L'utente "+toUpdateUser.getNome()+" "+toUpdateUser.getCognome()+" è stato aggiornato con successo");
             model.addAttribute("utenti", customUserDetailsService.getAllByAzienda(utente.getAzienda()));
             return "moduli/gdu/GestioneUtenti";
+        }
+        else {
+            return "redirect:/";
+        }
+    }
+
+    @PostMapping("dashboard/gdu/firstlogin")
+    public String registerNewUser(Principal principal, Model model, @RequestParam String password, @RequestParam String confirmPassword) {
+        String emailLogged =  principal.getName();
+        Optional<UtenteEntity> utenteOpt = customUserDetailsService.findByEmail(emailLogged);
+        if(utenteOpt.isPresent()) {
+            UtenteEntity utente=utenteOpt.get();
+            if(!customUserDetailsService.isThisaNewUtente(utente)) {
+                return "redirect:/";
+            }
+            if(!password.equals(confirmPassword)) {
+                model.addAttribute("error",true);
+                model.addAttribute("message","Le password non coincidono, controlla e riprova");
+                model.addAttribute("utente",utente);
+                return "user/firstlogin";
+            }
+            else if(password.length()<8 || password.length()>50) {
+                model.addAttribute("error",true);
+                model.addAttribute("message","La password dev'essere compresa tra gli 8 e i 50 caratteri");
+                model.addAttribute("utente",utente);
+                return "user/firstlogin";
+            }
+            utente.setHash_password(PasswordUtility.hashPassword(password));
+
+            utente.rimuoviRuolo(ruoloService.getNewUser(utente.getAzienda()));
+            utente.addRuolo(ruoloService.getStandardUser(utente.getAzienda()));
+            customUserDetailsService.aggiornaUtente(utente);
+            return "redirect:/dashboard"+ Alert.success("Registrazione effettuata correttamente, benvenuto in Modulink in collab. con "+utente.getAzienda().getNome());
         }
         else {
             return "redirect:/";

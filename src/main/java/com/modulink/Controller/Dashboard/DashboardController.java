@@ -34,19 +34,15 @@ public class DashboardController {
         Optional<UtenteEntity> utenteOpt = customUserDetailsService.findByEmail(email);
         if (utenteOpt.isPresent()) {
             UtenteEntity utente = utenteOpt.get();
-
-            //List<ModuloEntity> moduli;
-            //moduli = affiliazioneRepository.findModuliByRuolo(utente.getRuoli().stream().findFirst().get());
-
-
-            List<ModuloEntity> moduli = moduloService.findModuliByUtente(utente);
-
-            //per non far gestire al th le eccezioni perchè se succede è una bestemia
-            model.addAttribute("moduli", moduli != null ? moduli : List.of());
             model.addAttribute("utente", utente);
-
-
-            return "user/dashboard";
+            if(customUserDetailsService.isThisaNewUtente(utente)) { //Se è un nuovo utente allora viene portato alla schermata del 1°login
+                return "user/firstlogin";
+            }
+            else { //Altrimenti viene caricata la dashboard normalmente
+                List<ModuloEntity> moduli = moduloService.findModuliByUtente(utente);
+                model.addAttribute("moduli", moduli != null ? moduli : List.of());
+                return "user/dashboard";
+            }
         } else {
             return "redirect:/logout";
         }
