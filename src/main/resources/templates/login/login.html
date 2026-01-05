@@ -7,9 +7,11 @@
     <link rel="stylesheet" th:href="@{/css/main.css}">
     <link rel="stylesheet" th:href="@{/css/login.css}">
     <link rel="icon" type="image/x-icon" th:href="@{/favicon.ico}">
+    <link rel="stylesheet" th:href="@{/css/common/alerts.css}">
 </head>
-<header th:replace="~{fragments/header :: mainHeader}"></header>
 <body>
+<header th:replace="~{fragments/header :: mainHeader}"></header>
+<div th:replace="~{fragments/messages :: alerts}"></div>
 <div class="login-container">
     <div class="login-box">
         <div class="logo-container">
