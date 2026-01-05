@@ -59,7 +59,9 @@ public class DataInitializerService {
         associazioneRepository.save(associazione);
 
         ModuloEntity modulo = new ModuloEntity(0, "Gestione Utenti", "Permette la gestione di tutti gli utenti della propria azienda", "/dashboard/gdu/", "bi bi-person-lines-fill");
+        ModuloEntity modulo1 = new ModuloEntity(1,"Store Moduli", "Permette di aquistare nuovi moduli per la propria azienda", "dashboard/store/", "bi bi-cart-dash");
         modulo = moduloRepository.save(modulo);
+        modulo1 = moduloRepository.save(modulo1);
 
         // Ora azienda e modulo sono MANAGED nella stessa transazione
         AttivazioneEntity attivazione = new AttivazioneEntity(modulo, azienda);
