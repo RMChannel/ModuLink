@@ -252,7 +252,7 @@ public class RegisterController {
 
                 //La sessione viene svuotata visto che l'azienda è stata registrata correttamente e anche il responsabile
                 sessionStatus.setComplete();
-                return "redirect:/login";
+                return "redirect:/login?success&message=Registrazione effettuata con successo!! Ora effettua il Login";
             }
         }
     }
