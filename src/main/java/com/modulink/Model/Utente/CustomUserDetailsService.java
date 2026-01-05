@@ -157,4 +157,14 @@ public class CustomUserDetailsService implements UserDetailsService {
         Set<RuoloEntity> ruoli=utente.getRuoli();
         return  ruoli.contains(ruoloService.getNewUser(utente.getAzienda()));
     }
+
+    public List<UtenteEntity> getAllUsersFromIDs(List<Integer> ids, int id_azienda) throws UserNotFoundException {
+        List<UtenteEntity> utenti=new ArrayList<>();
+        for(int id:ids) {
+            Optional<UtenteEntity> utenteOpt=userRepository.findById(new UtenteID(id,id_azienda));
+            if(utenteOpt.isEmpty()) throw new UserNotFoundException();
+            else utenti.add(utenteOpt.get());
+        }
+        return utenti;
+    }
 }
