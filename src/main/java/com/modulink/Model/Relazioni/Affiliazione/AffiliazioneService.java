@@ -20,8 +20,10 @@ public class AffiliazioneService {
         List<AffiliazioneEntity> affiliazioni=new ArrayList<>();
 
         AffiliazioneEntity affiliazione1=new AffiliazioneEntity(0,0,aziendaEntity.getId_azienda());
+        AffiliazioneEntity affiliazione2=new AffiliazioneEntity(0,1,aziendaEntity.getId_azienda());
 
         affiliazioni.add(affiliazione1);
+        affiliazioni.add(affiliazione2);
         affiliazioneRepository.saveAll(affiliazioni);
     }
 }

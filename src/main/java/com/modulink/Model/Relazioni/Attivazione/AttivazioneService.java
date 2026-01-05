@@ -23,8 +23,10 @@ public class AttivazioneService {
         List<AttivazioneEntity> attivazioni=new ArrayList<>();
 
         AttivazioneEntity attivazione1=new AttivazioneEntity(moduloRepository.getReferenceById(0),aziendaEntity);
+        AttivazioneEntity attivazione2=new AttivazioneEntity(moduloRepository.getReferenceById(1),aziendaEntity);
 
         attivazioni.add(attivazione1);
+        attivazioni.add(attivazione2);
         attivazioneRepository.saveAll(attivazioni);
     }
 }
