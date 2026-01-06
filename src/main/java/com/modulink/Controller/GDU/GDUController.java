@@ -54,15 +54,11 @@ public class GDUController extends ModuloController {
 
     @GetMapping({"dashboard/gdu/","dashboard/gdu"})
     public String dashboardDispatcher(Principal principal, Model model, @ModelAttribute NewUserForm newUserForm, @ModelAttribute EditUserForm editUserForm) {
-        if (principal == null) {
-            return "redirect:/";
-        }
         String email =  principal.getName();
         Optional<UtenteEntity> utenteOpt = customUserDetailsService.findByEmail(email);
         if (isAccessibleModulo(utenteOpt)) {
             UtenteEntity utente = utenteOpt.get();
             List<ModuloEntity> moduli = moduloService.findModuliByUtente(utente);
-            //per non far gestire al th le eccezioni perchè se succede è una bestemia
             model.addAttribute("moduli", moduli != null ? moduli : List.of());
             model.addAttribute("utente", utente);
             model.addAttribute("utenti", customUserDetailsService.getAllByAzienda(utente.getAzienda()));
