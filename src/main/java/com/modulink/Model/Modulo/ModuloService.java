@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class ModuloService {
@@ -40,12 +42,30 @@ public class ModuloService {
     @Transactional
     public void updateModuloAffiliations(AziendaEntity azienda, int idModulo, List<RuoloEntity> ruoli) {
         ModuloEntity modulo = getModuloById(idModulo);
-        modulo.getAffiliazioni().removeAll(affiliazioneService.findAllByAttivazione(new AttivazioneEntity(modulo,azienda)));
-        for(RuoloEntity ruolo:ruoli) {
-            AffiliazioneEntity affiliazione = new AffiliazioneEntity(ruolo.getId_ruolo(),idModulo,azienda.getId_azienda());
-            affiliazione.setRuolo(ruolo);
-            affiliazione.setAttivazione(attivazioneService.getAttivazioneById(new AttivazioneID(modulo,azienda)));
-            modulo.getAffiliazioni().add(affiliazione);
+
+        List<AffiliazioneEntity> existingAffiliations = affiliazioneService.findAllByAttivazione(new AttivazioneEntity(modulo, azienda));
+
+        Set<Integer> existingRoleIds = existingAffiliations.stream()
+                .map(AffiliazioneEntity::getId_ruolo)
+                .collect(Collectors.toSet());
+
+        Set<Integer> targetRoleIds = ruoli.stream()
+                .map(RuoloEntity::getId_ruolo)
+                .collect(Collectors.toSet());
+
+        List<AffiliazioneEntity> toRemove = existingAffiliations.stream()
+                .filter(a -> !targetRoleIds.contains(a.getId_ruolo()))
+                .collect(Collectors.toList());
+
+        modulo.getAffiliazioni().removeAll(toRemove);
+
+        for (RuoloEntity ruolo : ruoli) {
+            if (!existingRoleIds.contains(ruolo.getId_ruolo())) {
+                AffiliazioneEntity affiliazione = new AffiliazioneEntity(ruolo.getId_ruolo(), idModulo, azienda.getId_azienda());
+                affiliazione.setRuolo(ruolo);
+                affiliazione.setAttivazione(attivazioneService.getAttivazioneById(new AttivazioneID(modulo, azienda)));
+                modulo.getAffiliazioni().add(affiliazione);
+            }
         }
         moduloRepository.save(modulo);
     }

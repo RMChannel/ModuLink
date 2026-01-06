@@ -25,7 +25,7 @@ public class StoreController extends ModuloController {
     private final ModuloService moduloService;
 
     public StoreController(CustomUserDetailsService customUserDetailsService, AttivazioneService attivazioneService, ModuloService moduloService) {
-        super(moduloService,2);
+        super(moduloService,3);
         this.customUserDetailsService = customUserDetailsService;
         this.attivazioneService = attivazioneService;
         this.moduloService = moduloService;

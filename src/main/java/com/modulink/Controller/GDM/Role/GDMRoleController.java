@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.security.Principal;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,7 +26,7 @@ public class GDMRoleController extends ModuloController {
     private final RuoloService ruoloService;
 
     public GDMRoleController(CustomUserDetailsService customUserDetailsService, ModuloService moduloService, RuoloService ruoloService) {
-        super(moduloService,3);
+        super(moduloService,2);
         this.customUserDetailsService = customUserDetailsService;
         this.moduloService = moduloService;
         this.ruoloService = ruoloService;
