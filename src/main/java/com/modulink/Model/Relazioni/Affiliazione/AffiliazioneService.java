@@ -1,6 +1,7 @@
 package com.modulink.Model.Relazioni.Affiliazione;
 
 import com.modulink.Model.Azienda.AziendaEntity;
+import com.modulink.Model.Relazioni.Attivazione.AttivazioneEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,5 +26,9 @@ public class AffiliazioneService {
         affiliazioni.add(new AffiliazioneEntity(0,3,aziendaEntity.getId_azienda()));
 
         affiliazioneRepository.saveAll(affiliazioni);
+    }
+
+    public List<AffiliazioneEntity> findAllByAttivazione(AttivazioneEntity attivazione) {
+        return affiliazioneRepository.findAllByAttivazione(attivazione);
     }
 }

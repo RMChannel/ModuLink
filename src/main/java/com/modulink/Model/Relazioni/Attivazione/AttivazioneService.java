@@ -28,6 +28,10 @@ public class AttivazioneService {
         this.ruoloService=ruoloService;
     }
 
+    public AttivazioneEntity getAttivazioneById(AttivazioneID attivazioneID) {
+        return attivazioneRepository.findById(attivazioneID).orElseThrow(() -> new IllegalArgumentException("L'attivazione non è stata trovata"));
+    }
+
     @Transactional
     public void attivazioneDefault(AziendaEntity aziendaEntity) {
         List<AttivazioneEntity> attivazioni=new ArrayList<>();
