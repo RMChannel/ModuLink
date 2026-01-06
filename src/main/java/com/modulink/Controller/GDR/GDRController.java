@@ -1,5 +1,6 @@
 package com.modulink.Controller.GDR;
 
+import com.modulink.Controller.ModuloController;
 import com.modulink.Model.Modulo.ModuloEntity;
 import com.modulink.Model.Modulo.ModuloService;
 import com.modulink.Model.Relazioni.Associazione.AssociazioneService;
@@ -20,23 +21,18 @@ import java.util.Optional;
 import java.util.Collections;
 
 @Controller
-public class GDRController {
+public class GDRController extends ModuloController {
     private final ModuloService moduloService;
     private final CustomUserDetailsService customUserDetailsService;
     private final RuoloService ruoloService;
     private final AssociazioneService associazioneService;
 
     public GDRController(ModuloService moduloService, CustomUserDetailsService customUserDetailsService, RuoloService ruoloService, AssociazioneService associazioneService) {
+        super(moduloService, 1);
         this.moduloService = moduloService;
         this.customUserDetailsService = customUserDetailsService;
         this.ruoloService = ruoloService;
         this.associazioneService = associazioneService;
-    }
-
-    private boolean isAccessibleModulo(Optional<UtenteEntity> user) {
-        if(user.isEmpty()) return false;
-        UtenteEntity utente=user.get();
-        return moduloService.isAccessibleModulo(1, utente);
     }
 
     @GetMapping({"dashboard/gdr/","dashboard/gdr"})
