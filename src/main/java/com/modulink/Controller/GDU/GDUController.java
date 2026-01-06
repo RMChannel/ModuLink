@@ -264,6 +264,12 @@ public class GDUController {
             utente.rimuoviRuolo(ruoloService.getNewUser(utente.getAzienda()));
             utente.addRuolo(ruoloService.getStandardUser(utente.getAzienda()));
             customUserDetailsService.aggiornaUtente(utente);
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setFrom(senderEmail);
+            message.setTo(utente.getEmail());
+            message.setSubject("Registrazione effettuata con successo!");
+            message.setText("Salve "+utente.getNome()+" "+utente.getCognome()+", ti confermiamo che il tuo account è stato registrato con successo alla piattaforma Modulink in collab. con "+utente.getAzienda().getNome()+".\n\n\nOra puoi accedere alla tua dashboard, se non visualizi alcun modulo contatta il tuo responsabile.");
+            mailSender.send(message);
             return "redirect:/dashboard"+ Alert.success("Registrazione effettuata correttamente, benvenuto in Modulink in collab. con "+utente.getAzienda().getNome());
         }
         else {
