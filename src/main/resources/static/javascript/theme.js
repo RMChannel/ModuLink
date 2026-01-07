@@ -1,8 +1,33 @@
-// Recupera il tema salvato dal localStorage (default: light)
-const savedTheme = localStorage.getItem('theme') || 'light';
-// Applica il tema immediatamente prima del render della pagina
-document.documentElement.setAttribute('data-theme', savedTheme);
+// ========================================
+// THEME MANAGEMENT (Immediate Execution)
+// ========================================
 
+// Function to determine the preferred theme
+function getPreferredTheme() {
+    // 1. Check if user has manually saved a preference
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) {
+        return savedTheme;
+    }
+    // 2. Check system preference
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        return 'dark';
+    }
+    // 3. Default fallback
+    return 'light';
+}
+
+// Apply the theme immediately (prevents flash of wrong theme)
+document.documentElement.setAttribute('data-theme', getPreferredTheme());
+
+// Optional: Listen for system theme changes if user hasn't locked a preference
+if (window.matchMedia) {
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+        if (!localStorage.getItem('theme')) {
+            document.documentElement.setAttribute('data-theme', e.matches ? 'dark' : 'light');
+        }
+    });
+}
 
 document.addEventListener("DOMContentLoaded", function() {
 
@@ -11,16 +36,24 @@ document.addEventListener("DOMContentLoaded", function() {
     // ========================================
     const sidebar = document.getElementById('sidebar');
     const sidebarCollapseBtn = document.getElementById('sidebarCollapse');
-    const sidebarIcon = sidebarCollapseBtn ? sidebarCollapseBtn.querySelector('i') : null;
 
-    if (sidebar && sidebarCollapseBtn) {
-        // Logica Pin/Collapse
-        sidebarCollapseBtn.addEventListener('click', function () {
-            sidebar.classList.toggle('collapsed');
+    if (sidebar) {
+        // 1. Restore Sidebar State from LocalStorage
+        const isCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
+        if (isCollapsed) {
+            sidebar.classList.add('collapsed');
+        }
 
-            // Opzionale: Cambia icona se necessario (es. pin fill vs pin vuoto o frecce)
-            // Qui usiamo rotazione CSS
-        });
+        // 2. Toggle Logic
+        if (sidebarCollapseBtn) {
+            sidebarCollapseBtn.addEventListener('click', function () {
+                sidebar.classList.toggle('collapsed');
+                
+                // Save state to LocalStorage
+                const isNowCollapsed = sidebar.classList.contains('collapsed');
+                localStorage.setItem('sidebarCollapsed', isNowCollapsed);
+            });
+        }
     }
 
     // ========================================
