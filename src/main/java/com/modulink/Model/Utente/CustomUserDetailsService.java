@@ -6,6 +6,9 @@ import com.modulink.Model.Relazioni.Associazione.AssociazioneEntity;
 import com.modulink.Model.Ruolo.RuoloEntity;
 import com.modulink.Model.Ruolo.RuoloService;
 import jakarta.transaction.Transactional;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -79,6 +82,7 @@ public class CustomUserDetailsService implements UserDetailsService {
      * @return Un'istanza di {@link CustomUserDetails} contenente le credenziali e i ruoli dell'utente.
      * @throws UsernameNotFoundException Se nessun utente viene trovato con l'email fornita.
      */
+    @Cacheable(value = "userDetails", key = "#email")
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         UtenteEntity user = userRepository.findByEmail(email)
@@ -106,6 +110,10 @@ public class CustomUserDetailsService implements UserDetailsService {
      * @param idAzienda   L'identificativo dell'azienda a cui associare l'utente.
      * @throws IllegalArgumentException Se l'azienda con l'ID specificato non esiste, interrompendo la registrazione.
      */
+    @Caching(evict = {
+            @CacheEvict(value = {"users", "userDetails"}, key = "#nuovoUtente.email"),
+            @CacheEvict(value = "usersByAzienda", key = "#idAzienda")
+    })
     @Transactional
     public void registraUtente(UtenteEntity nuovoUtente, int idAzienda) {
         // 1. Recupera l'azienda con controllo di esistenza (Safety Check)
@@ -125,14 +133,20 @@ public class CustomUserDetailsService implements UserDetailsService {
         userRepository.save(nuovoUtente);
     }
 
+    @Cacheable(value = "users", key = "#email")
     public Optional<UtenteEntity> findByEmail(String email) {
         return userRepository.findByEmail(email);
     }
 
+    @Cacheable(value = "usersByAzienda", key = "#aziendaEntity.id_azienda")
     public List<UtenteEntity> getAllByAzienda(AziendaEntity aziendaEntity) {
         return userRepository.getAllByAziendaIs(aziendaEntity);
     }
 
+    @Caching(evict = {
+            @CacheEvict(value = {"users", "userDetails"}, key = "#utente.email"),
+            @CacheEvict(value = "usersByAzienda", key = "#utente.azienda.id_azienda")
+    })
     @Transactional
     public void rimuoviUtente(UtenteEntity utente) {
         // Disaccoppia le associazioni dai ruoli per mantenere la coerenza del grafo oggetti
@@ -148,6 +162,10 @@ public class CustomUserDetailsService implements UserDetailsService {
         userRepository.delete(utente);
     }
 
+    @Caching(evict = {
+            @CacheEvict(value = {"users", "userDetails"}, key = "#utente.email"),
+            @CacheEvict(value = "usersByAzienda", key = "#utente.azienda.id_azienda")
+    })
     @Transactional
     public void aggiornaUtente(UtenteEntity utente) {
         userRepository.save(utente);
@@ -166,9 +184,5 @@ public class CustomUserDetailsService implements UserDetailsService {
             else utenti.add(utenteOpt.get());
         }
         return utenti;
-    }
-
-    public List<UtenteEntity> getAllByAziendaIs(AziendaEntity azienda) {
-        return userRepository.getAllByAziendaIs(azienda);
     }
 }

@@ -16,10 +16,11 @@
     /* =========================================
        TEXT COLORS
        ========================================= */
-    --text-body: #9ba5b6;                 /* Main body text */
+    --text-body: #475569;                 /* Main body text - MIGLIORATO contrasto */
     --text-heading: #0f172a;              /* Headings */
-    --text-secondary: #475569;            /* Secondary text */
-    --text-muted: #64748b;                /* Muted / helper text */
+    --text-secondary: #64748b;            /* Secondary text */
+    --text-muted: #94a3b8;                /* Muted / helper text */
+    --text-placeholder: #94a3b8;          /* Placeholder text */
     --text-light: #ffffff;                /* Text on dark backgrounds */
     --text-danger: #dc2626;               /* Error text */
     --text-danger-dark: #991b1b;          /* Alert danger text */
@@ -28,10 +29,13 @@
        BACKGROUND COLORS
        ========================================= */
     --bg-body: #f1f5f9;                   /* Default body background */
-    --bg-body-alt: #eaeef3;               /* Login/Register body background */
+    --bg-body-alt: #e2e8f0;               /* Login/Register body background - MIGLIORATO contrasto */
     --bg-light: #ffffff;                  /* Cards / panels */
     --bg-white: #ffffff;
     --bg-dark-section: #0f172a;           /* Dark sections */
+    --bg-input: #ffffff;                  /* NUOVO: Background dedicato per input */
+    --bg-input-focus: #ffffff;            /* NUOVO: Background input in focus */
+    --bg-input-disabled: #f8fafc;         /* NUOVO: Background input disabilitato */
 
     /* Overlay Backgrounds */
     --bg-header-blur: rgba(255, 255, 255, 0.95);
@@ -44,13 +48,13 @@
     /* =========================================
        BORDER COLORS
        ========================================= */
-    --border-color: #d1d9e6;
-    --border-color-light: #e5eaf1;
-    --border-color-hover: #b6c2d2;
+    --border-color: #cbd5e1;              /* MIGLIORATO: più visibile */
+    --border-color-light: #e2e8f0;
+    --border-color-hover: #94a3b8;        /* MIGLIORATO: più visibile */
     --border-module-card: rgba(255, 255, 255, 0.1);
     --border-module-card-hover: rgba(255, 255, 255, 0.25);
     --border-alert-danger: #fecaca;
-    --border-focus: rgba(30, 94, 255, 0.2);
+    --border-focus: rgba(30, 94, 255, 0.3); /* MIGLIORATO: più visibile */
 
     /* =========================================
        GRADIENTS
@@ -64,6 +68,7 @@
     --shadow-btn-primary: 0 4px 12px rgba(30, 94, 255, 0.25);
     --shadow-card: 0 10px 30px rgba(0, 0, 0, 0.06);
     --shadow-card-hover: 0 14px 36px rgba(0, 0, 0, 0.1);
+    --shadow-input-focus: 0 0 0 3px var(--border-focus); /* NUOVO: shadow per focus */
 }
 
 /* =========================================
@@ -77,22 +82,26 @@
     /* =========================================
        TEXT COLORS
        ========================================= */
-    --text-body: #e5e7eb;                 /* Main text */
-    --text-heading: #f8fafc;              /* Headings */
-    --text-secondary: #c7d2fe;            /* Secondary text (bluish for hierarchy) */
-    --text-muted: #9ca3af;                /* Muted text */
+    --text-body: #cbd5e1;                 /* MIGLIORATO: contrasto AA+ */
+    --text-heading: #f1f5f9;              /* MIGLIORATO: contrasto migliore */
+    --text-secondary: #94a3b8;            /* MIGLIORATO: più leggibile */
+    --text-muted: #64748b;                /* Muted text */
+    --text-placeholder: #64748b;          /* NUOVO: Placeholder più visibile */
     --text-light: #ffffff;
-    --text-danger: #fca5a5;
-    --text-danger-dark: #fee2e2;
+    --text-danger: #f87171;               /* MIGLIORATO: più visibile su dark */
+    --text-danger-dark: #fca5a5;          /* MIGLIORATO: contrasto */
 
     /* =========================================
        BACKGROUND COLORS
        ========================================= */
     --bg-body: #020617;
-    --bg-body-alt: #020617;
-    --bg-light: #111827;                  /* Cards / panels */
-    --bg-white: #111827;
+    --bg-body-alt: #0f172a;               /* MIGLIORATO: distinto da bg-body */
+    --bg-light: #1e293b;                  /* MIGLIORATO: più chiaro per cards */
+    --bg-white: #1e293b;                  /* MIGLIORATO: consistency */
     --bg-dark-section: #020617;
+    --bg-input: #0f172a;                  /* NUOVO: Background scuro per input */
+    --bg-input-focus: #1e293b;            /* NUOVO: Più chiaro in focus */
+    --bg-input-disabled: #0a0f1e;         /* NUOVO: Disabilitato più scuro */
 
     /* Overlay Backgrounds */
     --bg-header-blur: rgba(2, 6, 23, 0.95);
@@ -100,22 +109,24 @@
     --bg-module-card-hover: rgba(255, 255, 255, 0.14);
 
     /* Alert Backgrounds */
-    --bg-alert-danger: #450a0a;
+    --bg-alert-danger: #7f1d1d;           /* MIGLIORATO: più visibile */
 
     /* =========================================
        BORDER COLORS
        ========================================= */
-    --border-color: #1f2937;
-    --border-color-light: #111827;
-    --border-color-hover: #334155;
+    --border-color: #334155;              /* MIGLIORATO: più visibile */
+    --border-color-light: #1e293b;
+    --border-color-hover: #475569;        /* MIGLIORATO: più visibile */
     --border-module-card: rgba(255, 255, 255, 0.15);
     --border-module-card-hover: rgba(255, 255, 255, 0.3);
-    --border-alert-danger: #7f1d1d;
-    --border-focus: rgba(96, 165, 250, 0.35);
+    --border-alert-danger: #991b1b;       /* MIGLIORATO: più visibile */
+    --border-focus: rgba(96, 165, 250, 0.5); /* MIGLIORATO: più visibile */
 
     /* =========================================
        PRIMARY BRAND ADJUSTMENTS
        ========================================= */
+    --color-primary: #3b82f6;             /* MIGLIORATO: più visibile su dark */
+    --color-primary-dark: #2563eb;
     --color-primary-light: #1e3a8a;
     --color-primary-lighter: #60a5fa;
 
@@ -131,4 +142,5 @@
     --shadow-card: 0 10px 30px rgba(0, 0, 0, 0.55);
     --shadow-card-hover: 0 14px 36px rgba(0, 0, 0, 0.75);
     --shadow-btn-primary: 0 4px 12px rgba(0, 0, 0, 0.6);
+    --shadow-input-focus: 0 0 0 3px var(--border-focus);
 }

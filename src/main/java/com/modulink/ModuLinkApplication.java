@@ -2,6 +2,7 @@ package com.modulink;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cache.annotation.EnableCaching;
 
 /**
  * Punto di ingresso (Entry Point) principale dell'applicazione backend <strong>ModuLink</strong>.
@@ -24,6 +25,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @version 1.0
  */
 @SpringBootApplication
+@EnableCaching
 public class ModuLinkApplication {
 
     /**

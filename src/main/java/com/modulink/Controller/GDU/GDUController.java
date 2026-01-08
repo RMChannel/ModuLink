@@ -1,6 +1,7 @@
 package com.modulink.Controller.GDU;
 
 import com.modulink.Alert;
+import com.modulink.Controller.ModuloController;
 import com.modulink.Model.Azienda.AziendaEntity;
 import com.modulink.Model.Modulo.ModuloEntity;
 import com.modulink.Model.Modulo.ModuloService;
@@ -33,7 +34,7 @@ import java.util.Random;
 
 
 @Controller
-public class GDUController {
+public class GDUController extends ModuloController {
     private final ModuloService moduloService;
     private final CustomUserDetailsService customUserDetailsService;
     private final RuoloService ruoloService;
@@ -42,6 +43,7 @@ public class GDUController {
     private final String senderEmail;
 
     public GDUController(ModuloService moduloService, CustomUserDetailsService customUserDetailsService, RuoloService ruoloService, AssociazioneService associazioneService, JavaMailSenderImpl mailSender, @Value("${spring.mail.username}") String senderEmail) {
+        super(moduloService, 0);
         this.moduloService=moduloService;
         this.customUserDetailsService=customUserDetailsService;
         this.ruoloService=ruoloService;
@@ -50,23 +52,13 @@ public class GDUController {
         this.senderEmail=senderEmail;
     }
 
-    private boolean isAccessibleModulo(Optional<UtenteEntity> user) {
-        if(user.isEmpty()) return false;
-        UtenteEntity utente=user.get();
-        return moduloService.isAccessibleModulo(0, utente);
-    }
-
     @GetMapping({"dashboard/gdu/","dashboard/gdu"})
     public String dashboardDispatcher(Principal principal, Model model, @ModelAttribute NewUserForm newUserForm, @ModelAttribute EditUserForm editUserForm) {
-        if (principal == null) {
-            return "redirect:/";
-        }
         String email =  principal.getName();
         Optional<UtenteEntity> utenteOpt = customUserDetailsService.findByEmail(email);
         if (isAccessibleModulo(utenteOpt)) {
             UtenteEntity utente = utenteOpt.get();
             List<ModuloEntity> moduli = moduloService.findModuliByUtente(utente);
-            //per non far gestire al th le eccezioni perchè se succede è una bestemia
             model.addAttribute("moduli", moduli != null ? moduli : List.of());
             model.addAttribute("utente", utente);
             model.addAttribute("utenti", customUserDetailsService.getAllByAzienda(utente.getAzienda()));
@@ -264,6 +256,12 @@ public class GDUController {
             utente.rimuoviRuolo(ruoloService.getNewUser(utente.getAzienda()));
             utente.addRuolo(ruoloService.getStandardUser(utente.getAzienda()));
             customUserDetailsService.aggiornaUtente(utente);
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setFrom(senderEmail);
+            message.setTo(utente.getEmail());
+            message.setSubject("Registrazione effettuata con successo!");
+            message.setText("Salve "+utente.getNome()+" "+utente.getCognome()+", ti confermiamo che il tuo account è stato registrato con successo alla piattaforma Modulink in collab. con "+utente.getAzienda().getNome()+".\n\n\nOra puoi accedere alla tua dashboard, se non visualizi alcun modulo contatta il tuo responsabile.");
+            mailSender.send(message);
             return "redirect:/dashboard"+ Alert.success("Registrazione effettuata correttamente, benvenuto in Modulink in collab. con "+utente.getAzienda().getNome());
         }
         else {

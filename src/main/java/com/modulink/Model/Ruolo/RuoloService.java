@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class RuoloService {
@@ -92,5 +93,15 @@ public class RuoloService {
     public RuoloEntity getRoleById(int idRole, AziendaEntity azienda) {
         return ruoloRepository.findById(new RuoloID(idRole, azienda.getId_azienda()))
                 .orElseThrow(() -> new IllegalArgumentException("Ruolo non trovato"));
+    }
+
+    public List<RuoloEntity> getAllRolesFromIds(List<Integer> ids, int id_azienda) throws RuoloNotFoundException {
+        List<RuoloEntity> ruoli=new ArrayList<>();
+        for(int id:ids) {
+            Optional<RuoloEntity> ruoloOpt=ruoloRepository.findById(new RuoloID(id,id_azienda));
+            if(ruoloOpt.isEmpty()) throw new RuoloNotFoundException();
+            else ruoli.add(ruoloOpt.get());
+        }
+        return ruoli;
     }
 }
