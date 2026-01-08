@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="it" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: mainHead(pageTitle='Piani e Pacchetti', additionalCss=${ {'/css/pricing.css'} })}">
+</head>
+<body>
+
+<header th:replace="~{fragments/header :: mainHeader}"></header>
+
+<div class="pricing-container">
+    <div class="page-header">
+        <h1 class="page-title">Scegli il piano perfetto per la tua azienda</h1>
+        <p class="page-subtitle">Semplice, trasparente e scalabile. Nessun costo nascosto.</p>
+    </div>
+
+    <!-- SWITCH TRIMESTRALE / ANNUALE -->
+    <div class="pricing-toggle">
+        <span>Trimestrale</span>
+        <label class="switch">
+            <input type="checkbox" id="pricingSwitch" onchange="updatePrices()">
+            <span class="slider"></span>
+        </label>
+        <span>Annuale <span class="save-badge">Risparmia 20%</span></span>
+    </div>
+
+    <div class="pricing-grid">
+        
+        <!-- CARD BASE -->
+        <div class="price-card">
+            <div class="plan-name">Base</div>
+            <!-- Data attributes per salvare i prezzi (prezzi totali per il periodo) -->
+            <div class="plan-price" id="price-base" data-qtr="87" data-yr="290">€87</div>
+            <span class="plan-period" id="period-base">/ trimestrale</span>
+            <div class="savings-text" id="save-base"></div> <!-- Vuoto se trimestrale -->
+
+            <ul class="features-list">
+                <li><i class="fa-solid fa-check"></i> Fino a 5 Utenti</li>
+                <li><i class="fa-solid fa-check"></i> Modulo GDU Base</li>
+                <li><i class="fa-solid fa-check"></i> Supporto Email</li>
+                <li class="disabled"><i class="fa-solid fa-xmark"></i> Gestione Ruoli Avanzata</li>
+                <li class="disabled"><i class="fa-solid fa-xmark"></i> Moduli Personalizzati</li>
+            </ul>
+
+            <button class="btn btn-outline" style="width: 100%;" onclick="openPaymentModal('Base')">Scegli Base</button>
+        </div>
+
+        <!-- CARD PLUS (Popolare) -->
+        <div class="price-card popular">
+            <div class="popular-badge">PIÙ VENDUTO</div>
+            <div class="plan-name">Plus</div>
+            <div class="plan-price" id="price-plus" data-qtr="177" data-yr="590">€177</div>
+            <span class="plan-period" id="period-plus">/ trimestrale</span>
+            <div class="savings-text" id="save-plus"></div>
+
+            <ul class="features-list">
+                <li><i class="fa-solid fa-check"></i> Fino a 20 Utenti</li>
+                <li><i class="fa-solid fa-check"></i> Modulo GDU + GDR</li>
+                <li><i class="fa-solid fa-check"></i> Dashboard Analytics</li>
+                <li><i class="fa-solid fa-check"></i> Supporto Prioritario</li>
+                <li class="disabled"><i class="fa-solid fa-xmark"></i> Accesso API</li>
+            </ul>
+
+            <button class="btn btn-solid" style="width: 100%;" onclick="openPaymentModal('Plus')">Scegli Plus</button>
+        </div>
+
+        <!-- CARD PRO -->
+        <div class="price-card">
+            <div class="plan-name">Pro</div>
+            <div class="plan-price" id="price-pro" data-qtr="297" data-yr="990">€297</div>
+            <span class="plan-period" id="period-pro">/ trimestrale</span>
+            <div class="savings-text" id="save-pro"></div>
+
+            <ul class="features-list">
+                <li><i class="fa-solid fa-check"></i> Utenti Illimitati</li>
+                <li><i class="fa-solid fa-check"></i> Suite Completa (All Modules)</li>
+                <li><i class="fa-solid fa-check"></i> Accesso API & Integrazioni</li>
+                <li><i class="fa-solid fa-check"></i> Account Manager Dedicato</li>
+                <li><i class="fa-solid fa-check"></i> Backup Orari</li>
+            </ul>
+
+            <button class="btn btn-outline" style="width: 100%;" onclick="openPaymentModal('Pro')">Scegli Pro</button>
+        </div>
+
+    </div>
+</div>
+
+<!-- ================= MODALE DI PAGAMENTO ================= -->
+<div id="paymentModal" class="payment-modal-overlay">
+    <div class="payment-card">
+        <div class="loader-overlay" id="paymentLoader">
+            <div class="spinner"></div>
+            <h4>Elaborazione Pagamento...</h4>
+            <p class="text-muted">Non chiudere la pagina.</p>
+        </div>
+
+        <div class="modal-header">
+            <h3>Completa l'acquisto: <span id="modalPlanName" class="text-primary">Piano</span></h3>
+            <button class="btn-close-modal" onclick="closePaymentModal()">&times;</button>
+        </div>
+
+        <div class="modal-body">
+            <div class="summary-row">
+                <span>Totale da pagare:</span>
+                <span class="total-amount" id="modalTotalAmount">€0,00</span>
+            </div>
+
+            <form onsubmit="processPayment(event)">
+                
+                <!-- Dati Carta -->
+                <h5 class="mb-3"><i class="fa-regular fa-credit-card"></i> Metodo di Pagamento</h5>
+                <div class="form-grid">
+                    <div class="full-width">
+                        <div class="form-group">
+                            <label>Intestatario Carta</label>
+                            <input type="text" class="form-control" placeholder="Mario Rossi" required>
+                        </div>
+                    </div>
+                    <div class="full-width">
+                        <div class="form-group">
+                            <label>Numero Carta</label>
+                            <input type="text" class="form-control" placeholder="0000 0000 0000 0000" maxlength="19" required>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="form-group">
+                            <label>Scadenza</label>
+                            <input type="text" class="form-control" placeholder="MM/AA" maxlength="5" required>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="form-group">
+                            <label>CVC</label>
+                            <input type="text" class="form-control" placeholder="123" maxlength="3" required>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Checkbox Fatturazione -->
+                <div class="form-check mb-3 mt-4">
+                    <input class="form-check-input" type="checkbox" id="billingCheck" onchange="toggleBilling()">
+                    <label class="form-check-label" for="billingCheck">
+                        Desidero ricevere fattura elettronica
+                    </label>
+                </div>
+
+                <!-- Dati Fatturazione (Nascosti) -->
+                <div id="billingFields" class="billing-section">
+                    <h5 class="mb-3"><i class="fa-solid fa-file-invoice"></i> Dati di Fatturazione</h5>
+                    <div class="form-grid">
+                        <div class="full-width">
+                            <div class="form-group">
+                                <label>Ragione Sociale / Nome Azienda</label>
+                                <input type="text" class="form-control billing-input">
+                            </div>
+                        </div>
+                        <div>
+                            <div class="form-group">
+                                <label>P.IVA</label>
+                                <input type="text" class="form-control billing-input" maxlength="11">
+                            </div>
+                        </div>
+                        <div>
+                            <div class="form-group">
+                                <label>Codice SDI / PEC</label>
+                                <input type="text" class="form-control billing-input">
+                            </div>
+                        </div>
+                        <div class="full-width">
+                            <div class="form-group">
+                                <label>Indirizzo Completo</label>
+                                <input type="text" class="form-control billing-input">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-grid mt-4">
+                    <button type="submit" class="btn btn-solid" style="padding: 15px; font-size: 1.1rem;">
+                        Paga Ora <i class="fa-solid fa-lock ms-2"></i>
+                    </button>
+                </div>
+                <div class="text-center mt-3">
+                    <small class="text-muted"><i class="fa-solid fa-shield-halved"></i> Pagamento sicuro crittografato SSL</small>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<footer th:replace="~{fragments/footer :: mainFooter}"></footer>
+
+<!-- JAVASCRIPT -->
+<script>
+    // 1. GESTIONE PREZZI (Trimestrale / Annuale)
+    function updatePrices() {
+        const isAnnual = document.getElementById('pricingSwitch').checked;
+        const plans = ['base', 'plus', 'pro'];
+
+        plans.forEach(plan => {
+            const priceEl = document.getElementById('price-' + plan);
+            const periodEl = document.getElementById('period-' + plan);
+            const saveEl = document.getElementById('save-' + plan);
+
+            const qtrPrice = parseInt(priceEl.getAttribute('data-qtr'));
+            const yrPrice = parseInt(priceEl.getAttribute('data-yr'));
+
+            if (isAnnual) {
+                // Calcola risparmio (Prezzo trimestrale * 4 - Prezzo annuale)
+                const saving = (qtrPrice * 4) - yrPrice;
+                
+                priceEl.innerText = '€' + yrPrice;
+                periodEl.innerText = '/ anno';
+                saveEl.innerText = 'Risparmi €' + saving;
+            } else {
+                priceEl.innerText = '€' + qtrPrice;
+                periodEl.innerText = '/ trimestrale';
+                saveEl.innerText = ''; // Cancella testo risparmio
+            }
+        });
+    }
+
+    // 2. GESTIONE MODALE
+    function openPaymentModal(planName) {
+        const modal = document.getElementById('paymentModal');
+        const isAnnual = document.getElementById('pricingSwitch').checked;
+        
+        // Recupera il prezzo corrente visualizzato nella card corretta
+        const planId = planName.toLowerCase(); // Base -> base
+        const currentPrice = document.getElementById('price-' + planId).innerText;
+
+        document.getElementById('modalPlanName').innerText = planName + (isAnnual ? ' (Annuale)' : ' (Trimestrale)');
+        document.getElementById('modalTotalAmount').innerText = currentPrice;
+
+        modal.classList.add('open');
+        document.body.style.overflow = 'hidden'; // Blocca scroll pagina sotto
+    }
+
+    function closePaymentModal() {
+        const modal = document.getElementById('paymentModal');
+        modal.classList.remove('open');
+        document.body.style.overflow = ''; // Riabilita scroll
+    }
+
+    // Chiudi se clicchi fuori dalla card
+    document.getElementById('paymentModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closePaymentModal();
+        }
+    });
+
+    // 3. GESTIONE FATTURAZIONE
+    function toggleBilling() {
+        const isChecked = document.getElementById('billingCheck').checked;
+        const section = document.getElementById('billingFields');
+        const inputs = section.querySelectorAll('.billing-input');
+
+        if (isChecked) {
+            section.classList.add('visible');
+            inputs.forEach(input => input.setAttribute('required', 'true'));
+        } else {
+            section.classList.remove('visible');
+            inputs.forEach(input => input.removeAttribute('required'));
+        }
+    }
+
+    // 4. SIMULAZIONE PAGAMENTO
+    function processPayment(event) {
+        event.preventDefault();
+        const loader = document.getElementById('paymentLoader');
+        loader.style.display = 'flex';
+
+        setTimeout(() => {
+            loader.style.display = 'none';
+            closePaymentModal();
+            // Redirect o messaggio di successo globale
+            // Qui usiamo un alert nativo per semplicità, ma potresti usare un toast custom
+            alert("Pagamento effettuato con successo! Il tuo piano è ora attivo.");
+            window.location.href = "/dashboard"; // Porta l'utente alla dashboard
+        }, 2500);
+    }
+</script>
+
+</body>
+</html>

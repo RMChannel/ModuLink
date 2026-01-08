@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="it" xmlns:th="http://www.thymeleaf.org">
+<head
+        th:replace="~{fragments/head :: mainHead(pageTitle='Novità e Aggiornamenti', additionalCss=${ {'/css/news.css'} })}">
+</head>
+
+<body>
+
+<!-- Header importato -->
+<header th:replace="~{fragments/header :: mainHeader}"></header>
+
+<div class="news-page-container">
+     <h1 class="page-title">Novità & Aggiornamenti</h1>
+
+     <!-- ESEMPIO CARD 1 (Statica per ora, poi diventerà dinamica) -->
+     <div class="news-card">
+         <!-- Parte superiore cliccabile -->
+         <div class="news-header" onclick="toggleNews(this)">
+             <div class="news-info">
+                 <span class="news-date">08 Gen 2026</span>
+                 <h3 class="news-title">Rilasciata la versione 2.0 di ModuLink</h3>
+             </div>
+     <!-- Rettangolo contenitivo -->
+                 <div class="expand-btn">
+                     <i class="fa-solid fa-chevron-down"></i>
+                 </div>
+             </div>
+    <!-- Parte a scomparsa -->
+             <div class="news-content">
+                 <p>
+                     Siamo felici di annunciare il rilascio della nuova versione. Abbiamo introdotto il modulo GDR per la gestione avanzata dei ruoli e migliorato le performance de
+                     database del 30%.
+                 </p>
+             </div>
+         </div>
+
+    <!-- ESEMPIO CARD 2 -->
+         <div class="news-card">
+             <div class="news-header" onclick="toggleNews(this)">
+                 <div class="news-info">
+                     <span class="news-date">15 Dic 2025</span>
+                     <h3 class="news-title">Manutenzione programmata server</h3>
+                 </div>
+                 <div class="expand-btn">
+                     <i class="fa-solid fa-chevron-down"></i>
+                 </div>
+             </div>
+             <div class="news-content">
+                 <p>Gentili utenti, i server saranno in manutenzione dalle ore 02:00 alle ore 04:00 per aggiornamenti di sicurezza. Il servizio potrebbe subire interruzioni
+                    momentanee.
+                 </p>
+             </div>
+         </div>
+
+    <!-- ESEMPIO CARD 3 -->
+         <div class="news-card">
+             <div class="news-header" onclick="toggleNews(this)">
+                 <div class="news-info">
+                     <span class="news-date">20 Nov 2025</span>
+                     <h3 class="news-title">Nuova funzionalità: Export PDF</h3>
+                 </div>
+                 <div class="expand-btn">
+                     <i class="fa-solid fa-chevron-down"></i>
+                 </div>
+             </div>
+             <div class="news-content">
+                 <p>
+                     Da oggi è possibile esportare i report degli utenti direttamente in formato PDF dalla dashboard GDU. Clicca sull'icona della stampante per provare subito.
+                 </p>
+             </div>
+         </div>
+
+</div>
+
+<!-- Importazione del footer -->
+<footer th:replace="~{fragments/footer :: mainFooter}"></footer>
+
+<!-- JAVASCRIPT PER L'APERTURA -->
+<script>
+     function toggleNews(element) {
+         // Trova la card genitore
+         const card = element.closest('.news-card');
+
+         // Aggiunge o rimuove la classe "active" per aprire/chiudere
+         card.classList.toggle('active');
+     }
+</script>
+
+</body>
+</html>
