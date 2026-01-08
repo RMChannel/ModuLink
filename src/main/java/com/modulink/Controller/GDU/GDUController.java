@@ -58,9 +58,6 @@ public class GDUController extends ModuloController {
         Optional<UtenteEntity> utenteOpt = customUserDetailsService.findByEmail(email);
         if (isAccessibleModulo(utenteOpt)) {
             UtenteEntity utente = utenteOpt.get();
-            List<ModuloEntity> moduli = moduloService.findModuliByUtente(utente);
-            model.addAttribute("moduli", moduli != null ? moduli : List.of());
-            model.addAttribute("utente", utente);
             model.addAttribute("utenti", customUserDetailsService.getAllByAzienda(utente.getAzienda()));
             return "moduli/gdu/GestioneUtenti";
 
@@ -76,9 +73,6 @@ public class GDUController extends ModuloController {
         Optional<UtenteEntity> utenteOpt = customUserDetailsService.findByEmail(emailLogged);
         if(isAccessibleModulo(utenteOpt)) {
             UtenteEntity utente = utenteOpt.get();
-            List<ModuloEntity> moduli = moduloService.findModuliByUtente(utente);
-            model.addAttribute("moduli", moduli != null ? moduli : List.of());
-            model.addAttribute("utente", utente);
             Optional<UtenteEntity> userToDeleteOPT=customUserDetailsService.findByEmail(email);
             if(userToDeleteOPT.isEmpty()) {
                 model.addAttribute("error",true);
@@ -126,9 +120,6 @@ public class GDUController extends ModuloController {
         Optional<UtenteEntity> utenteOpt = customUserDetailsService.findByEmail(emailLogged);
         if(isAccessibleModulo(utenteOpt)) {
             UtenteEntity utente = utenteOpt.get();
-            List<ModuloEntity> moduli = moduloService.findModuliByUtente(utente);
-            model.addAttribute("moduli", moduli != null ? moduli : List.of());
-            model.addAttribute("utente", utente);
             if(bindingResults.hasErrors()) {
                 model.addAttribute("utenti", customUserDetailsService.getAllByAzienda(utente.getAzienda()));
                 model.addAttribute("newUserForm",newUserForm);
@@ -177,9 +168,6 @@ public class GDUController extends ModuloController {
         Optional<UtenteEntity> utenteOpt = customUserDetailsService.findByEmail(emailLogged);
         if(isAccessibleModulo(utenteOpt)) {
             UtenteEntity utente = utenteOpt.get();
-            List<ModuloEntity> moduli = moduloService.findModuliByUtente(utente);
-            model.addAttribute("moduli", moduli != null ? moduli : List.of());
-            model.addAttribute("utente", utente);
             if(bindingResults.hasErrors()) {
                 model.addAttribute("utenti", customUserDetailsService.getAllByAzienda(utente.getAzienda()));
                 model.addAttribute("editUserForm",editUserForm);

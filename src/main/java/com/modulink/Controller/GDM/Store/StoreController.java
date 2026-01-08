@@ -42,10 +42,7 @@ public class StoreController extends ModuloController {
 
         if (utenteOpt.isPresent()) {
             List<ModuloEntity> moduliNonAcquistati = attivazioneService.getNotPurchased(utenteOpt.get().getAzienda());
-            List<ModuloEntity> moduli = moduloService.findModuliByUtente(utenteOpt.get());
             model.addAttribute("moduliNon", moduliNonAcquistati);
-            model.addAttribute("utente", utenteOpt.get());
-            model.addAttribute("moduli", moduli);
         }
 
         return "moduli/gdm/store/StoreModuli";
