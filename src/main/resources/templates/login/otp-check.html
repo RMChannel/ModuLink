@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="it" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: mainHead(pageTitle='Verifica OTP', additionalCss=${ {'/css/login.css'} })}">
+    <link rel="stylesheet" th:href="@{/css/common/alerts.css}">
+</head>
+
+<body>
+
+<header th:replace="~{fragments/header :: mainHeader}"></header>
+
+<div class="login-container">
+    <div class="login-box">
+        <div class="logo-container">
+            <img th:src="@{/photo/logo.png}" alt="ModuLink Logo" class="logo">
+        </div>
+        <p class="subtitle">Inserisci il codice OTP inviato alla tua email</p>
+
+        <!-- Generic Error Message -->
+        <div th:if="${message}" class="alert alert-danger" th:text="${message}"></div>
+
+
+        <form th:action="@{/confirm-new-password}" method="post" th:object="${confirmPasswordForm}">
+
+            <!-- Global Error (from bindingResult) -->
+            <div th:if="${#fields.hasGlobalErrors()}" class="alert alert-danger">
+                <p th:each="err : ${#fields.globalErrors()}" th:text="${err}"></p>
+            </div>
+            
+            <input type="hidden" th:field="*{email}" id="email">
+
+            <div class="input-group">
+                <label for="otp">Codice OTP</label>
+                <input type="text" id="otp" th:field="*{otp}" placeholder="123456" required>
+                <div th:if="${#fields.hasErrors('otp')}" class="text-danger" th:errors="*{otp}">Errore OTP</div>
+            </div>
+
+            <div class="input-group">
+                <label for="newPassword">Nuova Password</label>
+                <input type="password" id="newPassword" th:field="*{newPassword}" placeholder="Nuova Password" required>
+                <div th:if="${#fields.hasErrors('newPassword')}" class="text-danger" th:errors="*{newPassword}">Errore Password</div>
+            </div>
+
+            <div class="input-group">
+                <label for="confirmNewPassword">Conferma Password</label>
+                <input type="password" id="confirmNewPassword" th:field="*{confirmNewPassword}" placeholder="Conferma Password" required>
+                <div th:if="${#fields.hasErrors('confirmNewPassword')}" class="text-danger" th:errors="*{confirmNewPassword}">Errore Conferma</div>
+            </div>
+
+            <button type="submit" class="btn-login">Cambia Password</button>
+        </form>
+
+        <div class="register-link" style="margin-top: 15px;">
+            <p>Non hai ricevuto il codice? <a href="#" onclick="resendOtp(event)">Invia di nuovo</a></p>
+        </div>
+    </div>
+</div>
+
+<script>
+    function resendOtp(event) {
+        event.preventDefault();
+        const email = document.getElementById('email').value;
+        const formData = new FormData();
+        formData.append('email', email);
+
+        // Add dummy values for other fields to satisfy @ModelAttribute binding if strict (though it shouldn't be for just triggering the logic if validations aren't forced)
+        // Actually the controller uses @ModelAttribute ConfirmPasswordForm but doesn't have @Valid on resend-otp, so partial binding is fine.
+        
+        fetch('/resend-otp', {
+            method: 'POST',
+            body: formData
+        }).then(response => {
+            if(response.ok) {
+                alert('OTP reinviato con successo! Controlla la tua casella di posta.');
+            } else {
+                alert('Si è verificato un errore durante l\'invio dell\'OTP. Riprova più tardi.');
+            }
+        }).catch(error => {
+            console.error('Error:', error);
+            alert('Errore di connessione.');
+        });
+    }
+</script>
+
+</body>
+<footer th:replace="~{fragments/footer :: mainFooter}"></footer>
+</html>

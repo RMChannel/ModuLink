@@ -10,7 +10,7 @@ import java.security.Principal;
 @Controller
 public class HomeController {
 
-    @GetMapping("/")
+    @GetMapping({"/","/home","/home/"})
     public String homepage(Model model, Principal principal) {
         if(principal != null) {
             return "redirect:/dashboard";
