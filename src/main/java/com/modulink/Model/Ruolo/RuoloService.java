@@ -3,6 +3,8 @@ package com.modulink.Model.Ruolo;
 import com.modulink.Model.Azienda.AziendaEntity;
 import com.modulink.Model.Relazioni.Associazione.AssociazioneEntity;
 import com.modulink.Model.Utente.UtenteEntity;
+import com.modulink.Model.Utente.CustomUserDetailsService;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,19 +15,61 @@ import java.util.Optional;
 @Service
 public class RuoloService {
     private final RuoloRepository ruoloRepository;
+    private final CustomUserDetailsService customUserDetailsService;
 
-    public RuoloService(RuoloRepository ruoloRepository) {
+    public RuoloService(RuoloRepository ruoloRepository, @Lazy CustomUserDetailsService customUserDetailsService) {
         this.ruoloRepository = ruoloRepository;
+        this.customUserDetailsService = customUserDetailsService;
     }
     
     @Transactional
     public void updateRoleAssociations(AziendaEntity azienda, int idRole, List<UtenteEntity> users) {
         RuoloEntity role = getRoleById(idRole, azienda);
-        role.getAssociazioni().clear();
-        for (UtenteEntity user : users) {
-            role.getAssociazioni().add(new AssociazioneEntity(user, role));
+        
+        List<UtenteEntity> usersToUpdate = new ArrayList<>();
+
+        // Trovo gli utenti da rimuovere le associazioni
+        List<AssociazioneEntity> currentAssocs = new ArrayList<>(role.getAssociazioni());
+        for (AssociazioneEntity assoc : currentAssocs) {
+            UtenteEntity user = assoc.getUtente();
+            if (user != null) {
+                //Trovo le specifiche associazioni da rimuovere
+                AssociazioneEntity toRemove = null;
+                for (AssociazioneEntity ua : user.getAssociazioni()) {
+                    if (ua.getId_ruolo() == role.getId_ruolo() && ua.getId_azienda() == azienda.getId_azienda()) {
+                        toRemove = ua;
+                        break;
+                    }
+                }
+                if (toRemove != null) {
+                    user.getAssociazioni().remove(toRemove);
+                }
+                usersToUpdate.add(user);
+            }
         }
+        
+        // Puliamo le associazioni al ruolo
+        role.getAssociazioni().clear();
+        
+        // Aggiungo le nuove associazioni
+        for (UtenteEntity user : users) {
+            AssociazioneEntity newAssoc = new AssociazioneEntity(user, role);
+            role.getAssociazioni().add(newAssoc);
+            
+            // Aggiorno gli utenti
+            user.getAssociazioni().add(newAssoc);
+            
+            if (!usersToUpdate.contains(user)) {
+                usersToUpdate.add(user);
+            }
+        }
+        
         ruoloRepository.save(role);
+
+        // Avvio l'aggiornamento della cache degli utenti col metodo dell'userService
+        for (UtenteEntity user : usersToUpdate) {
+            customUserDetailsService.aggiornaUtente(user);
+        }
     }
 
     @Transactional
