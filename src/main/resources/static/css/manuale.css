@@ -1,0 +1,229 @@
+@import 'user/colors.css';
+
+.manual-container {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 0 20px;
+    min-height: 80vh;
+}
+
+.page-header {
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.page-title {
+    color: var(--text-heading);
+    margin-bottom: 20px;
+    font-weight: 700;
+}
+
+/* --- BARRA DI RICERCA --- */
+.search-wrapper {
+    max-width: 600px;
+    margin: 0 auto 40px auto;
+    position: relative;
+}
+
+.search-input {
+    width: 100%;
+    padding: 15px 20px 15px 50px; /* Spazio per l'icona */
+    border-radius: 30px;
+    border: 1px solid var(--border-color);
+    background-color: var(--bg-white);
+    font-size: 1.1rem;
+    box-shadow: var(--shadow-card);
+    transition: all 0.3s ease;
+    color: var(--text-body);
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 4px var(--border-focus);
+}
+
+.search-icon {
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-secondary);
+    font-size: 1.2rem;
+}
+
+/* --- LAYOUT PRINCIPALE (Griglia Sommario + Contenuto) --- */
+.manual-layout {
+    display: grid;
+    grid-template-columns: 250px 1fr;
+    gap: 40px;
+    align-items: start;
+}
+
+/* --- SOMMARIO LATERALE (Sticky) --- */
+.sommario-box {
+    background-color: var(--bg-white);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 20px;
+    position: sticky;
+    top: 100px; /* Distanza dall'header quando si scrolla */
+    box-shadow: var(--shadow-card);
+}
+
+.sommario-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border-color-light);
+    color: var(--text-heading);
+}
+
+.sommario-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sommario-list li {
+    margin-bottom: 10px;
+}
+
+.sommario-list a {
+    text-decoration: none;
+    color: var(--text-secondary);
+    font-weight: 500;
+    transition: color 0.2s;
+    display: block;
+    padding: 5px 0;
+}
+
+.sommario-list a:hover {
+    color: var(--color-primary);
+    transform: translateX(5px);
+}
+
+/* --- SEZIONI CONTENUTO --- */
+.manual-section {
+    margin-bottom: 50px;
+    scroll-margin-top: 120px; /* Offset per lo scroll smooth */
+}
+
+.section-heading {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--color-primary);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* --- CARD MANUALE (Accordion) --- */
+.manual-card {
+    background-color: var(--bg-white);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    margin-bottom: 15px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.manual-card:hover {
+    border-color: var(--border-color-hover);
+    box-shadow: var(--shadow-card-hover);
+}
+
+.manual-header {
+    padding: 15px 25px;
+    background-color: var(--bg-white);
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.manual-header:hover {
+    background-color: #f8fafc;
+}
+
+.manual-question {
+    font-weight: 600;
+    color: var(--text-heading);
+    margin: 0;
+    font-size: 1.05rem;
+}
+
+.toggle-icon {
+    color: var(--text-secondary);
+    transition: transform 0.3s ease;
+}
+
+.manual-card.active .toggle-icon {
+    transform: rotate(180deg);
+    color: var(--color-primary);
+}
+
+/* --- CONTENUTO ESPANSO --- */
+.manual-body {
+    max-height: 0;
+    overflow: hidden;
+    padding: 0 25px;
+    background-color: var(--bg-body-alt);
+    transition: all 0.4s ease;
+    border-top: 1px solid transparent;
+}
+
+.manual-card.active .manual-body {
+    max-height: 1000px; /* Abbastanza alto per contenuti lunghi */
+    padding-bottom: 25px;
+    padding-top: 20px;
+    border-top-color: var(--border-color-light);
+}
+
+/* --- STILE LISTE PASSO-PASSO --- */
+.step-list {
+    counter-reset: manual-counter;
+    list-style: none;
+    padding: 0;
+}
+
+.step-list li {
+    position: relative;
+    padding-left: 40px;
+    margin-bottom: 15px;
+    color: var(--text-body);
+}
+
+.step-list li::before {
+    counter-increment: manual-counter;
+    content: counter(manual-counter);
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 28px;
+    height: 28px;
+    background-color: var(--color-primary-light);
+    color: var(--color-primary);
+    border-radius: 50%;
+    text-align: center;
+    line-height: 28px;
+    font-weight: 700;
+    font-size: 0.9rem;
+}
+
+.step-list li strong {
+    color: var(--text-heading);
+}
+
+/* Responsive per mobile */
+@media (max-width: 900px) {
+    .manual-layout {
+        grid-template-columns: 1fr; /* Colonna unica */
+    }
+    
+    .sommario-box {
+        display: none; /* Nascondiamo il sommario laterale su mobile per semplicità */
+    }
+}
