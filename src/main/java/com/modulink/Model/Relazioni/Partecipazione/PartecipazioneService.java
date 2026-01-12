@@ -21,7 +21,7 @@ public class PartecipazioneService {
 
     @Transactional
     public void Invita(EventoEntity eventoEntity, UtenteEntity utenteEntity){
-        PartecipazioneEntity partecipazioneEntity = new PartecipazioneEntity(eventoEntity.getId_evento(),utenteEntity.getId_utente(),utenteEntity.getAzienda().getId_azienda());
+        PartecipazioneEntity partecipazioneEntity = new PartecipazioneEntity(utenteEntity.getId_utente(), eventoEntity.getId_evento(), utenteEntity.getAzienda().getId_azienda());
         partecipazioneRepository.save(partecipazioneEntity);
     }
 
