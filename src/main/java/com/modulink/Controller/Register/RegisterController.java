@@ -88,7 +88,7 @@ public class RegisterController {
     public String showRegistrationForm(Model model, Principal principal) {
         if(principal != null) {return "redirect:/home";}
         model.addAttribute("registerAziendaForm", new RegisterAziendaForm());
-        return "/register/RegistraAzienda";
+        return "register/RegistraAzienda";
     }
 
     /**
@@ -116,12 +116,12 @@ public class RegisterController {
         else {
             if(bindingResult.hasErrors()) {
                 model.addAttribute("registerAziendaForm", registerAziendaForm);
-                return "/register/RegistraAzienda";
+                return "register/RegistraAzienda";
             }
             else if(aziendaService.getAziendaByPIVA(registerAziendaForm.getPiva())!=null) {
                 bindingResult.rejectValue("piva","piva.found","La partita IVA inserita risulta già registrata");
                 model.addAttribute("registerAziendaForm", registerAziendaForm);
-                return "/register/RegistraAzienda";
+                return "register/RegistraAzienda";
             }
             else {
                 // Normalizza il telefono rimuovendo gli spazi e verifica univocità
@@ -129,7 +129,7 @@ public class RegisterController {
                 if(aziendaService.findByTelefono(registerAziendaForm.getTelefono())) {
                     bindingResult.rejectValue("telefono","telefono.found","Il telefono inserito risulta già registrato da un'altra azienda");
                     model.addAttribute("registerAziendaForm", registerAziendaForm);
-                    return "/register/RegistraAzienda";
+                    return "register/RegistraAzienda";
                 }
                 MultipartFile file = registerAziendaForm.getLogo();
                 if(file!=null && !file.isEmpty()) {
@@ -138,7 +138,7 @@ public class RegisterController {
                 }
                 model.addAttribute("registerUtenteForm", new RegisterResponsabileForm());
                 model.addAttribute("firstAccess", true);
-                return "/register/RegistraUtente";
+                return "register/RegistraUtente";
             }
         }
     }
@@ -191,12 +191,12 @@ public class RegisterController {
         else {
             if(bindingResult.hasErrors()) {
                 model.addAttribute("registerUtenteForm", registerUtenteForm);
-                return "/register/RegistraUtente";
+                return "register/RegistraUtente";
             }
             else if (!registerUtenteForm.getPassword().equals(registerUtenteForm.getConfermaPassword())) {
                 bindingResult.rejectValue("confermaPassword", "error.password", "Le password non corrispondono");
                 model.addAttribute("registerUtenteForm", registerUtenteForm);
-                return "/register/RegistraUtente";
+                return "register/RegistraUtente";
             }
             else {
                 // Normalizza il telefono rimuovendo gli spazi
@@ -205,7 +205,7 @@ public class RegisterController {
                     userDetailsService.loadUserByUsername(registerUtenteForm.getEmail());
                     bindingResult.rejectValue("email","mail.found","La mail inserita risulta già registrata");
                     model.addAttribute("registerUtenteForm", registerUtenteForm);
-                    return "/register/RegistraUtente";
+                    return "register/RegistraUtente";
                 } catch (UsernameNotFoundException ignored) {}
                 String filename="";
                 if(registerAziendaForm.getLogoBytes()!=null) { //Salva il logo dell'azienda
