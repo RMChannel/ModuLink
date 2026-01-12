@@ -63,11 +63,13 @@ public class DataInitializerService {
         ModuloEntity GDR = new ModuloEntity(1, "Gestione Ruoli", "Permette la gestione e l'assegnazione dei ruoli", "/dashboard/gdr/", "bi bi-award-fill");
         ModuloEntity GDM = new ModuloEntity(2, "Gestione Moduli", "Permette la gestione di tutti i moduli integrati nella propria azienda","/dashboard/gdm/","bi bi-database-gear");
         ModuloEntity store = new ModuloEntity(3,"Store","Store dei moduli","/dashboard/store/","bi bi-cart-dash");
+        ModuloEntity calendario = new ModuloEntity(4,"Calendario", "Permette di organizzare e creare eventi", "/dashboard/calendario/", "bi bi-calendar");
 
         GDU = moduloRepository.save(GDU);
         GDR = moduloRepository.save(GDR);
         GDM = moduloRepository.save(GDM);
         store = moduloRepository.save(store);
+        calendario = moduloRepository.save(calendario);
 
         // Ora azienda e modulo sono MANAGED nella stessa transazione
         attivazioneRepository.save(new AttivazioneEntity(GDU, azienda));
