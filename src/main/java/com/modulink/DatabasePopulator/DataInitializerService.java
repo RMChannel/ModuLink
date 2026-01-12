@@ -75,6 +75,7 @@ public class DataInitializerService {
         attivazioneRepository.save(new AttivazioneEntity(GDM, azienda));
         attivazioneRepository.save(new AttivazioneEntity(store, azienda));
 
+
         affiliazioneRepository.save(new AffiliazioneEntity(ruoloResponsabile.getId_ruolo(),GDU.getId_modulo(),azienda.getId_azienda()));
         affiliazioneRepository.save(new AffiliazioneEntity(ruoloResponsabile.getId_ruolo(),GDR.getId_modulo(),azienda.getId_azienda()));
         affiliazioneRepository.save(new AffiliazioneEntity(ruoloResponsabile.getId_ruolo(),GDM.getId_modulo(),azienda.getId_azienda()));
