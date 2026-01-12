@@ -21,7 +21,7 @@ class RunningTest {
 
     @Test
     void applicationShouldRespondOnPort80() {
-        assertThat(port).isEqualTo(8080);
+        assertThat(port).isEqualTo(80);
 
         // Effettua una chiamata GET alla root (o a /actuator/health se preferisci)
         ResponseEntity<String> response = restTemplate.getForEntity("http://localhost:8080/", String.class);
