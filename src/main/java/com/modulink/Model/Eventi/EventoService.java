@@ -1,4 +1,6 @@
 package com.modulink.Model.Eventi;
+import com.modulink.Model.Azienda.AziendaEntity;
+import com.modulink.Model.Utente.UtenteEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,10 +17,13 @@ public class EventoService {
         eventoRepository.save(eventoEntity);
     }
 
-
+    @Transactional
+    public List<EventoEntity> findAllByUtente(UtenteEntity utente) {
+        return eventoRepository.findAllByUtente(utente);
+    }
 
     @Transactional
-    public List<EventoEntity> findAll() {
-        return eventoRepository.findAll();
+    public List<EventoEntity> findByAzienda(AziendaEntity aziendaEntity) {
+        return eventoRepository.findByAzienda(aziendaEntity);
     }
 }

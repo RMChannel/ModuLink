@@ -64,6 +64,8 @@ public class StoreController extends ModuloController {
             }
         }
 
+
+
         return "redirect:/dashboard/store" + Alert.error("Errore durante l'acquisto del modulo.");
     }
 }

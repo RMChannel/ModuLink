@@ -1,6 +1,7 @@
 package com.modulink.Model.Relazioni.Attivazione;
 
 import com.modulink.Model.Azienda.AziendaEntity;
+import com.modulink.Model.Azienda.AziendaRepository;
 import com.modulink.Model.Modulo.ModuloEntity;
 import com.modulink.Model.Modulo.ModuloRepository;
 import com.modulink.Model.Relazioni.Affiliazione.AffiliazioneEntity;
@@ -8,11 +9,13 @@ import com.modulink.Model.Relazioni.Affiliazione.AffiliazioneRepository;
 import com.modulink.Model.Relazioni.Affiliazione.AffiliazioneService;
 import com.modulink.Model.Ruolo.RuoloEntity;
 import com.modulink.Model.Ruolo.RuoloService;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class AttivazioneService {
@@ -20,12 +23,14 @@ public class AttivazioneService {
     private final ModuloRepository moduloRepository;
     private final AffiliazioneRepository affiliazioneRepository;
     private final RuoloService ruoloService;
+    private final AziendaRepository aziendaRepository;
 
-    public AttivazioneService(AttivazioneRepository attivazioneRepository, ModuloRepository moduloRepository, AffiliazioneRepository affiliazioneRepository, RuoloService ruoloService) {
+    public AttivazioneService(AttivazioneRepository attivazioneRepository, ModuloRepository moduloRepository, AffiliazioneRepository affiliazioneRepository, RuoloService ruoloService, AziendaRepository aziendaRepository) {
         this.attivazioneRepository=attivazioneRepository;
         this.moduloRepository=moduloRepository;
         this.affiliazioneRepository=affiliazioneRepository;
         this.ruoloService=ruoloService;
+        this.aziendaRepository=aziendaRepository;
     }
 
     public AttivazioneEntity getAttivazioneById(AttivazioneID attivazioneID) {
@@ -52,10 +57,17 @@ public class AttivazioneService {
     }
 
     @Transactional
+    @CacheEvict(value = {"moduliByUtente", "moduloAccess", "modulo"}, allEntries = true)
     public boolean purchaseModulo(AziendaEntity azienda, int moduloId) {
         if (azienda == null) {
             return false;
         }
+
+        Optional<AziendaEntity> managedAziendaOpt = aziendaRepository.findById(azienda.getId_azienda());
+        if (managedAziendaOpt.isEmpty()) {
+            return false;
+        }
+        AziendaEntity managedAzienda = managedAziendaOpt.get();
 
         ModuloEntity modulo = moduloRepository.findById(moduloId).orElse(null);
         if (modulo == null) {
@@ -63,24 +75,24 @@ public class AttivazioneService {
         }
 
         // Check if already purchased
-        if (attivazioneRepository.existsByAziendaAndModulo(azienda, modulo)) {
+        if (attivazioneRepository.existsByAziendaAndModulo(managedAzienda, modulo)) {
             return false;
         }
 
         // 1. Create and Save Attivazione
-        AttivazioneEntity nuovaAttivazione = new AttivazioneEntity(modulo, azienda);
+        AttivazioneEntity nuovaAttivazione = new AttivazioneEntity(modulo, managedAzienda);
         attivazioneRepository.save(nuovaAttivazione);
 
         // Ensure Attivazione is written to DB before Affiliazione
         attivazioneRepository.flush();
 
         // 2. Assign Responsabile Role for this Module
-        RuoloEntity resp = ruoloService.getResponsabile(azienda);
+        RuoloEntity resp = ruoloService.getResponsabile(managedAzienda);
         if (resp != null) {
             AffiliazioneEntity affiliazioneEntity = new AffiliazioneEntity(
                     resp.getId_ruolo(),
                     modulo.getId_modulo(),
-                    azienda.getId_azienda()
+                    managedAzienda.getId_azienda()
             );
             affiliazioneRepository.save(affiliazioneEntity);
         }
