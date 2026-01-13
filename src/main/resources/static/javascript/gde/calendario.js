@@ -1,7 +1,10 @@
 let currentDate = new Date();
 let currentView = 'week';
 let currentTimeInterval = null;
-let cachedUsers = null; // Cache per gli utenti
+let cachedUsers = null;
+let selectedUsers = [];
+let editSelectedUsers = [];
+let selectedEventElement = null;
 
 document.addEventListener('DOMContentLoaded', function() {
     initializeCalendar();
@@ -24,6 +27,9 @@ function setupEventListeners() {
     if(createModal) {
         createModal.addEventListener('show.bs.modal', function () {
             loadUsers();
+            selectedUsers = [];
+            updateSelectedUsersList('selectedUsersList', selectedUsers);
+
             // Set default date/time if not already set
             const now = new Date();
             const startInput = document.querySelector('input[name="inizio"]');
@@ -32,27 +38,79 @@ function setupEventListeners() {
                 startInput.value = formatDateTimeLocal(now);
             }
             if(endInput && !endInput.value) {
-                const endTime = new Date(now.getTime() + 3600000); // +1 hour
+                const endTime = new Date(now.getTime() + 3600000);
                 endInput.value = formatDateTimeLocal(endTime);
             }
         });
 
-        // Reset form when modal closes
         createModal.addEventListener('hidden.bs.modal', function () {
             document.getElementById('createEventForm').reset();
+            selectedUsers = [];
+            document.getElementById('userSearchInput').value = '';
+            document.getElementById('userSearchResults').classList.remove('show');
         });
     }
 
-    // View Switchers - FIX: previene doppi click e gestisce correttamente il cambio
+    // Edit modal setup
+    const editModal = document.getElementById('editEventModal');
+    if(editModal) {
+        editModal.addEventListener('show.bs.modal', function() {
+            loadUsers();
+        });
+
+        editModal.addEventListener('hidden.bs.modal', function() {
+            document.getElementById('editEventForm').reset();
+            editSelectedUsers = [];
+            document.getElementById('editUserSearchInput').value = '';
+            document.getElementById('editUserSearchResults').classList.remove('show');
+        });
+    }
+
+    // User search for create modal
+    const userSearchInput = document.getElementById('userSearchInput');
+    if(userSearchInput) {
+        userSearchInput.addEventListener('input', function(e) {
+            filterUsers(e.target.value, 'userSearchResults', selectedUsers);
+        });
+
+        userSearchInput.addEventListener('keydown', function(e) {
+            if(e.key === 'Enter') {
+                e.preventDefault();
+                const results = document.getElementById('userSearchResults');
+                const firstResult = results.querySelector('.user-search-item');
+                if(firstResult) {
+                    firstResult.click();
+                }
+            }
+        });
+    }
+
+    // User search for edit modal
+    const editUserSearchInput = document.getElementById('editUserSearchInput');
+    if(editUserSearchInput) {
+        editUserSearchInput.addEventListener('input', function(e) {
+            filterUsers(e.target.value, 'editUserSearchResults', editSelectedUsers);
+        });
+
+        editUserSearchInput.addEventListener('keydown', function(e) {
+            if(e.key === 'Enter') {
+                e.preventDefault();
+                const results = document.getElementById('editUserSearchResults');
+                const firstResult = results.querySelector('.user-search-item');
+                if(firstResult) {
+                    firstResult.click();
+                }
+            }
+        });
+    }
+
+    // View Switchers
     document.querySelectorAll('[data-view]').forEach(btn => {
         btn.addEventListener('click', function(e) {
             e.preventDefault();
             e.stopPropagation();
             const targetView = this.getAttribute('data-view');
-
-            // Previeni click multipli se già nella vista corretta
             if(currentView === targetView) return;
-
             switchView(targetView);
         });
     });
@@ -151,16 +209,10 @@ function switchView(view) {
 }
 
 function loadUsers() {
-    const list = document.getElementById('userSelectionList');
-    if(!list) return;
-
     // Se abbiamo già la cache, usala
     if(cachedUsers && cachedUsers.length > 0) {
-        renderUsersList(cachedUsers, list);
         return;
     }
-
-    list.innerHTML = '<div class="text-center text-muted p-3"><div class="spinner-border spinner-border-sm" role="status"></div><div class="mt-2">Caricamento utenti...</div></div>';
 
     fetch('/dashboard/gdu/api/users')
         .then(res => {
@@ -168,30 +220,99 @@ function loadUsers() {
             return res.json();
         })
         .then(users => {
-            cachedUsers = users; // Salva in cache
-            renderUsersList(users, list);
+            cachedUsers = users;
         })
         .catch(err => {
             console.error(err);
-            list.innerHTML = '<div class="text-danger p-3 text-center"><i class="bi bi-exclamation-circle"></i> Errore caricamento utenti</div>';
+            cachedUsers = [];
         });
 }
 
-function renderUsersList(users, container) {
+function filterUsers(searchTerm, resultsId, excludeUsers) {
+    const resultsContainer = document.getElementById(resultsId);
+    if(!resultsContainer || !cachedUsers) return;
+
+    if(!searchTerm || searchTerm.trim() === '') {
+        resultsContainer.classList.remove('show');
+        resultsContainer.innerHTML = '';
+        return;
+    }
+
+    const term = searchTerm.toLowerCase();
+    const excludeIds = excludeUsers.map(u => u.id);
+
+    const filtered = cachedUsers.filter(user => {
+        if(excludeIds.includes(user.id)) return false;
+        const fullName = `${user.nome} ${user.cognome}`.toLowerCase();
+        return fullName.includes(term);
+    });
+
+    if(filtered.length === 0) {
+        resultsContainer.innerHTML = '<div class="user-search-empty">Nessun utente trovato</div>';
+        resultsContainer.classList.add('show');
+        return;
+    }
+
+    resultsContainer.innerHTML = '';
+    filtered.forEach(user => {
+        const item = document.createElement('div');
+        item.className = 'user-search-item';
+        item.textContent = `${user.nome} ${user.cognome}`;
+        item.onclick = () => addUser(user, resultsId);
+        resultsContainer.appendChild(item);
+    });
+
+    resultsContainer.classList.add('show');
+}
+
+function addUser(user, resultsId) {
+    const isEdit = resultsId === 'editUserSearchResults';
+    const targetArray = isEdit ? editSelectedUsers : selectedUsers;
+    const listId = isEdit ? 'editSelectedUsersList' : 'selectedUsersList';
+    const inputId = isEdit ? 'editUserSearchInput' : 'userSearchInput';
+
+    // Controlla se già aggiunto
+    if(targetArray.find(u => u.id === user.id)) {
+        return;
+    }
+
+    targetArray.push(user);
+    updateSelectedUsersList(listId, targetArray);
+
+    // Clear search
+    document.getElementById(inputId).value = '';
+    document.getElementById(resultsId).classList.remove('show');
+    document.getElementById(resultsId).innerHTML = '';
+}
+
+function removeUser(userId, listId, targetArray) {
+    const index = targetArray.findIndex(u => u.id === userId);
+    if(index > -1) {
+        targetArray.splice(index, 1);
+        updateSelectedUsersList(listId, targetArray);
+    }
+}
+
+function updateSelectedUsersList(listId, users) {
+    const container = document.getElementById(listId);
+    if(!container) return;
+
     if(users.length === 0) {
-        container.innerHTML = '<div class="text-muted p-3 text-center">Nessun collega trovato</div>';
+        container.innerHTML = '<span class="text-muted small">Nessun partecipante selezionato</span>';
         return;
     }
 
     container.innerHTML = '';
-    users.forEach(u => {
-        const div = document.createElement('div');
-        div.className = 'user-select-item';
-        div.innerHTML = `
-            <input type="checkbox" id="user_${u.id}" name="partecipanti" value="${u.id}" class="form-check-input">
-            <label for="user_${u.id}">${escapeHtml(u.nome)} ${escapeHtml(u.cognome)}</label>
+    users.forEach(user => {
+        const tag = document.createElement('div');
+        tag.className = 'selected-user-tag';
+        tag.innerHTML = `
+            ${escapeHtml(user.nome)} ${escapeHtml(user.cognome)}
+            <button type="button" class="remove-user-btn" onclick="removeUser(${user.id}, '${listId}', ${listId === 'selectedUsersList' ? 'selectedUsers' : 'editSelectedUsers'})" title="Rimuovi">
+                <i class="bi bi-x-lg"></i>
+            </button>
         `;
-        container.appendChild(div);
+        container.appendChild(tag);
     });
 }
 
@@ -342,6 +463,9 @@ function renderWeekView() {
     weekEnd.setHours(23, 59, 59, 999);
 
     if(typeof eventsData !== 'undefined' && eventsData.length > 0) {
+        // Raggruppa eventi per colonna per gestire sovrapposizioni
+        const eventsByColumn = {};
+
         eventsData.forEach((event) => {
             const start = new Date(event.data_ora_inizio);
             const end = event.data_fine ? new Date(event.data_fine) : new Date(start.getTime() + 3600000);
@@ -350,43 +474,74 @@ function renderWeekView() {
                 let dayIndex = start.getDay() === 0 ? 6 : start.getDay() - 1;
                 if(start < weekStart) dayIndex = 0;
 
-                const columns = eventsGrid.querySelectorAll('.day-column');
-                if(columns[dayIndex]) {
-                    const col = columns[dayIndex];
-
-                    const dayDate = new Date(days[dayIndex]);
-                    dayDate.setHours(0, 0, 0, 0);
-                    const dayEndTime = new Date(dayDate);
-                    dayEndTime.setHours(23, 59, 59, 999);
-
-                    let effectiveStart = start < dayDate ? dayDate : start;
-                    let effectiveEnd = end > dayEndTime ? dayEndTime : end;
-
-                    const startH = effectiveStart.getHours() + effectiveStart.getMinutes() / 60;
-                    const endH = effectiveEnd.getHours() + effectiveEnd.getMinutes() / 60;
-                    const durationH = Math.max(endH - startH, 0.5);
-
-                    const el = document.createElement('div');
-                    el.className = 'week-event';
-                    el.style.top = `${startH * pxPerHour}px`;
-                    el.style.height = `${durationH * pxPerHour}px`;
-
-                    let content = `<div class="week-event-title">${escapeHtml(event.nome)}</div>`;
-                    content += `<div class="week-event-time">${formatTime(effectiveStart)} - ${formatTime(effectiveEnd)}</div>`;
-                    if(event.luogo) {
-                        content += `<div class="week-event-location"><i class="bi bi-geo-alt"></i> ${escapeHtml(event.luogo)}</div>`;
-                    }
-
-                    el.innerHTML = content;
-                    el.addEventListener('click', function(e) {
-                        e.stopPropagation();
-                        showEventDetails(event);
-                    });
-                    el.title = `${event.nome}\n${start.toLocaleString('it-IT')} - ${end.toLocaleString('it-IT')}`;
-
-                    col.appendChild(el);
+                if(!eventsByColumn[dayIndex]) {
+                    eventsByColumn[dayIndex] = [];
                 }
+
+                eventsByColumn[dayIndex].push({
+                    event: event,
+                    start: start,
+                    end: end
+                });
             }
+        });
+
+        // Renderizza eventi per ogni colonna
+        Object.keys(eventsByColumn).forEach(dayIndex => {
+            const columns = eventsGrid.querySelectorAll('.day-column');
+            if(!columns[dayIndex]) return;
+
+            const col = columns[dayIndex];
+            const dayDate = new Date(days[dayIndex]);
+            dayDate.setHours(0, 0, 0, 0);
+            const dayEndTime = new Date(dayDate);
+            dayEndTime.setHours(23, 59, 59, 999);
+
+            // Ordina eventi per ora di inizio
+            eventsByColumn[dayIndex].sort((a, b) => a.start - b.start);
+
+            // Rileva sovrapposizioni
+            const events = eventsByColumn[dayIndex];
+            events.forEach((eventData, idx) => {
+                const {event, start, end} = eventData;
+
+                let effectiveStart = start < dayDate ? dayDate : start;
+                let effectiveEnd = end > dayEndTime ? dayEndTime : end;
+
+                const startH = effectiveStart.getHours() + effectiveStart.getMinutes() / 60;
+                const endH = effectiveEnd.getHours() + effectiveEnd.getMinutes() / 60;
+                const durationH = Math.max(endH - startH, 0.5);
+
+                const el = document.createElement('div');
+                el.className = 'week-event';
+                el.dataset.eventId = event.id_evento;
+                el.style.top = `${startH * pxPerHour}px`;
+                el.style.height = `${durationH * pxPerHour}px`;
+
+                // Controlla sovrapposizione con evento precedente
+                if(idx > 0) {
+                    const prevEvent = events[idx - 1];
+                    if(prevEvent.end > start) {
+                        el.classList.add('overlapping');
+                    }
+                }
+
+                let content = `<div class="week-event-title">${escapeHtml(event.nome)}</div>`;
+                content += `<div class="week-event-time">${formatTime(effectiveStart)} - ${formatTime(effectiveEnd)}</div>`;
+                if(event.luogo) {
+                    content += `<div class="week-event-location"><i class="bi bi-geo-alt"></i> ${escapeHtml(event.luogo)}</div>`;
+                }
+
+                el.innerHTML = content;
+                el.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    selectEvent(el);
+                    showEventDetails(event);
+                });
+                el.title = `${event.nome}\n${start.toLocaleString('it-IT')} - ${end.toLocaleString('it-IT')}`;
+
+                col.appendChild(el);
+            });
         });
     }
 
@@ -495,10 +650,12 @@ function renderMonthView() {
             dayEvents.slice(0, maxVisible).forEach((event) => {
                 const evEl = document.createElement('div');
                 evEl.className = 'month-event';
+                evEl.dataset.eventId = event.id_evento;
                 const startTime = new Date(event.data_ora_inizio);
                 evEl.textContent = `${formatTime(startTime)} ${event.nome}`;
                 evEl.addEventListener('click', function(e) {
                     e.stopPropagation();
+                    selectEvent(evEl);
                     showEventDetails(event);
                 });
                 eventsContainer.appendChild(evEl);
@@ -517,6 +674,29 @@ function renderMonthView() {
 
         dayEl.appendChild(eventsContainer);
         container.appendChild(dayEl);
+    }
+}
+
+// ==========================================
+// EVENT SELECTION
+// ==========================================
+function selectEvent(element) {
+    // Rimuovi selezione precedente
+    if(selectedEventElement) {
+        selectedEventElement.classList.remove('selected');
+    }
+
+    // Aggiungi nuova selezione
+    if(element) {
+        element.classList.add('selected');
+        selectedEventElement = element;
+    }
+}
+
+function clearEventSelection() {
+    if(selectedEventElement) {
+        selectedEventElement.classList.remove('selected');
+        selectedEventElement = null;
     }
 }
 
@@ -582,10 +762,7 @@ function saveEvent() {
     }
 
     const formData = new FormData(form);
-    const partecipanti = [];
-    form.querySelectorAll('input[name="partecipanti"]:checked').forEach(cb => {
-        partecipanti.push(parseInt(cb.value));
-    });
+    const partecipanti = selectedUsers.map(u => u.id);
 
     const payload = {
         nome: formData.get('nome'),
@@ -631,6 +808,7 @@ function saveEvent() {
                 const modal = bootstrap.Modal.getInstance(modalEl);
                 if(modal) modal.hide();
                 form.reset();
+                selectedUsers = [];
                 renderView();
             } else {
                 alert('Errore durante la creazione dell\'evento');
@@ -669,15 +847,114 @@ function showEventDetails(event) {
     modal.show();
 }
 
-function deleteEvent() {
+function openEditModal() {
+    if(!selectedEvent) return;
+
+    // Chiudi modal dettagli
+    const detailsModal = bootstrap.Modal.getInstance(document.getElementById('eventDetailsModal'));
+    if(detailsModal) detailsModal.hide();
+
+    // Popola form di modifica
+    document.getElementById('editEventId').value = selectedEvent.id_evento;
+    document.getElementById('editEventName').value = selectedEvent.nome;
+    document.getElementById('editEventLocation').value = selectedEvent.luogo || '';
+
+    const start = new Date(selectedEvent.data_ora_inizio);
+    const end = selectedEvent.data_fine ? new Date(selectedEvent.data_fine) : start;
+
+    document.getElementById('editEventStart').value = formatDateTimeLocal(start);
+    document.getElementById('editEventEnd').value = formatDateTimeLocal(end);
+
+    // Reset lista partecipanti
+    editSelectedUsers = [];
+    updateSelectedUsersList('editSelectedUsersList', editSelectedUsers);
+
+    // Apri modal modifica
+    const editModal = new bootstrap.Modal(document.getElementById('editEventModal'));
+    editModal.show();
+}
+
+function updateEvent() {
+    const form = document.getElementById('editEventForm');
+    if(!form.checkValidity()) {
+        form.reportValidity();
+        return;
+    }
+
+    const formData = new FormData(form);
+    const partecipanti = editSelectedUsers.map(u => u.id);
+
+    const payload = {
+        id: parseInt(formData.get('id')),
+        nome: formData.get('nome'),
+        luogo: formData.get('luogo') || '',
+        inizio: formData.get('inizio'),
+        fine: formData.get('fine'),
+        partecipanti: partecipanti
+    };
+
+    const saveBtn = document.querySelector('#editEventModal .btn-primary');
+    const originalText = saveBtn.innerHTML;
+    saveBtn.disabled = true;
+    saveBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Salvataggio...';
+
+    fetch('/dashboard/calendar/api/update', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        },
+        body: JSON.stringify(payload)
+    })
+        .then(res => {
+            if (!res.ok) {
+                throw new Error(`HTTP error! status: ${res.status}`);
+            }
+            return res.json();
+        })
+        .then(data => {
+            if(data.status === 'success') {
+                // Aggiorna evento nella lista
+                const idx = eventsData.findIndex(e => e.id_evento === payload.id);
+                if(idx > -1) {
+                    eventsData[idx] = {
+                        id_evento: payload.id,
+                        nome: payload.nome,
+                        luogo: payload.luogo,
+                        data_ora_inizio: payload.inizio,
+                        data_fine: payload.fine
+                    };
+                }
+
+                const modalEl = document.getElementById('editEventModal');
+                const modal = bootstrap.Modal.getInstance(modalEl);
+                if(modal) modal.hide();
+                form.reset();
+                editSelectedUsers = [];
+                clearEventSelection();
+                renderView();
+            } else {
+                alert('Errore durante l\'aggiornamento dell\'evento');
+            }
+        })
+        .catch(err => {
+            console.error('Errore aggiornamento evento:', err);
+            alert('Errore di comunicazione con il server');
+        })
+        .finally(() => {
+            saveBtn.disabled = false;
+            saveBtn.innerHTML = originalText;
+        });
+}
+
+function deleteEventFromEdit() {
     if(!selectedEvent) return;
 
     if(!confirm('Sei sicuro di voler eliminare questo evento?')) {
         return;
     }
 
-    // Disable button and show loading
-    const deleteBtn = document.querySelector('#eventDetailsModal .btn-danger');
+    const deleteBtn = document.querySelector('#editEventModal .btn-danger');
     const originalText = deleteBtn.innerHTML;
     deleteBtn.disabled = true;
     deleteBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Eliminazione...';
@@ -702,10 +979,11 @@ function deleteEvent() {
                     eventsData = eventsData.filter(e => e.id_evento !== selectedEvent.id_evento);
                 }
 
-                const modalEl = document.getElementById('eventDetailsModal');
+                const modalEl = document.getElementById('editEventModal');
                 const modal = bootstrap.Modal.getInstance(modalEl);
                 if(modal) modal.hide();
 
+                clearEventSelection();
                 renderView();
             } else {
                 alert('Errore durante l\'eliminazione dell\'evento');

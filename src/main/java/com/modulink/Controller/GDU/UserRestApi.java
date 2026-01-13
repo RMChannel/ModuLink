@@ -42,6 +42,8 @@ public class UserRestApi {
 
         // Recupera tutti gli utenti della stessa azienda del richiedente
         List<UtenteEntity> colleagues = userRepository.getAllByAziendaIs(currentUser.getAzienda());
+        
+
 
         // Mappa le entità in DTO leggeri
         List<UserBasicInfo> response = colleagues.stream()

@@ -27,8 +27,4 @@ public class EventoService {
         return eventoRepository.findByAzienda(aziendaEntity);
     }
 
-    @Transactional
-    public List<EventoEntity> findAllByAziendaAndNotUtente(UtenteEntity utenteEntity) {
-
-    }
 }
