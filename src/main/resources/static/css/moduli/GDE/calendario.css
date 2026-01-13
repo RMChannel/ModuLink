@@ -35,11 +35,14 @@
     border-radius: 8px;
     padding: 0.5rem 0.75rem;
     transition: all 0.2s;
+    background-color: var(--bg-light);
+    color: var(--text-body);
+    border: 1px solid var(--border-color);
 }
 
 .date-navigation .btn:hover {
-    background-color: var(--color-primary-light);
-    border-color: var(--color-primary);
+    background-color: var(--bg-body-alt);
+    border-color: var(--border-color-hover);
 }
 
 #currentPeriodLabel {
@@ -52,12 +55,31 @@
     border-radius: 8px;
     padding: 0.5rem 1rem;
     transition: all 0.2s;
+    background-color: var(--bg-light);
+    color: var(--text-body);
+    border: 1px solid var(--border-color);
+    cursor: pointer;
+    user-select: none;
+}
+
+.view-selector .btn:hover {
+    background-color: var(--bg-body-alt);
+    border-color: var(--border-color-hover);
+}
+
+.view-selector .btn:active {
+    transform: scale(0.98);
 }
 
 .view-selector .btn.active {
     background-color: var(--color-primary);
     color: var(--color-white);
     border-color: var(--color-primary);
+}
+
+.view-selector .btn.active:hover {
+    background-color: var(--color-primary-dark);
+    border-color: var(--color-primary-dark);
 }
 
 /* View Container */
@@ -103,6 +125,11 @@
     flex-direction: column;
     gap: 0.25rem;
     transition: background-color 0.2s;
+}
+
+/* Dark mode: bordi header più visibili */
+[data-theme='dark'] .day-header {
+    border-right: 1px solid var(--border-color);
 }
 
 .day-header:hover {
@@ -167,6 +194,11 @@
     padding-top: 0.25rem;
 }
 
+/* Dark mode: bordi tempo più visibili */
+[data-theme='dark'] .time-slot {
+    border-bottom: 1px solid var(--border-color);
+}
+
 .time-label {
     font-size: 0.7rem;
     color: var(--text-muted);
@@ -190,6 +222,11 @@
     cursor: pointer;
 }
 
+/* Dark mode: bordi colonne più visibili */
+[data-theme='dark'] .day-column {
+    border-right: 1px solid var(--border-color);
+}
+
 .day-column::before {
     content: '';
     position: absolute;
@@ -206,6 +243,17 @@
     );
     pointer-events: none;
     z-index: 1;
+}
+
+/* Dark mode: linee orizzontali più visibili */
+[data-theme='dark'] .day-column::before {
+    background-image: repeating-linear-gradient(
+            to bottom,
+            transparent,
+            transparent 59px,
+            var(--border-color) 59px,
+            var(--border-color) 60px
+    );
 }
 
 .day-column:hover {
@@ -236,7 +284,7 @@
     height: 10px;
     background-color: #ef4444;
     border-radius: 50%;
-    border: 2px solid var(--bg-white);
+    border: 2px solid var(--bg-light);
 }
 
 .week-event {
@@ -323,6 +371,12 @@
     background-color: var(--bg-white);
     transition: background-color 0.2s;
     cursor: pointer;
+}
+
+/* Dark mode: bordi mese più visibili */
+[data-theme='dark'] .month-day {
+    border-right: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
 }
 
 .month-day:nth-child(7n) {

@@ -1,6 +1,7 @@
 let currentDate = new Date();
 let currentView = 'week';
 let currentTimeInterval = null;
+let cachedUsers = null; // Cache per gli utenti
 
 document.addEventListener('DOMContentLoaded', function() {
     initializeCalendar();
@@ -8,7 +9,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function initializeCalendar() {
     renderView();
+    setupEventListeners();
 
+    // Update current time indicator every minute for week view
+    if(currentView === 'week') {
+        updateCurrentTimeLine();
+        currentTimeInterval = setInterval(updateCurrentTimeLine, 60000);
+    }
+}
+
+function setupEventListeners() {
     // Load users when create modal opens
     const createModal = document.getElementById('createEventModal');
     if(createModal) {
@@ -33,29 +43,55 @@ function initializeCalendar() {
         });
     }
 
-    // View Switchers
+    // View Switchers - FIX: previene doppi click e gestisce correttamente il cambio
     document.querySelectorAll('[data-view]').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            switchView(e.target.dataset.view);
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const targetView = this.getAttribute('data-view');
+
+            // Previeni click multipli se già nella vista corretta
+            if(currentView === targetView) return;
+
+            switchView(targetView);
         });
     });
 
     // Navigation
-    document.getElementById('prevPeriod').addEventListener('click', () => changePeriod(-1));
-    document.getElementById('nextPeriod').addEventListener('click', () => changePeriod(1));
-    document.getElementById('todayBtn').addEventListener('click', () => {
-        currentDate = new Date();
-        renderView();
-    });
+    const prevBtn = document.getElementById('prevPeriod');
+    const nextBtn = document.getElementById('nextPeriod');
+    const todayBtn = document.getElementById('todayBtn');
 
-    // Update current time indicator every minute
-    if(currentView === 'week') {
-        updateCurrentTimeLine();
-        currentTimeInterval = setInterval(updateCurrentTimeLine, 60000);
+    if(prevBtn) {
+        prevBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            changePeriod(-1);
+        });
+    }
+
+    if(nextBtn) {
+        nextBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            changePeriod(1);
+        });
+    }
+
+    if(todayBtn) {
+        todayBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            currentDate = new Date();
+            renderView();
+        });
     }
 }
 
 function switchView(view) {
+    console.log('Switching to view:', view);
+
+    // Previeni cambio se già nella vista corretta
+    if(currentView === view) return;
+
+    const oldView = currentView;
     currentView = view;
 
     // Clear interval if switching away from week view
@@ -64,34 +100,65 @@ function switchView(view) {
         currentTimeInterval = null;
     }
 
-    // Update active button
-    document.querySelectorAll('[data-view]').forEach(b => b.classList.remove('active'));
-    document.querySelector(`[data-view="${view}"]`).classList.add('active');
-
-    // Switch views
-    document.querySelectorAll('.calendar-view').forEach(v => {
-        v.style.display = 'none';
-        v.classList.remove('active');
+    // Update active button - FIX: gestione più robusta
+    document.querySelectorAll('[data-view]').forEach(btn => {
+        if(!btn) return; // Safety check
+        const btnView = btn.getAttribute('data-view');
+        if(btnView === view) {
+            btn.classList.add('active');
+        } else {
+            btn.classList.remove('active');
+        }
     });
 
-    const targetId = `${view}View`;
-    const viewEl = document.getElementById(targetId);
-    if(viewEl) {
-        viewEl.style.display = 'flex';
-        viewEl.classList.add('active');
-        renderView();
+    // Hide all views first
+    const weekView = document.getElementById('weekView');
+    const monthView = document.getElementById('monthView');
 
-        // Start time indicator for week view
-        if(view === 'week') {
-            updateCurrentTimeLine();
-            currentTimeInterval = setInterval(updateCurrentTimeLine, 60000);
-        }
+    if(weekView) {
+        weekView.style.display = 'none';
+        if(weekView.classList) weekView.classList.remove('active');
+    }
+
+    if(monthView) {
+        monthView.style.display = 'none';
+        if(monthView.classList) monthView.classList.remove('active');
+    }
+
+    // Show target view
+    const targetView = document.getElementById(`${view}View`);
+    if(targetView) {
+        targetView.style.display = 'flex';
+        if(targetView.classList) targetView.classList.add('active');
+
+        // Render the view con un piccolo delay per assicurarci che il DOM sia pronto
+        setTimeout(() => {
+            renderView();
+
+            // Start time indicator for week view
+            if(view === 'week') {
+                setTimeout(() => {
+                    updateCurrentTimeLine();
+                    currentTimeInterval = setInterval(updateCurrentTimeLine, 60000);
+                }, 100);
+            }
+        }, 10);
+    } else {
+        console.error('Target view not found:', `${view}View`);
+        // Ripristina la vista precedente se fallisce
+        currentView = oldView;
     }
 }
 
 function loadUsers() {
     const list = document.getElementById('userSelectionList');
     if(!list) return;
+
+    // Se abbiamo già la cache, usala
+    if(cachedUsers && cachedUsers.length > 0) {
+        renderUsersList(cachedUsers, list);
+        return;
+    }
 
     list.innerHTML = '<div class="text-center text-muted p-3"><div class="spinner-border spinner-border-sm" role="status"></div><div class="mt-2">Caricamento utenti...</div></div>';
 
@@ -101,25 +168,31 @@ function loadUsers() {
             return res.json();
         })
         .then(users => {
-            if(users.length === 0) {
-                list.innerHTML = '<div class="text-muted p-3 text-center">Nessun collega trovato</div>';
-                return;
-            }
-            list.innerHTML = '';
-            users.forEach(u => {
-                const div = document.createElement('div');
-                div.className = 'user-select-item';
-                div.innerHTML = `
-                    <input type="checkbox" id="user_${u.id}" name="partecipanti" value="${u.id}" class="form-check-input">
-                    <label for="user_${u.id}">${escapeHtml(u.nome)} ${escapeHtml(u.cognome)}</label>
-                `;
-                list.appendChild(div);
-            });
+            cachedUsers = users; // Salva in cache
+            renderUsersList(users, list);
         })
         .catch(err => {
             console.error(err);
             list.innerHTML = '<div class="text-danger p-3 text-center"><i class="bi bi-exclamation-circle"></i> Errore caricamento utenti</div>';
         });
+}
+
+function renderUsersList(users, container) {
+    if(users.length === 0) {
+        container.innerHTML = '<div class="text-muted p-3 text-center">Nessun collega trovato</div>';
+        return;
+    }
+
+    container.innerHTML = '';
+    users.forEach(u => {
+        const div = document.createElement('div');
+        div.className = 'user-select-item';
+        div.innerHTML = `
+            <input type="checkbox" id="user_${u.id}" name="partecipanti" value="${u.id}" class="form-check-input">
+            <label for="user_${u.id}">${escapeHtml(u.nome)} ${escapeHtml(u.cognome)}</label>
+        `;
+        container.appendChild(div);
+    });
 }
 
 function changePeriod(delta) {
@@ -133,8 +206,13 @@ function changePeriod(delta) {
 
 function renderView() {
     updateHeaderLabel();
-    if (currentView === 'week') renderWeekView();
-    else if (currentView === 'month') renderMonthView();
+
+    // Render solo la vista corrente
+    if (currentView === 'week') {
+        renderWeekView();
+    } else if (currentView === 'month') {
+        renderMonthView();
+    }
 }
 
 function updateHeaderLabel() {
@@ -167,10 +245,19 @@ function getStartOfWeek(date) {
 // WEEK VIEW
 // ==========================================
 function renderWeekView() {
-    const headerContainer = document.querySelector('.week-header');
-    const weekBody = document.querySelector('.week-body');
+    const weekView = document.getElementById('weekView');
+    if(!weekView) {
+        console.error('Week view container not found');
+        return;
+    }
 
-    if(!headerContainer || !weekBody) return;
+    const headerContainer = weekView.querySelector('.week-header');
+    const weekBody = weekView.querySelector('.week-body');
+
+    if(!headerContainer || !weekBody) {
+        console.error('Week view elements not found');
+        return;
+    }
 
     // Clear previous content
     headerContainer.innerHTML = '<div class="time-column-header"></div>';
@@ -228,11 +315,13 @@ function renderWeekView() {
         col.dataset.date = d.toISOString().split('T')[0];
 
         // Add click handler to create event
-        col.addEventListener('click', (e) => {
+        col.addEventListener('click', function(e) {
             // Don't trigger if clicking on an event
             if(e.target.closest('.week-event')) return;
 
-            const clickY = e.clientY - col.getBoundingClientRect().top + col.parentElement.parentElement.scrollTop;
+            const rect = col.getBoundingClientRect();
+            const scrollTop = col.parentElement.parentElement.scrollTop;
+            const clickY = e.clientY - rect.top + scrollTop;
             const clickedHour = Math.floor(clickY / pxPerHour);
             const clickedMinute = Math.floor(((clickY % pxPerHour) / pxPerHour) * 60);
 
@@ -289,10 +378,10 @@ function renderWeekView() {
                     }
 
                     el.innerHTML = content;
-                    el.onclick = (e) => {
+                    el.addEventListener('click', function(e) {
                         e.stopPropagation();
                         showEventDetails(event);
-                    };
+                    });
                     el.title = `${event.nome}\n${start.toLocaleString('it-IT')} - ${end.toLocaleString('it-IT')}`;
 
                     col.appendChild(el);
@@ -302,7 +391,7 @@ function renderWeekView() {
     }
 
     // Add current time line if today is visible
-    updateCurrentTimeLine();
+    setTimeout(() => updateCurrentTimeLine(), 100);
 }
 
 function updateCurrentTimeLine() {
@@ -344,8 +433,18 @@ function updateCurrentTimeLine() {
 // MONTH VIEW
 // ==========================================
 function renderMonthView() {
-    const container = document.querySelector('.month-grid');
-    if(!container) return;
+    const monthView = document.getElementById('monthView');
+    if(!monthView) {
+        console.error('Month view container not found');
+        return;
+    }
+
+    const container = monthView.querySelector('.month-grid');
+    if(!container) {
+        console.error('Month grid not found');
+        return;
+    }
+
     container.innerHTML = '';
 
     const year = currentDate.getFullYear();
@@ -375,7 +474,7 @@ function renderMonthView() {
         dayEl.innerHTML = `<span class="month-day-number">${d.getDate()}</span>`;
 
         // Add click handler to create event on this day
-        dayEl.addEventListener('click', (e) => {
+        dayEl.addEventListener('click', function(e) {
             // Don't trigger if clicking on an event
             if(e.target.closest('.month-event') || e.target.closest('.month-event-more')) return;
 
@@ -398,10 +497,10 @@ function renderMonthView() {
                 evEl.className = 'month-event';
                 const startTime = new Date(event.data_ora_inizio);
                 evEl.textContent = `${formatTime(startTime)} ${event.nome}`;
-                evEl.onclick = (e) => {
+                evEl.addEventListener('click', function(e) {
                     e.stopPropagation();
                     showEventDetails(event);
-                };
+                });
                 eventsContainer.appendChild(evEl);
             });
 
@@ -409,9 +508,9 @@ function renderMonthView() {
                 const more = document.createElement('div');
                 more.className = 'month-event-more';
                 more.textContent = `+${dayEvents.length - maxVisible} altri`;
-                more.onclick = (e) => {
+                more.addEventListener('click', function(e) {
                     e.stopPropagation();
-                };
+                });
                 eventsContainer.appendChild(more);
             }
         }

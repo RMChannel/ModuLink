@@ -19,4 +19,6 @@ public interface EventoRepository extends JpaRepository<EventoEntity, EventoID> 
     @Query("SELECT COALESCE(MAX(e.id_evento), 0) FROM EventoEntity e WHERE e.azienda = :azienda")
     int findMaxIdByAzienda(@Param("azienda") AziendaEntity azienda);
 
+
+
 }
