@@ -65,6 +65,7 @@
         </div>
 
         <!-- User Profile -->
+        <a th:href="@{/dashboard/edit-user}" style="text-decoration: none;">
         <div class="user-profile" th:if="${utente != null}">
             <!-- Immagine Profilo -->
             <img th:if="${utente.path_immagine_profilo != null and !utente.path_immagine_profilo.isEmpty()}"
@@ -80,15 +81,12 @@
 
             <!-- User Info (Nome completo) -->
             <div class="user-info">
+
                 <span class="user-name" th:text="${utente.nome + ' ' + utente.cognome}">Utente Demo</span>
                 <span class="user-role" th:text="${utente.ruoli != null and !utente.ruoli.isEmpty() ? utente.ruoli.iterator().next().nome : 'Utente'}">Ruolo</span>
+
             </div>
         </div>
-
-        <!-- Settings Link -->
-        <a th:href="@{/dashboard/edit-user}" class="settings-link" title="Impostazioni">
-            <i class="bi bi-gear-fill"></i>
-            <span>Impostazioni</span>
         </a>
 
         <!-- Logout Link -->
