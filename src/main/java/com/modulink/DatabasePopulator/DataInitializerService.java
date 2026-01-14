@@ -11,6 +11,7 @@ import com.modulink.Model.Relazioni.Affiliazione.AffiliazioneEntity;
 import com.modulink.Model.Relazioni.Affiliazione.AffiliazioneRepository;
 import com.modulink.Model.Relazioni.Associazione.AssociazioneEntity;
 import com.modulink.Model.Relazioni.Associazione.AssociazioneRepository;
+import com.modulink.Model.Relazioni.Associazione.AssociazioneService;
 import com.modulink.Model.Relazioni.Attivazione.AttivazioneEntity;
 import com.modulink.Model.Relazioni.Attivazione.AttivazioneRepository;
 import com.modulink.Model.Relazioni.Partecipazione.PartecipazioneEntity;
@@ -54,10 +55,12 @@ public class DataInitializerService {
     public void runInitialization() {
         AziendaEntity azienda = new AziendaEntity("Test","12345678901","Via Nazionale","Santa Maria a Vico","81028","+393205397560","");
         UtenteEntity utente = new UtenteEntity(azienda, "robbencito@gmail.com", PasswordUtility.hashPassword("ciaociao"), "Roberto", "Cito", "+393471304385", "");
+        UtenteEntity u2 = new UtenteEntity(azienda, "rdiskonline@gmail.com", PasswordUtility.hashPassword("ciaociao"), "Test", "Test", "+393205397560", "");
 
         // Importante: riassegna sempre l'oggetto restituito dal save/registrazione
         azienda = aziendaService.registraAzienda(azienda);
         customUserDetailsService.registraUtente(utente, azienda.getId_azienda());
+        customUserDetailsService.registraUtente(u2, azienda.getId_azienda());
 
         RuoloEntity ruoloResponsabile = new RuoloEntity(0, azienda, "Responsabile", "#000000", "Responsabile dell'azienda");
         RuoloEntity ruoloNewUser = new RuoloEntity(1,azienda,"Utente Nuovo","blue","Utente non ancora ufficialmente registrato");
@@ -66,20 +69,22 @@ public class DataInitializerService {
         ruoloRepository.save(ruoloNewUser);
         ruoloRepository.save(ruoloStandard);
 
-        AssociazioneEntity associazione = new AssociazioneEntity(utente, ruoloResponsabile);
-        associazioneRepository.save(associazione);
+        associazioneRepository.save(new AssociazioneEntity(utente, ruoloResponsabile));
+        associazioneRepository.save(new AssociazioneEntity(u2, ruoloStandard));
 
         ModuloEntity GDU = new ModuloEntity(0, "Gestione Utenti", "Permette la gestione di tutti gli utenti della propria azienda", "/dashboard/gdu/", "bi bi-person-lines-fill");
         ModuloEntity GDR = new ModuloEntity(1, "Gestione Ruoli", "Permette la gestione e l'assegnazione dei ruoli", "/dashboard/gdr/", "bi bi-award-fill");
         ModuloEntity GDM = new ModuloEntity(2, "Gestione Moduli", "Permette la gestione di tutti i moduli integrati nella propria azienda","/dashboard/gdm/","bi bi-database-gear");
         ModuloEntity store = new ModuloEntity(3,"Store","Store dei moduli","/dashboard/store/","bi bi-cart-dash");
         ModuloEntity calendario = new ModuloEntity(4,"Calendario", "Permette di organizzare e creare eventi", "/dashboard/calendar", "bi bi-calendar");
+        ModuloEntity GTM = new ModuloEntity(5,"Gestione Task", "Permette di gestire le tasche degli utenti", "/dashboard/gtm/", "bi bi-clipboard-data");
 
         GDU = moduloRepository.save(GDU);
         GDR = moduloRepository.save(GDR);
         GDM = moduloRepository.save(GDM);
         store = moduloRepository.save(store);
         calendario = moduloRepository.save(calendario);
+        GTM = moduloRepository.save(GTM);
 
         // Ora azienda e modulo sono MANAGED nella stessa transazione
         attivazioneRepository.save(new AttivazioneEntity(GDU, azienda));
@@ -87,6 +92,7 @@ public class DataInitializerService {
         attivazioneRepository.save(new AttivazioneEntity(GDM, azienda));
         attivazioneRepository.save(new AttivazioneEntity(store, azienda));
         attivazioneRepository.save(new AttivazioneEntity(calendario, azienda));
+        attivazioneRepository.save(new AttivazioneEntity(GTM, azienda));
 
 
         affiliazioneRepository.save(new AffiliazioneEntity(ruoloResponsabile.getId_ruolo(),GDU.getId_modulo(),azienda.getId_azienda()));
@@ -94,6 +100,7 @@ public class DataInitializerService {
         affiliazioneRepository.save(new AffiliazioneEntity(ruoloResponsabile.getId_ruolo(),GDM.getId_modulo(),azienda.getId_azienda()));
         affiliazioneRepository.save(new AffiliazioneEntity(ruoloResponsabile.getId_ruolo(),store.getId_modulo(),azienda.getId_azienda()));
         affiliazioneRepository.save(new AffiliazioneEntity(ruoloResponsabile.getId_ruolo(),calendario.getId_modulo(),azienda.getId_azienda()));
+        affiliazioneRepository.save(new AffiliazioneEntity(ruoloResponsabile.getId_ruolo(),GTM.getId_modulo(),azienda.getId_azienda()));
 
         // --- CREAZIONE EVENTI DI PROVA ---
         LocalDateTime now = LocalDateTime.now();
