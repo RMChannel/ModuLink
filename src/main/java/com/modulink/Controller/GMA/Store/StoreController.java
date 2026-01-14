@@ -44,7 +44,7 @@ public class StoreController extends ModuloController {
             model.addAttribute("moduliNon", moduliNonAcquistati);
         }
 
-        return "moduli/gdm/store/StoreModuli";
+        return "moduli/gma/store/StoreModuli";
     }
 
     @PostMapping("/dashboard/store/buy")
