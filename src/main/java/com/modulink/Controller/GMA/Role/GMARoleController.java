@@ -1,7 +1,6 @@
-package com.modulink.Controller.GDM.Role;
+package com.modulink.Controller.GMA.Role;
 
 import com.modulink.Controller.ModuloController;
-import com.modulink.Model.Modulo.ModuloEntity;
 import com.modulink.Model.Modulo.ModuloService;
 import com.modulink.Model.Ruolo.RuoloEntity;
 import com.modulink.Model.Ruolo.RuoloNotFoundException;
@@ -20,33 +19,33 @@ import java.util.List;
 import java.util.Optional;
 
 @Controller
-public class GDMRoleController extends ModuloController {
+public class GMARoleController extends ModuloController {
     private final CustomUserDetailsService customUserDetailsService;
     private final ModuloService moduloService;
     private final RuoloService ruoloService;
 
-    public GDMRoleController(CustomUserDetailsService customUserDetailsService, ModuloService moduloService, RuoloService ruoloService) {
+    public GMARoleController(CustomUserDetailsService customUserDetailsService, ModuloService moduloService, RuoloService ruoloService) {
         super(moduloService,2);
         this.customUserDetailsService = customUserDetailsService;
         this.moduloService = moduloService;
         this.ruoloService = ruoloService;
     }
 
-    @GetMapping({"dashboard/gdm","dashboard/gdm/"})
+    @GetMapping({"dashboard/gma","dashboard/gma/"})
     public String dashboardDispatcher(Principal principal, Model model) {
         String email =  principal.getName();
         Optional<UtenteEntity> utenteOpt = customUserDetailsService.findByEmail(email);
         if (isAccessibleModulo(utenteOpt)) {
             UtenteEntity utente = utenteOpt.get();
             model.addAttribute("ruoli", ruoloService.getAllRolesByAzienda(utente.getAzienda()));
-            return "moduli/gdm/role/RoleModuli";
+            return "moduli/gma/role/RoleModuli";
         }
         else {
             return "redirect:/";
         }
     }
 
-    @PostMapping("dashboard/gdr/edit-modulo")
+    @PostMapping("dashboard/gma/edit-modulo")
     public String editModulo(Principal principal, Model model, @RequestParam int idModulo, @RequestParam(required = false) List<Integer> roleIds) {
         String email =  principal.getName();
         Optional<UtenteEntity> utenteOpt = customUserDetailsService.findByEmail(email);
@@ -63,14 +62,14 @@ public class GDMRoleController extends ModuloController {
                     model.addAttribute("ruoli", ruoloService.getAllRolesByAzienda(utente.getAzienda()));
                     model.addAttribute("error",true);
                     model.addAttribute("message","Uno dei ruoli selezionati non è stato trovato");
-                    return "moduli/gdm/role/RoleModuli";
+                    return "moduli/gma/role/RoleModuli";
                 }
             }
             moduloService.updateModuloAffiliations(utente.getAzienda(),idModulo,ruoli);
             model.addAttribute("success",true);
             model.addAttribute("message","Assegnazione completata con successo");
             model.addAttribute("ruoli", ruoloService.getAllRolesByAzienda(utente.getAzienda()));
-            return "moduli/gdm/role/RoleModuli";
+            return "moduli/gma/role/RoleModuli";
         }
         else {
             return "redirect:/";
