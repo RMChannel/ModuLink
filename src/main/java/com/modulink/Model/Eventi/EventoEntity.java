@@ -1,7 +1,6 @@
 package com.modulink.Model.Eventi;
 
 import com.modulink.Model.Azienda.AziendaEntity;
-import com.modulink.Model.Utente.UtenteEntity;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -16,11 +15,8 @@ public class EventoEntity {
     private int id_evento;
 
     @Id
-    @Column(name="ID_Azienda", nullable = false)
-    private int id_azienda;
-
     @ManyToOne
-    @JoinColumn(name="ID_Azienda", referencedColumnName = "ID_Azienda", insertable=false, updatable=false, foreignKey = @ForeignKey(name = "FK_Evento_Azienda"))
+    @JoinColumn(name="id_azienda", referencedColumnName = "id_azienda", nullable = false, foreignKey = @ForeignKey(name = "FK_Evento_Azienda"))
     private AziendaEntity azienda;
 
     @Column(name="nome", nullable = false, length = 200)
@@ -35,22 +31,15 @@ public class EventoEntity {
     @Column(name="data_fine")
     private LocalDateTime data_fine;
 
-    @ManyToOne
-    private UtenteEntity creatore;
-
     public EventoEntity() {}
 
-    public EventoEntity(int id_evento, AziendaEntity azienda, String nome, String luogo, LocalDateTime data_ora_inizio, LocalDateTime data_fine, UtenteEntity creatore) {
+    public EventoEntity(int id_evento, AziendaEntity azienda, String nome, String luogo, LocalDateTime data_ora_inizio, LocalDateTime data_fine) {
         this.id_evento = id_evento;
-        if (azienda != null) {
-            this.azienda = azienda;
-            this.id_azienda = azienda.getId_azienda();
-        }
+        this.azienda = azienda;
         this.nome = nome;
         this.luogo = luogo;
         this.data_ora_inizio = data_ora_inizio;
         this.data_fine = data_fine;
-        this.creatore = creatore;
     }
 
     public int getId_evento() {
@@ -61,23 +50,12 @@ public class EventoEntity {
         this.id_evento = id_evento;
     }
 
-    public int getId_azienda() {
-        return id_azienda;
-    }
-
-    public void setId_azienda(int id_azienda) {
-        this.id_azienda = id_azienda;
-    }
-
     public AziendaEntity getAzienda() {
         return azienda;
     }
 
     public void setAzienda(AziendaEntity azienda) {
         this.azienda = azienda;
-        if (azienda != null) {
-            this.id_azienda = azienda.getId_azienda();
-        }
     }
 
     public String getNome() {
@@ -110,13 +88,5 @@ public class EventoEntity {
 
     public void setData_fine(LocalDateTime data_fine) {
         this.data_fine = data_fine;
-    }
-
-    public UtenteEntity getCreatore() {
-        return creatore;
-    }
-
-    public void setCreatore(UtenteEntity creatore) {
-        this.creatore = creatore;
     }
 }
