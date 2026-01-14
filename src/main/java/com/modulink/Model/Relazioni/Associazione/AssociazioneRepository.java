@@ -28,4 +28,5 @@ import java.util.List;
 public interface AssociazioneRepository extends JpaRepository<AssociazioneEntity, AssocazioneID> {
     void removeAllByUtente(UtenteEntity utente);
     void removeAllByRuolo(RuoloEntity ruolo);
+    List<AssociazioneEntity> findByRuolo(RuoloEntity ruolo);
 }

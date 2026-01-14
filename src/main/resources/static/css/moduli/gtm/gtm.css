@@ -1,0 +1,267 @@
+@import url('../../user/colors.css');
+
+/* =========================================
+   GTM MODULE STYLES - ADAPTIVE THEME
+   ========================================= */
+
+/* 1. Container & Typography Override */
+.container-fluid {
+    background-color: transparent; 
+    color: var(--text-body);
+}
+
+h1.h2, h2, h3 {
+    color: var(--text-heading);
+    font-weight: 700;
+}
+
+h3 {
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+}
+
+/* 2. Toolbar & Buttons */
+.btn-toolbar .btn-outline-primary {
+    color: var(--color-primary);
+    border-color: var(--color-primary);
+    transition: all 0.3s ease;
+}
+
+.btn-toolbar .btn-outline-primary:hover {
+    background-color: var(--color-primary);
+    color: var(--color-white);
+    box-shadow: var(--shadow-btn-primary);
+}
+
+/* 3. Responsive Table Adaptation */
+.table-responsive {
+    background-color: var(--bg-white);
+    border-radius: 12px;
+    box-shadow: var(--shadow-card);
+    padding: 0;
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+    margin-bottom: 2rem;
+}
+
+/* Bootstrap Table Variables Override */
+.table {
+    --bs-table-color: var(--text-body);
+    --bs-table-bg: var(--bg-white);
+    --bs-table-border-color: var(--border-color-light);
+    --bs-table-striped-bg: var(--bg-body-alt);
+    --bs-table-striped-color: var(--text-body);
+    --bs-table-active-bg: var(--bg-light);
+    --bs-table-active-color: var(--text-body);
+    --bs-table-hover-bg: var(--bg-light);
+    --bs-table-hover-color: var(--text-body);
+    
+    margin-bottom: 0;
+    width: 100%;
+    border-collapse: collapse;
+}
+
+/* Table Header */
+.table thead th {
+    background-color: var(--bg-light);
+    color: var(--text-heading);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+    padding: 1rem;
+    border-bottom: 2px solid var(--border-color);
+    vertical-align: middle;
+}
+
+.table thead.table-dark th {
+    background-color: var(--bg-dark-section);
+    color: var(--text-light);
+    border-color: rgba(255,255,255,0.1);
+}
+
+/* Table Body */
+.table tbody td {
+    padding: 1rem;
+    vertical-align: middle;
+    border-bottom: 1px solid var(--border-color-light);
+    color: var(--text-body);
+}
+
+.table-hover tbody tr:hover {
+    background-color: var(--bg-light);
+    transition: background-color 0.2s ease;
+}
+
+/* 4. Badges & Status */
+.badge {
+    font-weight: 600;
+    padding: 0.5em 0.8em;
+    border: 1px solid transparent;
+}
+
+.badge-priority-high {
+    background-color: var(--text-danger) !important;
+    color: white;
+}
+.badge-priority-medium {
+    background-color: #ffc107 !important; /* Warning color, maybe verify variable */
+    color: black;
+}
+.badge-priority-low {
+    background-color: #22c55e !important; /* Green */
+    color: white;
+}
+
+/* 5. Action Buttons in Table */
+.btn-sm.btn-outline-primary {
+    color: var(--color-primary);
+    border-color: var(--border-color-hover);
+    background: transparent;
+}
+
+.btn-sm.btn-outline-primary:hover {
+    color: var(--color-white);
+    border-color: var(--color-primary);
+    background-color: var(--color-primary);
+}
+
+.btn-sm.btn-outline-danger {
+    color: var(--text-danger);
+    border-color: var(--border-color-hover);
+    background: transparent;
+}
+
+.btn-sm.btn-outline-danger:hover {
+    color: var(--color-white);
+    border-color: var(--text-danger);
+    background-color: var(--text-danger);
+}
+
+.btn-sm.btn-outline-success {
+    color: #22c55e;
+    border-color: var(--border-color-hover);
+    background: transparent;
+}
+
+.btn-sm.btn-outline-success:hover {
+    color: var(--color-white);
+    border-color: #22c55e;
+    background-color: #22c55e;
+}
+
+/* 6. Empty State */
+.text-muted em {
+    font-style: normal;
+    color: var(--text-secondary);
+}
+
+/* 7. Modal Styles (GTM Specific) */
+.gtm-modal .modal-content {
+    background-color: var(--bg-white);
+    border: 1px solid var(--border-color);
+    color: var(--text-body);
+    box-shadow: var(--shadow-card-hover);
+    border-radius: 12px;
+}
+
+.gtm-modal .modal-header {
+    border-bottom: 1px solid var(--border-color-light);
+}
+
+.gtm-modal .modal-title {
+    color: var(--text-heading);
+    font-weight: 600;
+}
+
+.gtm-modal .modal-body {
+    background-color: var(--bg-white);
+}
+
+.gtm-modal .modal-footer {
+    border-top: 1px solid var(--border-color-light);
+    background-color: var(--bg-white);
+    border-bottom-left-radius: 12px;
+    border-bottom-right-radius: 12px;
+}
+
+.gtm-modal .form-label {
+    color: var(--text-heading);
+    font-weight: 500;
+}
+
+/* Input Fields */
+.form-control, .form-select {
+    background-color: var(--bg-input);
+    border-color: var(--border-color);
+    color: var(--text-body);
+}
+
+.form-control:focus, .form-select:focus {
+    background-color: var(--bg-input-focus);
+    border-color: var(--color-primary);
+    color: var(--text-body);
+    box-shadow: var(--shadow-input-focus);
+}
+
+.form-text {
+    color: var(--text-muted);
+}
+
+/* 8. Assignee Selection Styles */
+.input-group-text {
+    background-color: var(--bg-input);
+    border-color: var(--border-color);
+    color: var(--text-secondary);
+}
+
+.list-group-item {
+    background-color: var(--bg-white);
+    color: var(--text-body);
+    border-color: var(--border-color-light);
+}
+
+.list-group-item:hover {
+    background-color: var(--bg-light);
+    cursor: pointer;
+    color: var(--text-heading);
+}
+
+/* Chips for selected assignees */
+.assignee-chip {
+    background-color: var(--bg-light) !important;
+    border: 1px solid var(--border-color-light) !important;
+    color: var(--text-heading);
+}
+
+/* Dark mode specific overrides for chips and dropdowns */
+[data-theme='dark'] .assignee-chip {
+    background-color: var(--bg-body-alt) !important;
+    border-color: var(--border-color) !important;
+    color: var(--text-heading);
+}
+
+[data-theme='dark'] .list-group-item {
+    background-color: var(--bg-white);
+    color: var(--text-body);
+    border-color: var(--border-color);
+}
+
+[data-theme='dark'] .list-group-item:hover {
+    background-color: var(--bg-body-alt);
+    color: var(--text-heading);
+}
+
+/* Fix dropdown visibility in dark mode */
+#add_assigneeDropdown, #edit_assigneeDropdown {
+    background-color: var(--bg-white);
+    border-color: var(--border-color);
+}
+
+[data-theme='dark'] #add_assigneeDropdown, 
+[data-theme='dark'] #edit_assigneeDropdown {
+    background-color: var(--bg-white);
+    border-color: var(--border-color-hover);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5) !important;
+}
