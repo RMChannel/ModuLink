@@ -11,6 +11,58 @@
     <link rel="stylesheet" th:href="@{/css/common/alerts.css}">
     <link rel="stylesheet" th:href="@{/css/moduli/GDE/calendario.css}">
     <script th:src="@{/javascript/theme.js}"></script>
+
+    <style>
+        /* Stile menu contestuale (Right Click Popup) */
+        #contextMenu {
+            display: none;
+            position: fixed;
+            z-index: 9999;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            width: 300px;
+            max-height: 400px;
+            overflow-y: auto;
+            padding: 0;
+        }
+        .ctx-header {
+            background: #f8f9fa;
+            padding: 10px 15px;
+            border-bottom: 1px solid #eee;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .ctx-body {
+            padding: 10px;
+        }
+        .ctx-item {
+            padding: 8px;
+            border-bottom: 1px solid #f0f0f0;
+            cursor: pointer;
+            transition: background 0.2s;
+            border-radius: 4px;
+        }
+        .ctx-item:last-child { border-bottom: none; }
+        .ctx-item:hover { background-color: #f0f8ff; }
+
+        /* Badge tipi */
+        .badge-task { background-color: #fff3cd; color: #856404; border: 1px solid #ffeeba; }
+        .badge-event { background-color: #cfe2ff; color: #084298; border: 1px solid #b6d4fe; }
+
+        /* Filtri Switch */
+        .filter-controls .form-check-input:checked {
+            background-color: var(--bs-primary);
+            border-color: var(--bs-primary);
+        }
+        .filter-controls .form-check-input#filterTasks:checked {
+            background-color: #ffc107;
+            border-color: #ffc107;
+        }
+    </style>
 </head>
 <body>
 <div class="dashboard-wrapper">
@@ -33,12 +85,31 @@
                     <span id="currentPeriodLabel" class="fw-bold fs-5 text-secondary"></span>
                 </div>
 
-                <div class="d-flex gap-3 flex-wrap">
+                <div class="d-flex gap-3 flex-wrap align-items-center">
+                    <div class="filter-controls d-flex align-items-center gap-3 border-end pe-3 me-2">
+                        <div class="form-check form-switch m-0">
+                            <input class="form-check-input" type="checkbox" id="filterEvents" checked>
+                            <label class="form-check-label d-flex align-items-center" for="filterEvents">
+                                <span class="d-inline-block rounded-circle bg-primary me-1" style="width:10px; height:10px;"></span>
+                                Eventi
+                            </label>
+                        </div>
+                        <div class="form-check form-switch m-0">
+                            <input class="form-check-input" type="checkbox" id="filterTasks" checked>
+                            <label class="form-check-label d-flex align-items-center" for="filterTasks">
+                                <span class="d-inline-block rounded-circle bg-warning me-1" style="width:10px; height:10px;"></span>
+                                Task
+                            </label>
+                        </div>
+                    </div>
+
                     <div class="view-selector btn-group">
                         <button class="btn btn-outline-secondary active" data-view="week"><i class="bi bi-calendar-week me-1"></i> Settimana</button>
                         <button class="btn btn-outline-secondary" data-view="month"><i class="bi bi-calendar-month me-1"></i> Mese</button>
                     </div>
-                    <button class="btn btn-outline-primary" id="refreshEventsBtn"><i class="bi bi-arrow-clockwise"></i></button>
+                    <div class="btn-group">
+                        <button class="btn btn-outline-primary" id="refreshEventsBtn" title="Aggiorna"><i class="bi bi-arrow-clockwise"></i></button>
+                    </div>
                     <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createEventModal"><i class="bi bi-plus-lg me-1"></i> Nuovo</button>
                 </div>
             </div>
@@ -60,6 +131,14 @@
     </div>
 </div>
 
+<div id="contextMenu">
+    <div class="ctx-header">
+        <span id="ctxDateLabel">Data</span>
+        <button type="button" class="btn-close btn-sm" onclick="closeContextMenu()"></button>
+    </div>
+    <div class="ctx-body" id="ctxContent"></div>
+</div>
+
 <div class="modal fade" id="createEventModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -68,6 +147,9 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
+                <div id="dateErrorAlert" class="alert alert-danger d-none">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>Impossibile creare eventi nel passato!
+                </div>
                 <form id="createEventForm">
                     <div class="mb-3">
                         <label class="form-label">Nome Evento *</label>
@@ -156,19 +238,12 @@
                 <input type="hidden" id="detailId">
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary" onclick="openEditModal()">Modifica</button>
+                <button type="button" id="btnEditDetail" class="btn btn-primary" onclick="openEditModal()">Modifica</button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Chiudi</button>
             </div>
         </div>
     </div>
 </div>
-
-<script th:inline="javascript">
-    /*<![CDATA[*/
-    // Thymeleaf ora serializzerà una lista di Mappe/DTO semplici, senza errori di ricorsione
-    var eventsData = /*[[${eventi}]]*/ [];
-    /*]]>*/
-</script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script th:src="@{/javascript/gde/calendario.js}"></script>
