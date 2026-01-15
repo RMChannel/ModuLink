@@ -72,13 +72,13 @@ public class DataInitializerService {
         associazioneRepository.save(new AssociazioneEntity(utente, ruoloResponsabile));
         associazioneRepository.save(new AssociazioneEntity(u2, ruoloStandard));
 
-        ModuloEntity GDU = new ModuloEntity(0, "Gestione Utenti", "Permette la gestione di tutti gli utenti della propria azienda", "/dashboard/gdu/", "bi bi-person-lines-fill");
-        ModuloEntity GDR = new ModuloEntity(1, "Gestione Ruoli", "Permette la gestione e l'assegnazione dei ruoli", "/dashboard/gdr/", "bi bi-award-fill");
-        ModuloEntity GMA = new ModuloEntity(2, "Gestione Moduli", "Permette la gestione di tutti i moduli integrati nella propria azienda","/dashboard/gma/","bi bi-database-gear");
-        ModuloEntity store = new ModuloEntity(3,"Store","Store dei moduli","/dashboard/store/","bi bi-cart-dash");
-        ModuloEntity calendario = new ModuloEntity(4,"Calendario", "Permette di organizzare e creare eventi", "/dashboard/calendar", "bi bi-calendar");
-        ModuloEntity GTM = new ModuloEntity(5,"Gestione Task", "Permette di gestire le tasche degli utenti", "/dashboard/gtm/", "bi bi-clipboard-data");
-        ModuloEntity GDM = new ModuloEntity(6,"Gestione Magazzino", "Permette di gestire tutti i prodotti nel magazzino", "/dashboard/gdm/", "bi bi-box-seam");
+        ModuloEntity GDU = new ModuloEntity(0, "Gestione Utenti", "Permette la gestione di tutti gli utenti della propria azienda", "/dashboard/gdu/", "bi bi-person-lines-fill",true);
+        ModuloEntity GDR = new ModuloEntity(1, "Gestione Ruoli", "Permette la gestione e l'assegnazione dei ruoli", "/dashboard/gdr/", "bi bi-award-fill",true);
+        ModuloEntity GMA = new ModuloEntity(2, "Gestione Moduli", "Permette la gestione di tutti i moduli integrati nella propria azienda","/dashboard/gma/","bi bi-database-gear",true );
+        ModuloEntity store = new ModuloEntity(3,"Store","Store dei moduli","/dashboard/store/","bi bi-cart-dash",true);
+        ModuloEntity calendario = new ModuloEntity(4,"Calendario", "Permette di organizzare e creare eventi", "/dashboard/calendar", "bi bi-calendar",true);
+        ModuloEntity GTM = new ModuloEntity(5,"Gestione Task", "Permette di gestire le tasche degli utenti", "/dashboard/gtm/", "bi bi-clipboard-data",true);
+        ModuloEntity GDM = new ModuloEntity(6,"Gestione Magazzino", "Permette di gestire tutti i prodotti nel magazzino", "/dashboard/gdm/", "bi bi-box-seam",true);
 
         GDU = moduloRepository.save(GDU);
         GDR = moduloRepository.save(GDR);

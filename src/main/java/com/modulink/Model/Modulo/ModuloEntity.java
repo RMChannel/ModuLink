@@ -1,6 +1,7 @@
 package com.modulink.Model.Modulo;
 
 import com.modulink.Model.Relazioni.Affiliazione.AffiliazioneEntity;
+import com.modulink.Model.Utente.UtenteEntity;
 import jakarta.persistence.*;
 
 import java.util.HashSet;
@@ -25,18 +26,21 @@ public class ModuloEntity {
     @Column(name = "url_icona")
     private String url_icona;
 
+    private boolean Visible;
+
     @OneToMany(mappedBy = "id_modulo", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<AffiliazioneEntity> affiliazioni = new HashSet<>();
 
 
     public ModuloEntity(){}
 
-    public ModuloEntity(int id_modulo, String nome, String descrizione, String url_modulo, String url_icona) {
+    public ModuloEntity(int id_modulo, String nome, String descrizione, String url_modulo, String url_icona, boolean Visible) {
         this.id_modulo = id_modulo;
         this.nome = nome;
         this.descrizione = descrizione;
         this.url_modulo = url_modulo;
         this.url_icona = url_icona;
+        this.Visible = Visible;
     }
 
     public int getId_modulo() {
@@ -87,6 +91,14 @@ public class ModuloEntity {
         this.affiliazioni = affiliazioni;
     }
 
+    public boolean isVisible() {
+        return Visible;
+    }
+
+    public void setVisible(boolean visible) {
+        Visible = visible;
+    }
+
     @Override
     public String toString() {
         return "ModuloEntity{" +
@@ -95,6 +107,8 @@ public class ModuloEntity {
                 ", descrizione='" + descrizione + '\'' +
                 ", url_modulo='" + url_modulo + '\'' +
                 ", url_icona='" + url_icona + '\'' +
+                ", Visible=" + Visible +
+                ", affiliazioni=" + affiliazioni +
                 '}';
     }
 }
