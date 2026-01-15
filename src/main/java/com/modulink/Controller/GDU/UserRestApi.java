@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -57,6 +58,20 @@ public class UserRestApi {
 
         return ResponseEntity.ok(response);
     }
+
+
+    //SimpleParser
+    public static List<UserBasicInfo> parseUsers(List<UtenteEntity> users) {
+        return users.stream()
+                .map(u-> new UserBasicInfo(
+                        u.getId_utente(),
+                        u.getNome(),
+                        u.getCognome(),
+                        u.getEmail()
+                ))
+                .collect(Collectors.toList());
+    }
+
 
     // DTO Record interno per pulizia e immutabilità
     public record UserBasicInfo(int id, String nome, String cognome, String email) {}

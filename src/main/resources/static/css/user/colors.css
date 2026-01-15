@@ -74,6 +74,7 @@
 /* =========================================
    DARK MODE OVERRIDES
    ========================================= */
+
 [data-theme='dark'] {
     /* Base Colors */
     --color-white: #020617;
@@ -84,9 +85,9 @@
        ========================================= */
     --text-body: #cbd5e1;                 /* MIGLIORATO: contrasto AA+ */
     --text-heading: #f1f5f9;              /* MIGLIORATO: contrasto migliore */
-    --text-secondary: #94a3b8;            /* MIGLIORATO: più leggibile */
-    --text-muted: #64748b;                /* Muted text */
-    --text-placeholder: #64748b;          /* NUOVO: Placeholder più visibile */
+    --text-secondary: #dcd9d9;            /* MIGLIORATO: più leggibile */
+    --text-muted: #c3c3c3;                /* Muted text */
+    --text-placeholder: #d1d1d1;          /* NUOVO: Placeholder più visibile */
     --text-light: #ffffff;
     --text-danger: #f87171;               /* MIGLIORATO: più visibile su dark */
     --text-danger-dark: #fca5a5;          /* MIGLIORATO: contrasto */

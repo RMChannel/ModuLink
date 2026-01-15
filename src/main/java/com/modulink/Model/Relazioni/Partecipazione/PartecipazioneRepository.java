@@ -11,6 +11,7 @@ import java.util.List;
 @Repository
 public interface PartecipazioneRepository extends JpaRepository<PartecipazioneEntity, PartecipazioneID> {
     public List<PartecipazioneEntity> findByUtente(UtenteEntity utente);
-
-
+    public List<PartecipazioneEntity> getPartecipazioneEntitiesByEvento(EventoEntity evento);
+    void removeByUtenteAndEvento(UtenteEntity utente, EventoEntity evento);
+    
 }

@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,5 +26,16 @@ public class PartecipazioneService {
         partecipazioneRepository.save(partecipazioneEntity);
     }
 
+    public List<UtenteEntity> getUtenteEntitiesByEvento(EventoEntity eventoEntity){
+        List<UtenteEntity> utenteEntities = new ArrayList<>();
+        partecipazioneRepository.getPartecipazioneEntitiesByEvento(eventoEntity).forEach(c->{
+            utenteEntities.add(c.getUtente());
+        });
+        return utenteEntities;
+    }
+
+    public void RimuoviInvito(EventoEntity eventoEntity, UtenteEntity utenteEntity){
+        partecipazioneRepository.removeByUtenteAndEvento(utenteEntity, eventoEntity);
+    }
 
 }
