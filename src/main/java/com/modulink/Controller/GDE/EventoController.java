@@ -246,6 +246,7 @@ public class EventoController extends ModuloController {
     }
 
     public static List<EventoDTO> parseTask(List<TaskEntity> tasks) {
+        for(TaskEntity task : tasks) if(task.isCompletato()) tasks.remove(task);
         return tasks.stream()
                 .map(e->new EventoDTO(e.getId_task(), e.getTitolo(), "Ufficio", e.getDataCreazione().atStartOfDay(), e.getScadenza().atTime(LocalTime.MAX)))
                 .collect(Collectors.toList());
