@@ -33,6 +33,7 @@
                     <div class="message-card" th:each="msg : ${messages}">
                         <div class="message-header">
                             <span class="message-category" th:text="${msg.category}">Categoria</span>
+                            <span class="message-date" th:text="${#temporals.format(msg.datetime, 'dd/MM/yyyy HH:mm')}">Data</span>
                         </div>
                         <div class="message-body">
                             <a th:href="'mailto:' + ${msg.email}" class="message-email">
