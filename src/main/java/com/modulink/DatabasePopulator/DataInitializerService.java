@@ -75,15 +75,17 @@ public class DataInitializerService {
 
 
         ModuloEntity GDU = new ModuloEntity(0, "Gestione Utenti", "Permette la gestione di tutti gli utenti della propria azienda", "/dashboard/gdu/", "bi bi-person-lines-fill",true);
-        ModuloEntity GDR = new ModuloEntity(1, "Gestione Ruoli", "Permette la gestione e l'assegnazione dei ruoli", "/dashboard/gdr/", "bi bi-award-fill",true);
+        ModuloEntity GRU = new ModuloEntity(1, "Gestione Ruoli", "Permette la gestione e l'assegnazione dei ruoli", "/dashboard/gru/", "bi bi-award-fill",true);
         ModuloEntity GMA = new ModuloEntity(2, "Gestione Moduli", "Permette la gestione di tutti i moduli integrati nella propria azienda","/dashboard/gma/","bi bi-database-gear",true );
         ModuloEntity store = new ModuloEntity(9999,"Store","Store dei moduli","/dashboard/store/","bi bi-cart-dash",true);
         ModuloEntity calendario = new ModuloEntity(4,"Calendario", "Permette di organizzare e creare eventi", "/dashboard/calendar", "bi bi-calendar",true);
         ModuloEntity GTM = new ModuloEntity(5,"Gestione Task", "Permette di gestire le tasche degli utenti", "/dashboard/gtm/", "bi bi-clipboard-data",true);
         ModuloEntity GDM = new ModuloEntity(6,"Gestione Magazzino", "Permette di gestire tutti i prodotti nel magazzino", "/dashboard/gdm/", "bi bi-box-seam",true);
 
+
+
         GDU = moduloRepository.save(GDU);
-        GDR = moduloRepository.save(GDR);
+        GRU = moduloRepository.save(GRU);
         GMA = moduloRepository.save(GMA);
         store = moduloRepository.save(store);
         calendario = moduloRepository.save(calendario);
@@ -93,7 +95,7 @@ public class DataInitializerService {
 
         // Ora azienda e modulo sono MANAGED nella stessa transazione
         attivazioneRepository.save(new AttivazioneEntity(GDU, azienda));
-        attivazioneRepository.save(new AttivazioneEntity(GDR, azienda));
+        attivazioneRepository.save(new AttivazioneEntity(GRU, azienda));
         attivazioneRepository.save(new AttivazioneEntity(GMA, azienda));
         attivazioneRepository.save(new AttivazioneEntity(store, azienda));
         attivazioneRepository.save(new AttivazioneEntity(calendario, azienda));
@@ -105,13 +107,14 @@ public class DataInitializerService {
 
 
         affiliazioneRepository.save(new AffiliazioneEntity(ruoloResponsabile.getId_ruolo(),GDU.getId_modulo(),azienda.getId_azienda()));
-        affiliazioneRepository.save(new AffiliazioneEntity(ruoloResponsabile.getId_ruolo(),GDR.getId_modulo(),azienda.getId_azienda()));
+        affiliazioneRepository.save(new AffiliazioneEntity(ruoloResponsabile.getId_ruolo(),GRU.getId_modulo(),azienda.getId_azienda()));
         affiliazioneRepository.save(new AffiliazioneEntity(ruoloResponsabile.getId_ruolo(),GMA.getId_modulo(),azienda.getId_azienda()));
         affiliazioneRepository.save(new AffiliazioneEntity(ruoloResponsabile.getId_ruolo(),store.getId_modulo(),azienda.getId_azienda()));
         affiliazioneRepository.save(new AffiliazioneEntity(ruoloResponsabile.getId_ruolo(),calendario.getId_modulo(),azienda.getId_azienda()));
         affiliazioneRepository.save(new AffiliazioneEntity(ruoloResponsabile.getId_ruolo(),GTM.getId_modulo(),azienda.getId_azienda()));
         affiliazioneRepository.save(new AffiliazioneEntity(ruoloResponsabile.getId_ruolo(),GDM.getId_modulo(),azienda.getId_azienda()));
         // --- CREAZIONE EVENTI DI PROVA ---
+
         LocalDateTime now = LocalDateTime.now();
 
         EventoEntity evento1 = new EventoEntity(0, azienda, "Riunione Staff", "Sala Riunioni A", now.plusHours(2), now.plusHours(4));

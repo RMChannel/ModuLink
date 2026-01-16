@@ -1,4 +1,4 @@
-package com.modulink.Controller.UserModules.GDR;
+package com.modulink.Controller.UserModules.GRU;
 
 import com.modulink.Controller.ModuloController;
 import com.modulink.Model.Modulo.ModuloService;
@@ -19,19 +19,19 @@ import java.util.Optional;
 import java.util.Collections;
 
 @Controller
-public class GDRController extends ModuloController {
+public class GRUController extends ModuloController {
     private final ModuloService moduloService;
     private final CustomUserDetailsService customUserDetailsService;
     private final RuoloService ruoloService;
 
-    public GDRController(ModuloService moduloService, CustomUserDetailsService customUserDetailsService, RuoloService ruoloService) {
+    public GRUController(ModuloService moduloService, CustomUserDetailsService customUserDetailsService, RuoloService ruoloService) {
         super(moduloService, 1);
         this.moduloService = moduloService;
         this.customUserDetailsService = customUserDetailsService;
         this.ruoloService = ruoloService;
     }
 
-    @GetMapping({"dashboard/gdr/","dashboard/gdr"})
+    @GetMapping({"dashboard/gru/","dashboard/gru"})
     public String dashboardDispatcher(Principal principal, Model model) {
         String email =  principal.getName();
         Optional<UtenteEntity> utenteOpt = customUserDetailsService.findByEmail(email);
@@ -47,14 +47,14 @@ public class GDRController extends ModuloController {
                 model.addAttribute("newRoleForm", new NewRoleForm());
             }
             
-            return "moduli/gdr/GestioneRuoli";
+            return "moduli/gru/GestioneRuoli";
         }
         else {
             return "redirect:/";
         }
     }
 
-    @PostMapping("dashboard/gdr/add-role")
+    @PostMapping("dashboard/gru/add-role")
     public String addRole(@ModelAttribute("newRoleForm") @Valid NewRoleForm newRoleForm, BindingResult bindingResult, Principal principal, Model model) {
         String email = principal.getName();
         Optional<UtenteEntity> utenteOpt = customUserDetailsService.findByEmail(email);
@@ -65,7 +65,7 @@ public class GDRController extends ModuloController {
             if (bindingResult.hasErrors()) {
                 model.addAttribute("newRoleForm",newRoleForm);
                 model.addAttribute("ruoli", ruoli);
-                return "moduli/gdr/GestioneRuoli";
+                return "moduli/gru/GestioneRuoli";
             }
             else {
                 RuoloEntity newRole=new RuoloEntity(utente.getAzienda(), newRoleForm.getNome(), newRoleForm.getColore(), newRoleForm.getDescrizione());
@@ -73,7 +73,7 @@ public class GDRController extends ModuloController {
                 model.addAttribute("ruoli", ruoli);
                 model.addAttribute("success",true);
                 model.addAttribute("message","Il ruolo "+newRoleForm.getNome()+" è stato creato correttamente.");
-                return "moduli/gdr/GestioneRuoli";
+                return "moduli/gru/GestioneRuoli";
             }
         }
         else {
@@ -81,7 +81,7 @@ public class GDRController extends ModuloController {
         }
     }
 
-    @PostMapping("dashboard/gdr/modify-role")
+    @PostMapping("dashboard/gru/modify-role")
     public String modifyRole(@RequestParam int idRuolo, @RequestParam String nome, @RequestParam String colore, @RequestParam String descrizione, Principal principal, Model model, @ModelAttribute("newRoleForm") NewRoleForm newRoleForm) {
         Optional<UtenteEntity> utenteOpt = customUserDetailsService.findByEmail(principal.getName());
         if (isAccessibleModulo(utenteOpt)) {
@@ -107,14 +107,14 @@ public class GDRController extends ModuloController {
                 model.addAttribute("message","Il ruolo "+nome+" è stato aggiornato correttamente.");
             }
             model.addAttribute("ruoli",ruoli);
-            return "moduli/gdr/GestioneRuoli";
+            return "moduli/gru/GestioneRuoli";
         }
         else {
             return "redirect:/";
         }
     }
 
-    @PostMapping("dashboard/gdr/delete-role")
+    @PostMapping("dashboard/gru/delete-role")
     public String deleteRole(@RequestParam int idRuolo, Principal principal, Model model, @ModelAttribute("newRoleForm") NewRoleForm newRoleForm) {
         Optional<UtenteEntity> utenteOpt = customUserDetailsService.findByEmail(principal.getName());
         if (isAccessibleModulo(utenteOpt)) {
@@ -130,18 +130,18 @@ public class GDRController extends ModuloController {
                 model.addAttribute("ruoli",ruoli);
                 model.addAttribute("error",true);
                 model.addAttribute("message","Non puoi eliminare un ruolo di default");
-                return "moduli/gdr/GestioneRuoli";
+                return "moduli/gru/GestioneRuoli";
             }
             model.addAttribute("success",true);
             model.addAttribute("message","Il ruolo è stato eliminato con successo");
-            return "moduli/gdr/GestioneRuoli";
+            return "moduli/gru/GestioneRuoli";
         }
         else {
             return "redirect:/";
         }
     }
 
-    @PostMapping("dashboard/gdr/assign-role")
+    @PostMapping("dashboard/gru/assign-role")
     public String assignRole(@RequestParam int idRuolo, @RequestParam(required = false) List<Integer> userIds, Principal principal, Model model, @ModelAttribute("newRoleForm") NewRoleForm newRoleForm) {
         Optional<UtenteEntity> utenteOpt = customUserDetailsService.findByEmail(principal.getName());
         if (isAccessibleModulo(utenteOpt)) {
@@ -157,17 +157,17 @@ public class GDRController extends ModuloController {
                     model.addAttribute("allUsers", customUserDetailsService.getAllByAzienda(utente.getAzienda()));
                     model.addAttribute("error",true);
                     model.addAttribute("message","Uno degli utenti selezionati non è stato trovato");
-                    return "moduli/gdr/GestioneRuoli";
+                    return "moduli/gru/GestioneRuoli";
                 }
             }
             ruoloService.updateRoleAssociations(utente.getAzienda(), idRuolo, usersToAssign);
             model.addAttribute("success",true);
             model.addAttribute("message","Assegnazione completata con successo");
             model.addAttribute("allUsers", customUserDetailsService.getAllByAzienda(utente.getAzienda()));
-            return "moduli/gdr/GestioneRuoli";
+            return "moduli/gru/GestioneRuoli";
         }
         else {
-            return "redirect:/dashboard/gdr";
+            return "redirect:/dashboard/gru";
         }
     }
 }
