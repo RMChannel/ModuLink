@@ -16,6 +16,7 @@ public class AttivazioneEntity {
             name = "id_modulo",
             foreignKey = @ForeignKey(name = "fk_modulo_azienda")
     )
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private ModuloEntity modulo;
 
     @Id
@@ -24,6 +25,7 @@ public class AttivazioneEntity {
             name = "id_azienda",
             foreignKey = @ForeignKey(name = "fk_azienda_modulo")
     )
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private AziendaEntity azienda;
 
     public AttivazioneEntity() {}
