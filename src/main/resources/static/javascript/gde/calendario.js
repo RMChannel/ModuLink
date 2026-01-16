@@ -240,7 +240,7 @@ function renderWeekView() {
         col.addEventListener('click', (e) => {
             if(e.target.closest('.week-event')) return;
             const rect = col.getBoundingClientRect();
-            const clickY = e.clientY - rect.top + col.parentElement.parentElement.scrollTop;
+            const clickY = e.clientY - rect.top;
             const mins = Math.floor((clickY/60)*60);
             const rounded = Math.round(mins/30)*30;
             openCreateEventModal(d, Math.floor(rounded/60), rounded%60);
@@ -409,8 +409,7 @@ function renderMonthView() {
 
         cell.appendChild(evCont);
         cell.addEventListener('click', (e) => {
-            if(e.target===cell || e.target.classList.contains('month-day-number'))
-                openCreateEventModal(d, 9, 0);
+            openCreateEventModal(d, 9, 0);
         });
 
         cell.addEventListener('contextmenu', (e) => handleContextMenu(e, d));
@@ -742,14 +741,24 @@ function filterUsers(term, resId, selArr) {
     const box = document.getElementById(resId);
     if(!term) { box.classList.remove('show'); return; }
     const ex = selArr.map(u=>u.id_utente);
-    const res = cachedUsers.filter(u => !ex.includes(u.id_utente) && (u.nome+' '+u.cognome).toLowerCase().includes(term.toLowerCase()));
+    const termLower = term.toLowerCase();
+
+    const res = cachedUsers.filter(u =>
+        !ex.includes(u.id_utente) && (
+            (u.nome+' '+u.cognome).toLowerCase().includes(termLower) ||
+            (u.email && u.email.toLowerCase().includes(termLower))
+        )
+    );
 
     box.innerHTML = '';
     if(!res.length) box.innerHTML = '<div class="user-search-empty">Nessuno trovato</div>';
     else res.forEach(u => {
         const d = document.createElement('div');
-        d.className = 'user-search-item';
-        d.textContent = u.nome+' '+u.cognome;
+        d.className = 'user-search-item d-flex flex-column gap-0';
+        d.innerHTML = `
+            <span class="fw-bold">${escapeHtml(u.nome+' '+u.cognome)}</span>
+            <small class="text-muted" style="font-size: 0.75rem;">${escapeHtml(u.email)}</small>
+        `;
         d.onclick = () => {
             selArr.push(u);
             updateSelectedUsersList(resId==='userSearchResults'?'selectedUsersList':'editSelectedUsersList', selArr);

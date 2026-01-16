@@ -100,6 +100,6 @@ public class UserRestApi {
 
 
     // DTO Record interno per pulizia e immutabilità
-    public record UserDTO(int id_utente, String nome, String cognome) {}
+    public record UserDTO(int id_utente, String nome, String cognome, String email) {}
     public record UserBasicInfo(int id, String nome, String cognome, String email) {}
 }
