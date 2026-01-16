@@ -10,7 +10,7 @@
         <a th:href="@{/dashboard}" class="d-flex align-items-center text-decoration-none">
             <!-- Caso 1: Logo Azienda Esistente -->
             <img th:if="${utente != null and utente.azienda != null and utente.azienda.logo != null and !utente.azienda.logo.isEmpty()}"
-                 th:src="@{${utente.azienda.logo}}"
+                 th:src="@{'/'+${utente.azienda.logo}}"
                  alt="Logo Azienda"
                  class="company-logo-img">
 
