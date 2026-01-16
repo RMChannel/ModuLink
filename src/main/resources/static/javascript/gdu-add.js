@@ -1,10 +1,15 @@
 document.addEventListener('DOMContentLoaded', function() {
     const addUserModalElement = document.getElementById('addUserModal');
     if (addUserModalElement) {
-        addUserModalElement.addEventListener('show.bs.modal', function (event) {
-            // Optional: Clear form fields when opening the modal
-            // const form = addUserModalElement.querySelector('form');
-            // if(form) form.reset();
-        });
+        const form = addUserModalElement.querySelector('form');
+        if (form) {
+            form.addEventListener('submit', function() {
+                const submitBtn = form.querySelector('button[type="submit"]');
+                if (submitBtn) {
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Creazione...';
+                }
+            });
+        }
     }
 });
