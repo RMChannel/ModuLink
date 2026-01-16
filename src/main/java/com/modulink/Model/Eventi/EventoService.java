@@ -11,6 +11,12 @@ public class EventoService {
         this.eventoRepository = eventoRepository;
     }
 
+    public void create(EventoEntity eventoEntity){
+        eventoRepository.save(eventoEntity);
+    }
+
+
+
     @Transactional
     public List<EventoEntity> findAll() {
         return eventoRepository.findAll();

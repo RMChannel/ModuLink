@@ -3,6 +3,8 @@ package com.modulink.Model.Relazioni.Partecipazione;
 import com.modulink.Model.Eventi.EventoEntity;
 import com.modulink.Model.Utente.UtenteEntity;
 import jakarta.persistence.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 @Table(name = "partecipazione", schema = "modulink")
@@ -26,6 +28,7 @@ public class PartecipazioneEntity {
             @JoinColumn(name = "ID_Utente", referencedColumnName = "ID_Utente", insertable = false, updatable = false),
             @JoinColumn(name = "ID_Azienda", referencedColumnName = "ID_Azienda", insertable = false, updatable = false)
     })
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private UtenteEntity utente;
 
     @ManyToOne
@@ -33,6 +36,7 @@ public class PartecipazioneEntity {
             @JoinColumn(name = "id_evento", referencedColumnName = "id_evento", insertable = false, updatable = false),
             @JoinColumn(name = "ID_Azienda", referencedColumnName = "id_azienda", insertable = false, updatable = false)
     })
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private EventoEntity evento;
 
     public PartecipazioneEntity() {
