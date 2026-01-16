@@ -106,8 +106,9 @@
     color: var(--text-secondary);
 }
 
-.empty-store i {
+.empty-store > i:first-child {
     font-size: 3rem;
     margin-bottom: 1rem;
     opacity: 0.5;
+    display: block;
 }
