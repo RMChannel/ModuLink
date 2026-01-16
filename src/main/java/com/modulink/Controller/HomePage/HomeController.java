@@ -50,11 +50,6 @@ public class HomeController {
         }
     }
 
-    @GetMapping("/news")
-    public String news(Model model, Principal principal){
-        return "homepage/news";
-    }
-
     @GetMapping("/supporto")
     public String supporto(Model model, Principal principal) {
         model.addAttribute("support", new SupportForm());

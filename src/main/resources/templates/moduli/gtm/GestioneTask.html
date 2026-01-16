@@ -162,7 +162,7 @@
 <div class="modal fade gtm-modal" id="addTaskModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-            <form th:action="@{/dashboard/gtm}" method="post">
+            <form th:action="@{/dashboard/gtm}" method="post" th:object="${form}">
                 <div class="modal-header">
                     <h5 class="modal-title">Nuova Task</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -171,25 +171,28 @@
                     <!-- Title -->
                     <div class="mb-3">
                         <label for="titolo" class="form-label">Titolo</label>
-                        <input type="text" class="form-control" id="titolo" name="titolo" placeholder="Titolo della task" required minlength="2" maxlength="50">
-                        <div class="form-text">Minimo 2 caratteri, massimo 50.</div>
+                        <input type="text" class="form-control" id="titolo" name="titolo" th:value="*{titolo}" th:classappend="${#fields.hasErrors('titolo')} ? 'is-invalid' : ''" placeholder="Titolo della task" required minlength="2" maxlength="50">
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('titolo')}" th:errors="*{titolo}">Errore titolo</div>
+                        <div class="form-text" th:unless="${#fields.hasErrors('titolo')}">Minimo 2 caratteri, massimo 50.</div>
                     </div>
 
                     <!-- Priority & Deadline Row -->
                     <div class="row g-3 mb-3">
                         <div class="col-md-6">
                             <label for="priorita" class="form-label">Priorità</label>
-                            <select class="form-select" id="priorita" name="priorita">
-                                <option value="1">Bassa (1)</option>
-                                <option value="2">Medio-Bassa (2)</option>
-                                <option value="3" selected>Normale (3)</option>
-                                <option value="4">Alta (4)</option>
-                                <option value="5">Urgente (5)</option>
+                            <select class="form-select" id="priorita" name="priorita" th:value="*{priorita}" th:classappend="${#fields.hasErrors('priorita')} ? 'is-invalid' : ''">
+                                <option value="1" th:selected="*{priorita == 1}">Bassa (1)</option>
+                                <option value="2" th:selected="*{priorita == 2}">Medio-Bassa (2)</option>
+                                <option value="3" th:selected="*{priorita == 3}">Normale (3)</option>
+                                <option value="4" th:selected="*{priorita == 4}">Alta (4)</option>
+                                <option value="5" th:selected="*{priorita == 5}">Urgente (5)</option>
                             </select>
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('priorita')}" th:errors="*{priorita}">Errore priorità</div>
                         </div>
                         <div class="col-md-6">
                             <label for="scadenza" class="form-label">Scadenza</label>
-                            <input type="date" class="form-control" id="scadenza" name="scadenza">
+                            <input type="date" class="form-control" id="scadenza" name="scadenza" th:value="*{scadenza}" th:classappend="${#fields.hasErrors('scadenza')} ? 'is-invalid' : ''">
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('scadenza')}" th:errors="*{scadenza}">Errore scadenza</div>
                         </div>
                     </div>
                     
@@ -228,8 +231,8 @@
 <div class="modal fade gtm-modal" id="editTaskModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-            <form th:action="@{/dashboard/gtm/edit-task}" method="post">
-                <input type="hidden" id="edit_idTask" name="idTask">
+            <form th:action="@{/dashboard/gtm/edit-task}" method="post" th:object="${editForm}">
+                <input type="hidden" id="edit_idTask" name="idTask" th:value="*{idTask}">
                 <div class="modal-header">
                     <h5 class="modal-title">Modifica Task</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -238,30 +241,33 @@
                     <!-- Title -->
                     <div class="mb-3">
                         <label for="edit_titolo" class="form-label">Titolo</label>
-                        <input type="text" class="form-control" id="edit_titolo" name="titolo" placeholder="Titolo della task" required minlength="2" maxlength="50">
+                        <input type="text" class="form-control" id="edit_titolo" name="titolo" th:value="*{titolo}" th:classappend="${#fields.hasErrors('titolo')} ? 'is-invalid' : ''" placeholder="Titolo della task" required minlength="2" maxlength="50">
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('titolo')}" th:errors="*{titolo}">Errore titolo</div>
                     </div>
 
                     <!-- Priority & Deadline Row -->
                     <div class="row g-3 mb-3">
                         <div class="col-md-6">
                             <label for="edit_priorita" class="form-label">Priorità</label>
-                            <select class="form-select" id="edit_priorita" name="priorita">
-                                <option value="1">Bassa (1)</option>
-                                <option value="2">Medio-Bassa (2)</option>
-                                <option value="3">Normale (3)</option>
-                                <option value="4">Alta (4)</option>
-                                <option value="5">Urgente (5)</option>
+                            <select class="form-select" id="edit_priorita" name="priorita" th:value="*{priorita}" th:classappend="${#fields.hasErrors('priorita')} ? 'is-invalid' : ''">
+                                <option value="1" th:selected="*{priorita == 1}">Bassa (1)</option>
+                                <option value="2" th:selected="*{priorita == 2}">Medio-Bassa (2)</option>
+                                <option value="3" th:selected="*{priorita == 3}">Normale (3)</option>
+                                <option value="4" th:selected="*{priorita == 4}">Alta (4)</option>
+                                <option value="5" th:selected="*{priorita == 5}">Urgente (5)</option>
                             </select>
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('priorita')}" th:errors="*{priorita}">Errore priorità</div>
                         </div>
                         <div class="col-md-6">
                             <label for="edit_scadenza" class="form-label">Scadenza</label>
-                            <input type="date" class="form-control" id="edit_scadenza" name="scadenza">
+                            <input type="date" class="form-control" id="edit_scadenza" name="scadenza" th:value="*{scadenza}" th:classappend="${#fields.hasErrors('scadenza')} ? 'is-invalid' : ''">
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('scadenza')}" th:errors="*{scadenza}">Errore scadenza</div>
                         </div>
                     </div>
 
                     <!-- Status -->
                     <div class="mb-3 form-check">
-                        <input type="checkbox" class="form-check-input" id="edit_completato" name="completato">
+                        <input type="checkbox" class="form-check-input" id="edit_completato" name="completato" th:checked="*{completato}">
                         <label class="form-check-label" for="edit_completato">Segna come completata</label>
                     </div>
                     
@@ -472,6 +478,14 @@ document.addEventListener('DOMContentLoaded', function() {
         addManager.clearSelection();
         document.getElementById('add_searchAssignee').value = '';
     });
+
+    // Check for errors and reopen modals if necessary
+    if (document.querySelector('#addTaskModal .is-invalid')) {
+        new bootstrap.Modal(addModal).show();
+    }
+    if (document.querySelector('#editTaskModal .is-invalid')) {
+        new bootstrap.Modal(document.getElementById('editTaskModal')).show();
+    }
 
     // Edit Modal Events & Pre-filling
     const editModal = document.getElementById('editTaskModal');

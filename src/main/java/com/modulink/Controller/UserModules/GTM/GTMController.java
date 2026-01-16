@@ -56,6 +56,8 @@ public class GTMController extends ModuloController {
             UtenteEntity utente = (UtenteEntity) model.getAttribute("utente");
             model.addAttribute("taskCreate",taskService.findByCreatore(utente));
             model.addAttribute("taskAssegnate",assegnazioneService.getTaskAssegnate(utente));
+            model.addAttribute("form", new GTMForm());
+            model.addAttribute("editForm", new GTMEditForm());
             return "moduli/gtm/GestioneTask";
         }
         else return "redirect:/";
@@ -77,10 +79,18 @@ public class GTMController extends ModuloController {
     }
 
     @PostMapping({"/dashboard/gtm","/dashboard/gtm/"})
-    public String createNewTask(Principal principal, Model model, @Valid @ModelAttribute GTMForm form) {
+    public String createNewTask(Principal principal, Model model, @Valid @ModelAttribute("form") GTMForm form, BindingResult bindingResult) {
         Optional<UtenteEntity> utenteOpt = customUserDetailsService.findByEmail(principal.getName());
         if(isAccessibleModulo(utenteOpt)) {
             UtenteEntity utente = utenteOpt.get();
+            if(form.getScadenza() != null && form.getScadenza().isBefore(LocalDate.now().minusDays(1))) bindingResult.rejectValue("scadenza","datanelpassato.error","La data di scadenza non può essere nel passato");
+            if(form.getPriorita()<0 || form.getPriorita()>5) bindingResult.rejectValue("priorita","prioritanonvalida.error","La priorità deve essere compresa tra 0 e 5");
+            if(bindingResult.hasErrors()) {
+                model.addAttribute("taskCreate",taskService.findByCreatore(utente));
+                model.addAttribute("taskAssegnate",assegnazioneService.getTaskAssegnate(utente));
+                model.addAttribute("editForm", new GTMEditForm());
+                return "moduli/gtm/GestioneTask";
+            }
             TaskEntity task=new TaskEntity(utente.getAzienda(),utente,form.getTitolo(),form.getPriorita(),form.getScadenza(), LocalDate.now(),null);
             Set<AssegnazioneEntity> assegnazioniSet=new HashSet<>();
             if(form.getMessaggi()!=null) {
@@ -138,13 +148,20 @@ public class GTMController extends ModuloController {
     }
 
     @PostMapping({"/dashboard/gtm/edit-task","/dashboard/gtm/edit-task/"})
-    public String editTask(Principal principal, Model model, @Valid @ModelAttribute GTMEditForm form, BindingResult bindingResult) {
+    public String editTask(Principal principal, Model model, @Valid @ModelAttribute("editForm") GTMEditForm form, BindingResult bindingResult) {
         Optional<UtenteEntity> utenteOpt = customUserDetailsService.findByEmail(principal.getName());
         if(isAccessibleModulo(utenteOpt)) {
             UtenteEntity utente = utenteOpt.get();
             TaskEntity task=taskService.findById(new TaskID(form.getIdTask(),utente.getAzienda().getId_azienda()));
             if(task==null) return "redirect:/dashboard/gtm"+Alert.error("Task non trovata");
-            else if(bindingResult.hasErrors()) return "moduli/gtm/GestioneTask";
+            if(form.getScadenza() != null && form.getScadenza().isBefore(LocalDate.now().minusDays(1))) bindingResult.rejectValue("scadenza","datanelpassato.error","La data di scadenza non può essere nel passato");
+            if(form.getPriorita()<0 || form.getPriorita()>5) bindingResult.rejectValue("priorita","prioritanonvalida.error","La priorità deve essere compresa tra 0 e 5");
+            if(bindingResult.hasErrors()) {
+                model.addAttribute("taskCreate",taskService.findByCreatore(utente));
+                model.addAttribute("taskAssegnate",assegnazioneService.getTaskAssegnate(utente));
+                model.addAttribute("form", new GTMForm());
+                return "moduli/gtm/GestioneTask";
+            }
             else if(!task.getUtenteCreatore().equals(utente)) return "redirect:/dashboard/gtm"+Alert.error("Non sei autorizzato a modificare questa task");
             task.setTitolo(form.getTitolo());
             task.setPriorita(form.getPriorita());
