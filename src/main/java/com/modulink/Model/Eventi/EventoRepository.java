@@ -14,7 +14,7 @@ import java.util.Optional;
 public interface EventoRepository extends JpaRepository<EventoEntity, EventoID> {
     List<EventoEntity> findByAzienda(AziendaEntity azienda);
 
-    @Query("SELECT p.evento FROM PartecipazioneEntity p WHERE p.utente = :utente")
+    @Query("SELECT DISTINCT e FROM EventoEntity e LEFT JOIN PartecipazioneEntity p ON p.evento = e WHERE p.utente = :utente OR e.creatore = :utente")
     List<EventoEntity> findAllByUtente(@Param("utente") UtenteEntity utente);
 
     @Query("SELECT COALESCE(MAX(e.id_evento), 0) FROM EventoEntity e WHERE e.azienda = :azienda")

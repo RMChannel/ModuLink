@@ -6,63 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+
     <link rel="stylesheet" th:href="@{/css/user/colors.css}">
     <link rel="stylesheet" th:href="@{/css/user/dashboard-layout.css}">
     <link rel="stylesheet" th:href="@{/css/common/alerts.css}">
     <link rel="stylesheet" th:href="@{/css/moduli/GDE/calendario.css}">
+
     <script th:src="@{/javascript/theme.js}"></script>
-
-    <style>
-        /* Stile menu contestuale (Right Click Popup) */
-        #contextMenu {
-            display: none;
-            position: fixed;
-            z-index: 9999;
-            background: white;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            width: 300px;
-            max-height: 400px;
-            overflow-y: auto;
-            padding: 0;
-        }
-        .ctx-header {
-            background: #f8f9fa;
-            padding: 10px 15px;
-            border-bottom: 1px solid #eee;
-            font-weight: bold;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .ctx-body {
-            padding: 10px;
-        }
-        .ctx-item {
-            padding: 8px;
-            border-bottom: 1px solid #f0f0f0;
-            cursor: pointer;
-            transition: background 0.2s;
-            border-radius: 4px;
-        }
-        .ctx-item:last-child { border-bottom: none; }
-        .ctx-item:hover { background-color: #f0f8ff; }
-
-        /* Badge tipi */
-        .badge-task { background-color: #fff3cd; color: #856404; border: 1px solid #ffeeba; }
-        .badge-event { background-color: #cfe2ff; color: #084298; border: 1px solid #b6d4fe; }
-
-        /* Filtri Switch */
-        .filter-controls .form-check-input:checked {
-            background-color: var(--bs-primary);
-            border-color: var(--bs-primary);
-        }
-        .filter-controls .form-check-input#filterTasks:checked {
-            background-color: #ffc107;
-            border-color: #ffc107;
-        }
-    </style>
 </head>
 <body>
 <div class="dashboard-wrapper">
@@ -82,7 +32,7 @@
                         <button class="btn btn-outline-secondary btn-sm" id="todayBtn" title="Vai a oggi">Oggi</button>
                         <button class="btn btn-outline-secondary btn-sm" id="nextPeriod" title="Periodo successivo"><i class="bi bi-chevron-right"></i></button>
                     </div>
-                    <span id="currentPeriodLabel" class="fw-bold fs-5 text-secondary"></span>
+                    <span id="currentPeriodLabel" class="fw-bold fs-5"></span>
                 </div>
 
                 <div class="d-flex gap-3 flex-wrap align-items-center">
@@ -153,11 +103,11 @@
                 <form id="createEventForm">
                     <div class="mb-3">
                         <label class="form-label">Nome Evento *</label>
-                        <input type="text" class="form-control" name="nome" required>
+                        <input type="text" class="form-control" name="nome" placeholder="Riunione Amministrativa" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Luogo</label>
-                        <input type="text" class="form-control" name="luogo">
+                        <input type="text" class="form-control" name="luogo" placeholder="Sala riunioni A">
                     </div>
                     <div class="row">
                         <div class="col-6 mb-3"><label class="form-label">Inizio *</label><input type="datetime-local" class="form-control" name="inizio" required></div>
@@ -189,6 +139,9 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
+                <div id="editDateErrorAlert" class="alert alert-danger d-none">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>Errore generico
+                </div>
                 <form id="editEventForm">
                     <input type="hidden" id="editEventId" name="id">
                     <div class="mb-3">
@@ -230,10 +183,10 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <div class="mb-3"><i class="bi bi-clock me-2"></i><span id="detailTime"></span></div>
-                <div class="mb-3"><i class="bi bi-geo-alt me-2"></i><span id="detailPlace"></span></div>
+                <div class="mb-3"><i class="bi bi-clock me-2 text-primary"></i><span id="detailTime"></span></div>
+                <div class="mb-3"><i class="bi bi-geo-alt me-2 text-danger"></i><span id="detailPlace"></span></div>
                 <div class="mb-3" id="detailParticipantsSection" style="display:none">
-                    <i class="bi bi-people me-2"></i><span id="detailParticipants"></span>
+                    <i class="bi bi-people me-2 text-success"></i><span id="detailParticipants"></span>
                 </div>
                 <input type="hidden" id="detailId">
             </div>

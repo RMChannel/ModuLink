@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Admin Dashboard - ModuLink</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/user/colors.css}">
+    <link rel="stylesheet" th:href="@{/css/user/dashboard-layout.css}">
+    <link rel="stylesheet" th:href="@{/css/common/alerts.css}">
+    <link rel="stylesheet" th:href="@{/css/admin/admin.css}">
+    <script th:src="@{/javascript/theme.js}"></script>
+</head>
+<body>
+<div class="dashboard-wrapper">
+    <!-- Sidebar Fragment -->
+    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+    
+    <!-- Alerts Fragment -->
+    <div th:replace="~{fragments/messages :: alerts}"></div>
+
+    <!-- Main Content -->
+    <div id="content">
+        <div class="container-fluid">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2">Amministrazione - Gestione Aziende</h1>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-striped table-hover align-middle">
+                    <thead class="table-dark">
+                    <tr>
+                        <th scope="col">ID</th>
+                        <th scope="col">Logo</th>
+                        <th scope="col">Nome</th>
+                        <th scope="col">P.IVA</th>
+                        <th scope="col">Città</th>
+                        <th scope="col">Telefono</th>
+                        <th scope="col" class="text-end">Azioni</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="azienda : ${aziende}">
+                        <td th:text="${azienda.id_azienda}">1</td>
+                        <td>
+                            <img th:if="${azienda.logo != null and !azienda.logo.isEmpty()}" th:src="@{${azienda.logo}}" alt="Logo" style="height: 30px; width: auto;">
+                            <span th:unless="${azienda.logo != null and !azienda.logo.isEmpty()}" class="text-muted">N/A</span>
+                        </td>
+                        <td th:text="${azienda.nome}">Nome Azienda</td>
+                        <td th:text="${azienda.piva}">00000000000</td>
+                        <td th:text="${azienda.citta}">Città</td>
+                        <td th:text="${azienda.telefono}">0000000000</td>
+                        <td class="text-end">
+                            <!-- Edit Button -->
+                            <button class="btn btn-sm btn-outline-primary me-2" title="Modifica"
+                                    th:data-id="${azienda.id_azienda}"
+                                    th:data-nome="${azienda.nome}"
+                                    th:data-piva="${azienda.piva}"
+                                    th:data-indirizzo="${azienda.indirizzo}"
+                                    th:data-citta="${azienda.citta}"
+                                    th:data-cap="${azienda.cap}"
+                                    th:data-telefono="${azienda.telefono}"
+                                    th:data-logo="${azienda.logo}"
+                                    onclick="editAzienda(this)">
+                                <i class="bi bi-pencil"></i>
+                            </button>
+                            <!-- Delete Button -->
+                            <button class="btn btn-sm btn-outline-danger" title="Elimina Azienda"
+                                    th:data-id="${azienda.id_azienda}"
+                                    th:data-nome="${azienda.nome}"
+                                    onclick="openDeleteAziendaModal(this)">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(aziende)}">
+                        <td colspan="7" class="text-center text-muted py-4">
+                            <em>Nessuna azienda trovata.</em>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Azienda Modal (Create/Edit) -->
+<div class="modal fade" id="aziendaModal" tabindex="-1" aria-labelledby="aziendaModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <form th:action="@{/dashboard/admin/azienda/save}" method="post" id="aziendaForm">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="aziendaModalLabel">Nuova Azienda</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="id_azienda" name="id_azienda" value="0">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="nome" class="form-label">Nome Azienda *</label>
+                            <input type="text" class="form-control" id="nome" name="nome" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="piva" class="form-label">Partita IVA *</label>
+                            <input type="text" class="form-control" id="piva" name="piva" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="telefono" class="form-label">Telefono *</label>
+                            <input type="text" class="form-control" id="telefono" name="telefono" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="logo" class="form-label">URL Logo</label>
+                            <input type="text" class="form-control" id="logo" name="logo">
+                        </div>
+                        <div class="col-12">
+                            <label for="indirizzo" class="form-label">Indirizzo *</label>
+                            <input type="text" class="form-control" id="indirizzo" name="indirizzo" required>
+                        </div>
+                        <div class="col-md-8">
+                            <label for="citta" class="form-label">Città *</label>
+                            <input type="text" class="form-control" id="citta" name="citta" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="cap" class="form-label">CAP *</label>
+                            <input type="text" class="form-control" id="cap" name="cap" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
+                    <button type="submit" class="btn btn-primary">Salva</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Azienda Modal -->
+<div class="modal fade" id="deleteAziendaModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Elimina Azienda</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Stai per eliminare l'azienda <strong id="deleteTargetName"></strong>.</p>
+                <p class="text-danger mb-3">Questa azione eliminerà tutti i dati associati a questa azienda (Utenti, Ruoli, Prodotti, ecc.).</p>
+                <p>Sei sicuro di voler procedere?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
+                <form th:action="@{/dashboard/admin/azienda/delete}" method="post">
+                    <input type="hidden" name="id" id="deleteIdInput">
+                    <button type="submit" class="btn btn-danger">Elimina Definitivamente</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    function openDeleteAziendaModal(button) {
+        const id = button.getAttribute('data-id');
+        const nome = button.getAttribute('data-nome');
+        
+        document.getElementById('deleteIdInput').value = id;
+        document.getElementById('deleteTargetName').textContent = nome;
+        
+        const modal = new bootstrap.Modal(document.getElementById('deleteAziendaModal'));
+        modal.show();
+    }
+</script>
+<script th:src="@{/javascript/admin/admin.js}"></script>
+
+</body>
+</html>

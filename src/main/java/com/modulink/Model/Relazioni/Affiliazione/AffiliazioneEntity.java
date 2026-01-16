@@ -5,6 +5,8 @@ import com.modulink.Model.Modulo.ModuloEntity;
 import com.modulink.Model.Relazioni.Attivazione.AttivazioneEntity;
 import com.modulink.Model.Ruolo.RuoloEntity;
 import jakarta.persistence.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 @IdClass(AffiliazioneID.class)
@@ -20,6 +22,7 @@ public class AffiliazioneEntity {
 
     @Id
     @Column(name = "ID_Azienda")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     public int id_azienda;
 
     @ManyToOne

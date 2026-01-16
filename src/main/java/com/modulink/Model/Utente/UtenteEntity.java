@@ -6,6 +6,8 @@ import com.modulink.Model.Ruolo.RuoloEntity;
 import com.modulink.Model.Relazioni.Associazione.AssociazioneEntity;
 import com.modulink.Model.Ruolo.RuoloService;
 import jakarta.persistence.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.util.HashSet;
 import java.util.Objects;
@@ -55,6 +57,7 @@ public class UtenteEntity {
     @Id
     @ManyToOne
     @JoinColumn(name="ID_Azienda", referencedColumnName = "ID_Azienda", nullable = false, foreignKey = @ForeignKey(name = "FK_Utente_Azienda"))
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private AziendaEntity azienda;
 
     /**

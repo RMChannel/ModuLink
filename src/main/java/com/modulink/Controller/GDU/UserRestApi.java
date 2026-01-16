@@ -1,10 +1,14 @@
 package com.modulink.Controller.GDU;
 
+import com.modulink.Model.Azienda.AziendaService;
 import com.modulink.Model.Utente.CustomUserDetailsService;
 import com.modulink.Model.Utente.UtenteEntity;
 import com.modulink.Model.Utente.UserRepository;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -20,10 +24,12 @@ public class UserRestApi {
 
     private final CustomUserDetailsService customUserDetailsService;
     private final UserRepository userRepository;
+    private final AziendaService aziendaService;
 
-    public UserRestApi(CustomUserDetailsService customUserDetailsService, UserRepository userRepository) {
+    public UserRestApi(CustomUserDetailsService customUserDetailsService, UserRepository userRepository, AziendaService aziendaService) {
         this.customUserDetailsService = customUserDetailsService;
         this.userRepository = userRepository;
+        this.aziendaService = aziendaService;
     }
 
     @GetMapping("/users")
@@ -43,7 +49,7 @@ public class UserRestApi {
 
         // Recupera tutti gli utenti della stessa azienda del richiedente
         List<UtenteEntity> colleagues = userRepository.getAllByAziendaIs(currentUser.getAzienda());
-        
+        colleagues.remove(currentUser);//rimuovo l'utente attuale
 
 
         // Mappa le entità in DTO leggeri
@@ -70,6 +76,27 @@ public class UserRestApi {
                         u.getEmail()
                 ))
                 .collect(Collectors.toList());
+    }
+
+
+    @GetMapping("/admin/users/{id}")
+    public ResponseEntity<List<UserBasicInfo>> getUser(@PathVariable int id, Principal principal) {
+        if (principal == null) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+        String email = principal.getName();
+        Optional<UtenteEntity> currentUserOpt = customUserDetailsService.findByEmail(email);
+        if(currentUserOpt.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+        UtenteEntity currentUser = currentUserOpt.get();
+        if(currentUser.getAzienda().getId_azienda() ==  0 ) {//hardcoded to correct
+            List<UserBasicInfo> users = parseUsers(customUserDetailsService.getAllByAzienda(aziendaService.getAziendaById(id).get()));
+            return ResponseEntity.ok(users);
+        }else {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
     }
 
 

@@ -3,6 +3,8 @@ package com.modulink.Model.Relazioni.Attivazione;
 import com.modulink.Model.Azienda.AziendaEntity;
 import com.modulink.Model.Modulo.ModuloEntity;
 import jakarta.persistence.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 @IdClass(AttivazioneID.class)
@@ -18,6 +20,7 @@ public class AttivazioneEntity {
 
     @Id
     @ManyToOne
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(
             name = "id_azienda",
             foreignKey = @ForeignKey(name = "fk_azienda_modulo")

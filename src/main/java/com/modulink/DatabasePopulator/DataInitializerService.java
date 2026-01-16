@@ -72,6 +72,7 @@ public class DataInitializerService {
         associazioneRepository.save(new AssociazioneEntity(utente, ruoloResponsabile));
         associazioneRepository.save(new AssociazioneEntity(u2, ruoloStandard));
 
+        ModuloEntity Admin = new ModuloEntity(-1,"Panello Admin", "Panello di controllo di Admin","/dashboard/admin/","bi bi-code-square", false);
         ModuloEntity GDU = new ModuloEntity(0, "Gestione Utenti", "Permette la gestione di tutti gli utenti della propria azienda", "/dashboard/gdu/", "bi bi-person-lines-fill",true);
         ModuloEntity GDR = new ModuloEntity(1, "Gestione Ruoli", "Permette la gestione e l'assegnazione dei ruoli", "/dashboard/gdr/", "bi bi-award-fill",true);
         ModuloEntity GMA = new ModuloEntity(2, "Gestione Moduli", "Permette la gestione di tutti i moduli integrati nella propria azienda","/dashboard/gma/","bi bi-database-gear",true );
@@ -87,6 +88,7 @@ public class DataInitializerService {
         calendario = moduloRepository.save(calendario);
         GTM = moduloRepository.save(GTM);
         GDM = moduloRepository.save(GDM);
+        Admin = moduloRepository.save(Admin);
 
         // Ora azienda e modulo sono MANAGED nella stessa transazione
         attivazioneRepository.save(new AttivazioneEntity(GDU, azienda));
@@ -97,6 +99,8 @@ public class DataInitializerService {
         attivazioneRepository.save(new AttivazioneEntity(GTM, azienda));
         attivazioneRepository.save(new AttivazioneEntity(GDM, azienda));
 
+        //testing admin
+        attivazioneRepository.save(new AttivazioneEntity(Admin, azienda));
 
         affiliazioneRepository.save(new AffiliazioneEntity(ruoloResponsabile.getId_ruolo(),GDU.getId_modulo(),azienda.getId_azienda()));
         affiliazioneRepository.save(new AffiliazioneEntity(ruoloResponsabile.getId_ruolo(),GDR.getId_modulo(),azienda.getId_azienda()));
@@ -105,7 +109,7 @@ public class DataInitializerService {
         affiliazioneRepository.save(new AffiliazioneEntity(ruoloResponsabile.getId_ruolo(),calendario.getId_modulo(),azienda.getId_azienda()));
         affiliazioneRepository.save(new AffiliazioneEntity(ruoloResponsabile.getId_ruolo(),GTM.getId_modulo(),azienda.getId_azienda()));
         affiliazioneRepository.save(new AffiliazioneEntity(ruoloResponsabile.getId_ruolo(),GDM.getId_modulo(),azienda.getId_azienda()));
-
+        affiliazioneRepository.save(new AffiliazioneEntity(ruoloResponsabile.getId_ruolo(),Admin.getId_modulo(),azienda.getId_azienda()));
         // --- CREAZIONE EVENTI DI PROVA ---
         LocalDateTime now = LocalDateTime.now();
         
@@ -113,6 +117,11 @@ public class DataInitializerService {
         EventoEntity evento2 = new EventoEntity(1, azienda, "Pranzo Aziendale", "Ristorante 'Da Mario'", now.plusDays(1).withHour(13).withMinute(0), now.plusDays(1).withHour(15).withMinute(0));
         EventoEntity evento3 = new EventoEntity(2, azienda, "Corso Formazione", "Online", now.minusDays(1).withHour(10).withMinute(0), now.minusDays(1).withHour(12).withMinute(0));
         EventoEntity evento4 = new EventoEntity(3, azienda, "Brainstorming", "Ufficio", now.withHour(9).withMinute(0), now.withHour(11).withMinute(0)); // Oggi
+
+        evento1.setCreatore(utente);
+        evento2.setCreatore(utente);
+        evento3.setCreatore(utente);
+        evento4.setCreatore(utente);
 
         eventoRepository.save(evento1);
         eventoRepository.save(evento2);

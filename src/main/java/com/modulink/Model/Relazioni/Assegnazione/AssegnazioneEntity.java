@@ -4,6 +4,8 @@ import com.modulink.Model.Ruolo.RuoloEntity;
 import com.modulink.Model.Task.TaskEntity;
 import com.modulink.Model.Utente.UtenteEntity;
 import jakarta.persistence.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 @IdClass(AssegnazioneID.class)
@@ -15,6 +17,7 @@ public class AssegnazioneEntity {
 
     @Id
     @Column(name = "ID_Azienda")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private int id_azienda;
 
     @Id

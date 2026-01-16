@@ -1,0 +1,151 @@
+/* Admin Page Styles */
+
+/* Main Content Adjustment for Sidebar */
+.main-content {
+    margin-left: 0; /* Let dashboard-layout handle flex or grid if possible, but here we adjust */
+    padding: 20px;
+    transition: margin-left 0.3s ease;
+    width: 100%;
+}
+
+/* If sidebar is fixed, we might need margin. 
+   Based on dashboard-layout.css, #content is flex-grow: 1. 
+   So we should probably wrap our content in a div that fits that structure. 
+*/
+
+/* Card Styling */
+.card {
+    background-color: var(--bg-light);
+    border: none;
+    border-radius: 12px;
+    box-shadow: var(--shadow-card);
+    transition: box-shadow 0.3s ease;
+}
+
+.card:hover {
+    box-shadow: var(--shadow-card-hover);
+}
+
+.card-header {
+    background-color: var(--bg-white);
+    border-bottom: 1px solid var(--border-color-light);
+    border-radius: 12px 12px 0 0 !important;
+    padding: 1.5rem;
+}
+
+.card-body {
+    padding: 1.5rem;
+    color: var(--text-body);
+}
+
+/* Table Styling */
+.table {
+    color: var(--text-body);
+    margin-bottom: 0;
+    vertical-align: middle;
+}
+
+.table thead th {
+    background-color: var(--bg-body-alt);
+    color: var(--text-heading);
+    border-bottom: 2px solid var(--border-color);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    padding: 12px 16px;
+}
+
+.table tbody td {
+    border-bottom: 1px solid var(--border-color-light);
+    padding: 12px 16px;
+    vertical-align: middle;
+}
+
+.table-hover tbody tr:hover {
+    background-color: var(--bg-body-alt);
+}
+
+/* Buttons */
+.btn-primary {
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
+    box-shadow: var(--shadow-btn-primary);
+    color: var(--color-white);
+    font-weight: 500;
+}
+
+.btn-primary:hover {
+    background-color: var(--color-primary-dark);
+    border-color: var(--color-primary-dark);
+}
+
+.btn-outline-primary {
+    color: var(--color-primary);
+    border-color: var(--color-primary);
+}
+
+.btn-outline-primary:hover {
+    background-color: var(--color-primary);
+    color: var(--color-white);
+}
+
+.btn-outline-danger {
+    color: var(--text-danger);
+    border-color: var(--text-danger);
+}
+
+.btn-outline-danger:hover {
+    background-color: var(--text-danger);
+    color: var(--color-white);
+}
+
+/* Modal Styling */
+.modal-content {
+    background-color: var(--bg-white);
+    border: none;
+    border-radius: 16px;
+    box-shadow: var(--shadow-card-hover);
+}
+
+.modal-header {
+    border-bottom: 1px solid var(--border-color-light);
+}
+
+.modal-title {
+    color: var(--text-heading);
+    font-weight: 600;
+}
+
+.modal-body {
+    color: var(--text-body);
+}
+
+.modal-footer {
+    border-top: 1px solid var(--border-color-light);
+}
+
+.form-label {
+    color: var(--text-heading);
+    font-weight: 500;
+}
+
+.form-control {
+    background-color: var(--bg-input);
+    border: 1px solid var(--border-color);
+    color: var(--text-body);
+    border-radius: 8px;
+}
+
+.form-control:focus {
+    background-color: var(--bg-input-focus);
+    border-color: var(--color-primary);
+    box-shadow: var(--shadow-input-focus);
+    color: var(--text-body);
+}
+
+.btn-close {
+    filter: invert(0.5); /* Adjust based on theme if needed */
+}
+[data-theme='dark'] .btn-close {
+    filter: invert(1);
+}

@@ -43,13 +43,14 @@ function setupEventListeners() {
             loadUsers();
             selectedUsers = [];
             updateSelectedUsersList('selectedUsersList', selectedUsers);
-            document.getElementById('dateErrorAlert').classList.add('d-none'); // Reset errore
+            document.getElementById('dateErrorAlert').classList.add('d-none');
 
             const now = new Date();
             const startInput = document.querySelector('input[name="inizio"]');
             const endInput = document.querySelector('input[name="fine"]');
 
-            // Default: Ora successiva se vuoto
+            if(startInput) startInput.min = formatDateTimeLocal(now);
+
             if(startInput && !startInput.value) {
                 now.setMinutes(0,0,0);
                 now.setHours(now.getHours() + 1);
@@ -72,7 +73,11 @@ function setupEventListeners() {
 
     const editModal = document.getElementById('editEventModal');
     if(editModal) {
-        editModal.addEventListener('show.bs.modal', () => loadUsers());
+        editModal.addEventListener('show.bs.modal', () => {
+            loadUsers();
+            const alertBox = document.getElementById('editDateErrorAlert');
+            if(alertBox) alertBox.classList.add('d-none');
+        });
         editModal.addEventListener('hidden.bs.modal', () => {
             document.getElementById('editEventForm').reset();
             editSelectedUsers = [];
@@ -203,13 +208,11 @@ function renderWeekView() {
         // Column
         const col = document.createElement('div');
         col.className = 'day-column';
-        // Attributo data per il context menu
         col.setAttribute('data-date', d.toISOString());
 
         // Click sinistro: crea evento
         col.addEventListener('click', (e) => {
             if(e.target.closest('.week-event')) return;
-            // Calcolo ora click
             const rect = col.getBoundingClientRect();
             const clickY = e.clientY - rect.top + col.parentElement.parentElement.scrollTop;
             const mins = Math.floor((clickY/60)*60);
@@ -221,14 +224,28 @@ function renderWeekView() {
         col.addEventListener('contextmenu', (e) => handleContextMenu(e, d));
 
         // RENDER EVENTI DELLA GIORNATA
-        // 1. Filtra eventi di oggi
         const dayEvents = eventsData.filter(e => {
             const start = new Date(e.data_ora_inizio);
-            return start.getDate() === d.getDate() && start.getMonth() === d.getMonth() && start.getFullYear() === d.getFullYear();
+            const end = e.data_fine ? new Date(e.data_fine) : start;
+
+            // Per task multi-giorno: mostra se il giorno corrente è nel range
+            if(e.type === 'task' && e.data_fine) {
+                const dayStart = new Date(d);
+                dayStart.setHours(0,0,0,0);
+                const dayEnd = new Date(d);
+                dayEnd.setHours(23,59,59,999);
+
+                return start <= dayEnd && end >= dayStart;
+            }
+
+            // Per eventi normali: solo se inizia quel giorno
+            return start.getDate() === d.getDate() &&
+                start.getMonth() === d.getMonth() &&
+                start.getFullYear() === d.getFullYear();
         });
 
         if(dayEvents.length > 0) {
-            layoutDayEvents(dayEvents, col); // Funzione helper per le sovrapposizioni
+            layoutDayEvents(dayEvents, col, d);
         }
 
         eventsGrid.appendChild(col);
@@ -239,27 +256,42 @@ function renderWeekView() {
 }
 
 // Algoritmo per gestire eventi sovrapposti visivamente
-function layoutDayEvents(events, container) {
-    // 1. Ordina per ora inizio
+function layoutDayEvents(events, container, currentDay) {
     events.sort((a,b) => new Date(a.data_ora_inizio) - new Date(b.data_ora_inizio));
 
-    // Preparazione oggetti con coordinate normalizzate (0-24h)
     const items = events.map(e => {
         const start = new Date(e.data_ora_inizio);
         const end = e.data_fine ? new Date(e.data_fine) : new Date(start.getTime()+3600000);
-        const startH = start.getHours() + start.getMinutes()/60;
-        let endH = end.getHours() + end.getMinutes()/60;
-        if(endH <= startH) endH = startH + 1;
+
+        // Per task multi-giorno: calcola l'ora di inizio/fine per il giorno corrente
+        let startH, endH;
+
+        if(e.type === 'task' && e.data_fine) {
+            const dayStart = new Date(currentDay);
+            dayStart.setHours(0,0,0,0);
+            const dayEnd = new Date(currentDay);
+            dayEnd.setHours(23,59,59,999);
+
+            // Se il task inizia prima di oggi, parte da mezzanotte
+            startH = start <= dayStart ? 0 : (start.getHours() + start.getMinutes()/60);
+
+            // Se il task finisce dopo oggi, arriva a mezzanotte
+            endH = end >= dayEnd ? 24 : (end.getHours() + end.getMinutes()/60);
+        } else {
+            startH = start.getHours() + start.getMinutes()/60;
+            endH = end.getHours() + end.getMinutes()/60;
+            if(endH <= startH) endH = startH + 1;
+        }
+
         return { event: e, start: startH, end: endH, col: 0, maxCols: 1 };
     });
 
-    // 2. Calcola colonne (imballaggio semplice)
+    // Calcola colonne
     const columns = [];
     items.forEach(item => {
         let placed = false;
         for(let i=0; i<columns.length; i++) {
             const lastInCol = columns[i][columns[i].length-1];
-            // Se l'evento inizia dopo che l'ultimo della colonna è finito -> OK
             if(item.start >= lastInCol.end) {
                 columns[i].push(item);
                 item.col = i;
@@ -273,37 +305,36 @@ function layoutDayEvents(events, container) {
         }
     });
 
-    // 3. Render
-    const maxCols = columns.length; // Totale colonne necessarie per questo gruppo
-    // Nota: Un algoritmo perfetto (come Google Calendar) raggruppa cluster. Qui semplifichiamo:
-    // Dividiamo la larghezza per il numero totale di colonne usate in quel momento di sovrapposizione.
+    const maxCols = columns.length;
 
     items.forEach(item => {
         const el = document.createElement('div');
-        el.className = `week-event ${item.event.type === 'task' ? 'task-event' : ''}`;
+        const isMultiDay = item.event.type === 'task' && item.event.data_fine &&
+            (new Date(item.event.data_fine) - new Date(item.event.data_ora_inizio)) > 86400000;
 
-        // Stili base
+        el.className = `week-event ${item.event.type === 'task' ? 'task-event' : ''} ${isMultiDay ? 'multi-day-task' : ''}`;
+
         if(item.event.type === 'task') {
-            el.style.backgroundColor = '#fff3cd'; el.style.borderLeft = '4px solid #ffc107'; el.style.color = '#856404';
+            el.style.backgroundColor = '#fff3cd';
+            el.style.borderLeft = '4px solid #ffc107';
+            el.style.color = '#856404';
         }
 
-        el.textContent = item.event.nome;
+        // Mostra indicatore per task multi-giorno
+        const taskLabel = isMultiDay ?
+            `📅 ${item.event.nome}` :
+            item.event.nome;
+
+        el.textContent = taskLabel;
         el.style.top = `${item.start * 60}px`;
         el.style.height = `${(item.end - item.start) * 60}px`;
 
-        // Larghezza dinamica
         const width = 100 / maxCols;
         el.style.width = `calc(${width}% - 4px)`;
         el.style.left = `${item.col * width}%`;
 
         el.addEventListener('click', (ev) => { ev.stopPropagation(); showEventDetails(item.event); });
-
-        // Prevent context menu propagation on event click (optional, allows deleting event directly later)
-        el.addEventListener('contextmenu', (ev) => {
-            ev.stopPropagation();
-            // Potresti voler aprire un menu specifico per l'evento qui,
-            // ma per ora lasciamo il menu della colonna o nulla.
-        });
+        el.addEventListener('contextmenu', (ev) => { ev.stopPropagation(); });
 
         container.appendChild(el);
     });
@@ -335,47 +366,77 @@ function renderMonthView() {
         cell.setAttribute('data-date', d.toISOString());
         cell.innerHTML = `<span class="month-day-number">${d.getDate()}</span>`;
 
-        const dayEvents = eventsData.filter(e => isSameDay(new Date(e.data_ora_inizio), d));
+        // Filtra eventi per il giorno, includendo task multi-giorno
+        const dayEvents = eventsData.filter(e => {
+            const start = new Date(e.data_ora_inizio);
+            const end = e.data_fine ? new Date(e.data_fine) : start;
+
+            if(e.type === 'task' && e.data_fine) {
+                const dayStart = new Date(d);
+                dayStart.setHours(0,0,0,0);
+                const dayEnd = new Date(d);
+                dayEnd.setHours(23,59,59,999);
+                return start <= dayEnd && end >= dayStart;
+            }
+
+            return isSameDay(start, d);
+        });
+
         const evCont = document.createElement('div');
         evCont.className = 'month-events-container';
 
         dayEvents.slice(0, 3).forEach(ev => {
             const el = document.createElement('div');
-            el.className = 'month-event';
+            const isMultiDay = ev.type === 'task' && ev.data_fine &&
+                (new Date(ev.data_fine) - new Date(ev.data_ora_inizio)) > 86400000;
+
+            el.className = `month-event ${isMultiDay ? 'multi-day-task' : ''}`;
             if(ev.type === 'task') {
-                el.style.backgroundColor = '#ffc107'; el.style.color = '#000';
+                el.style.backgroundColor = '#ffc107';
+                el.style.color = '#000';
             }
-            el.textContent = ev.nome;
+            el.textContent = isMultiDay ? `📅 ${ev.nome}` : ev.nome;
             el.onclick = (e) => { e.stopPropagation(); showEventDetails(ev); };
             evCont.appendChild(el);
         });
+
         if(dayEvents.length > 3) {
             evCont.innerHTML += `<div class="month-event-more">+${dayEvents.length-3} altri</div>`;
         }
 
         cell.appendChild(evCont);
         cell.addEventListener('click', (e) => {
-            if(e.target===cell || e.target.classList.contains('month-day-number')) openCreateEventModal(d, 9, 0);
+            if(e.target===cell || e.target.classList.contains('month-day-number'))
+                openCreateEventModal(d, 9, 0);
         });
 
-        // RIGHT CLICK MONTH
         cell.addEventListener('contextmenu', (e) => handleContextMenu(e, d));
-
         container.appendChild(cell);
     }
 }
 
-// ---------------------------
-// RIGHT CLICK CONTEXT MENU
-// ---------------------------
 function handleContextMenu(e, date) {
-    e.preventDefault(); // Blocca menu browser
+    e.preventDefault();
     const menu = document.getElementById('contextMenu');
     const content = document.getElementById('ctxContent');
     const dateLabel = document.getElementById('ctxDateLabel');
 
-    // Filtra eventi per quel giorno
-    const items = eventsData.filter(ev => isSameDay(new Date(ev.data_ora_inizio), date));
+    // Filtra eventi per quel giorno, includendo task multi-giorno
+    const items = eventsData.filter(ev => {
+        const start = new Date(ev.data_ora_inizio);
+        const end = ev.data_fine ? new Date(ev.data_fine) : start;
+
+        if(ev.type === 'task' && ev.data_fine) {
+            const dayStart = new Date(date);
+            dayStart.setHours(0,0,0,0);
+            const dayEnd = new Date(date);
+            dayEnd.setHours(23,59,59,999);
+            return start <= dayEnd && end >= dayStart;
+        }
+
+        return isSameDay(start, date);
+    });
+
     items.sort((a,b) => new Date(a.data_ora_inizio) - new Date(b.data_ora_inizio));
 
     dateLabel.textContent = date.toLocaleDateString('it-IT', {weekday:'long', day:'numeric', month:'long'});
@@ -391,11 +452,15 @@ function handleContextMenu(e, date) {
             const badgeClass = ev.type === 'task' ? 'badge-task' : 'badge-event';
             const typeLabel = ev.type === 'task' ? 'TASK' : 'EVENTO';
 
+            const isMultiDay = ev.type === 'task' && ev.data_fine &&
+                (new Date(ev.data_fine) - new Date(ev.data_ora_inizio)) > 86400000;
+            const multiDayIcon = isMultiDay ? '📅 ' : '';
+
             row.innerHTML = `
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
                         <span class="badge ${badgeClass} me-2" style="font-size:0.7rem">${typeLabel}</span>
-                        <strong>${time}</strong> ${escapeHtml(ev.nome)}
+                        <strong>${time}</strong> ${multiDayIcon}${escapeHtml(ev.nome)}
                     </div>
                 </div>
             `;
@@ -407,13 +472,11 @@ function handleContextMenu(e, date) {
         });
     }
 
-    // Aggiungi opzione "Crea Nuovo" in fondo al menu
     const createBtn = document.createElement('div');
     createBtn.className = 'ctx-item text-primary fw-bold border-top mt-1';
     createBtn.innerHTML = '<i class="bi bi-plus-lg me-2"></i>Crea nuovo qui';
     createBtn.onclick = () => {
         closeContextMenu();
-        // Controlla se è passato prima di aprire
         const now = new Date();
         now.setHours(0,0,0,0);
         const checkDate = new Date(date);
@@ -427,12 +490,10 @@ function handleContextMenu(e, date) {
     };
     content.appendChild(createBtn);
 
-    // Posizionamento
     menu.style.display = 'block';
     let x = e.pageX;
     let y = e.pageY;
 
-    // Evita overflow schermo
     if(x + 300 > window.innerWidth) x -= 300;
     if(y + menu.offsetHeight > window.innerHeight) y -= menu.offsetHeight;
 
@@ -444,27 +505,23 @@ function closeContextMenu() {
     document.getElementById('contextMenu').style.display = 'none';
 }
 
-// ---------------------------
 // CRUD & VALIDATION
-// ---------------------------
 function saveEvent() {
     const form = document.getElementById('createEventForm');
     const alertBox = document.getElementById('dateErrorAlert');
-    alertBox.classList.add('d-none'); // Reset
+    alertBox.classList.add('d-none');
 
     if(!form.checkValidity()) { form.reportValidity(); return; }
 
     const formData = new FormData(form);
     const startStr = formData.get('inizio');
-
-    // VALIDAZIONE DATA PASSATA
     const startDate = new Date(startStr);
     const now = new Date();
 
-    // Tolleranza di 1 minuto per evitare problemi di secondi durante il click
     if(startDate < new Date(now.getTime() - 60000)) {
+        alertBox.innerHTML = '<i class="bi bi-exclamation-triangle-fill me-2"></i>Impossibile creare eventi nel passato!';
         alertBox.classList.remove('d-none');
-        return; // Blocca salvataggio
+        return;
     }
 
     const payload = {
@@ -475,24 +532,59 @@ function saveEvent() {
         partecipanti: selectedUsers.map(u => u.id_utente)
     };
 
+    // Update ottimistico: aggiungi temporaneamente l'evento
+    const tempEvent = {
+        id_evento: 'temp_' + Date.now(),
+        nome: payload.nome,
+        luogo: payload.luogo,
+        data_ora_inizio: payload.inizio,
+        data_fine: payload.fine,
+        type: 'event',
+        temp: true
+    };
+    storedEvents.push(tempEvent);
+    mergeEventsAndTasks();
+    renderView();
+
     fetch('/dashboard/calendar/api/create', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify(payload)
     })
-        .then(r => r.json())
-        .then(data => {
+        .then(async response => {
+            const data = await response.json();
+            if (!response.ok) {
+                // Rimuovi evento temporaneo in caso di errore
+                storedEvents = storedEvents.filter(e => !e.temp);
+                mergeEventsAndTasks();
+                renderView();
+
+                alertBox.innerHTML = `<i class="bi bi-exclamation-triangle-fill me-2"></i>${data.error || 'Errore durante la creazione'}`;
+                alertBox.classList.remove('d-none');
+                return;
+            }
             if(data.status === 'success') {
                 bootstrap.Modal.getInstance(document.getElementById('createEventModal')).hide();
-                fetchEvents();
+                // Ricarica per ottenere i dati reali dal server
+                setTimeout(() => fetchEvents(), 300);
             }
         })
-        .catch(() => alert("Errore creazione"));
+        .catch(() => {
+            // Rimuovi evento temporaneo in caso di errore
+            storedEvents = storedEvents.filter(e => !e.temp);
+            mergeEventsAndTasks();
+            renderView();
+
+            alertBox.innerHTML = '<i class="bi bi-exclamation-triangle-fill me-2"></i>Errore di connessione.';
+            alertBox.classList.remove('d-none');
+        });
 }
 
 function updateEvent() {
-    // Logica update simile al save (omessa validazione stretta qui per permettere correzioni storiche se necessario, oppure aggiungila)
     const form = document.getElementById('editEventForm');
+    const alertBox = document.getElementById('editDateErrorAlert');
+    if(alertBox) alertBox.classList.add('d-none');
+
     const formData = new FormData(form);
     const payload = {
         id: formData.get('id'),
@@ -502,23 +594,98 @@ function updateEvent() {
         fine: formData.get('fine'),
         partecipanti: editSelectedUsers.map(u => u.id_utente)
     };
+
+    // Update ottimistico
+    const eventIndex = storedEvents.findIndex(e => e.id_evento == payload.id);
+    const oldEvent = eventIndex >= 0 ? {...storedEvents[eventIndex]} : null;
+
+    if(eventIndex >= 0) {
+        storedEvents[eventIndex] = {
+            ...storedEvents[eventIndex],
+            nome: payload.nome,
+            luogo: payload.luogo,
+            data_ora_inizio: payload.inizio,
+            data_fine: payload.fine,
+            temp: true
+        };
+        mergeEventsAndTasks();
+        renderView();
+    }
+
     fetch('/dashboard/calendar/api/update', {
-        method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload)
-    }).then(r=>r.json()).then(d => {
-        if(d.status==='updated') {
-            bootstrap.Modal.getInstance(document.getElementById('editEventModal')).hide();
-            fetchEvents();
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(payload)
+    }).then(async response => {
+        const data = await response.json();
+        if(!response.ok) {
+            // Ripristina vecchio evento in caso di errore
+            if(oldEvent && eventIndex >= 0) {
+                storedEvents[eventIndex] = oldEvent;
+                mergeEventsAndTasks();
+                renderView();
+            }
+
+            if(alertBox) {
+                alertBox.innerHTML = `<i class="bi bi-exclamation-triangle-fill me-2"></i>${data.error || "Errore durante l'aggiornamento"}`;
+                alertBox.classList.remove('d-none');
+            } else {
+                alert(data.error || "Errore durante l'aggiornamento");
+            }
+            return;
         }
+        if(data.status==='updated') {
+            bootstrap.Modal.getInstance(document.getElementById('editEventModal')).hide();
+            setTimeout(() => fetchEvents(), 300);
+        }
+    }).catch(e => {
+        // Ripristina vecchio evento in caso di errore
+        if(oldEvent && eventIndex >= 0) {
+            storedEvents[eventIndex] = oldEvent;
+            mergeEventsAndTasks();
+            renderView();
+        }
+        console.error(e);
     });
 }
 
 function deleteEventFromEdit() {
     if(!confirm('Eliminare?')) return;
+
+    // Update ottimistico
+    const eventId = selectedEvent.id_evento;
+    const eventIndex = storedEvents.findIndex(e => e.id_evento == eventId);
+    const oldEvent = eventIndex >= 0 ? {...storedEvents[eventIndex]} : null;
+
+    if(eventIndex >= 0) {
+        storedEvents.splice(eventIndex, 1);
+        mergeEventsAndTasks();
+        renderView();
+    }
+
     fetch('/dashboard/calendar/api/delete', {
-        method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({id: selectedEvent.id_evento})
-    }).then(() => {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({id: eventId})
+    }).then(response => {
+        if(!response.ok && oldEvent && eventIndex >= 0) {
+            // Ripristina in caso di errore
+            storedEvents.splice(eventIndex, 0, oldEvent);
+            mergeEventsAndTasks();
+            renderView();
+            alert('Errore durante l\'eliminazione');
+            return;
+        }
         bootstrap.Modal.getInstance(document.getElementById('editEventModal')).hide();
-        fetchEvents();
+        setTimeout(() => fetchEvents(), 300);
+    }).catch(e => {
+        // Ripristina in caso di errore
+        if(oldEvent && eventIndex >= 0) {
+            storedEvents.splice(eventIndex, 0, oldEvent);
+            mergeEventsAndTasks();
+            renderView();
+        }
+        console.error(e);
     });
 }
 
@@ -579,10 +746,7 @@ function openCreateEventModal(date, h, m) {
     const d = new Date(date);
     d.setHours(h, m, 0, 0);
 
-    // Validazione preventiva all'apertura
     if(d < now) {
-        // Se l'utente clicca nel passato, impostiamo comunque "Adesso" come default
-        // Invece di bloccare l'apertura, miglioriamo la UX correggendo la data
         const nextHour = new Date(now);
         nextHour.setMinutes(0,0,0);
         nextHour.setHours(nextHour.getHours() + 1);
@@ -627,7 +791,6 @@ function updateSelectedUsersList(id, arr) {
     c.innerHTML = '';
     arr.forEach(u => {
         const listName = id === 'selectedUsersList' ? 'selectedUsers' : 'editSelectedUsers';
-        // Hacky way to remove via closure ref references, better to search index
         const d = document.createElement('div');
         d.className = 'selected-user-tag';
         d.innerHTML = `${u.nome} <button type="button" class="remove-user-btn"><i class="bi bi-x-lg"></i></button>`;

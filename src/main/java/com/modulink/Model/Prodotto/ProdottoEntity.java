@@ -2,6 +2,8 @@ package com.modulink.Model.Prodotto;
 
 import com.modulink.Model.Azienda.AziendaEntity;
 import jakarta.persistence.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 @IdClass(ProdottoID.class)
@@ -14,6 +16,7 @@ public class ProdottoEntity {
     @Id
     @ManyToOne
     @JoinColumn(name = "id_azienda", referencedColumnName = "id_azienda", nullable = false, foreignKey = @ForeignKey(name = "FK_Prodotto_Azienda"))
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private AziendaEntity azienda;
 
     @Column(name = "nome", nullable = false)

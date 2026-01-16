@@ -24,6 +24,8 @@ public class EventoService {
         return eventoRepository.findAllByUtente(utente);
     }
 
+
+
     @Transactional
     public List<EventoEntity> findByAzienda(AziendaEntity aziendaEntity) {
         return eventoRepository.findByAzienda(aziendaEntity);
