@@ -40,6 +40,9 @@ public class AdminController extends ModuloController {
             return "redirect:/dashboard";
         }
 
+
+
+
         List<AziendaEntity> aziende = aziendaService.getAllAziende();
         // Prevent admin from deleting their own company (if applicable) or the main admin company
         currentUserOpt.ifPresent(utenteEntity -> {

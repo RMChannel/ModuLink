@@ -112,7 +112,7 @@ function setupEventListeners() {
 
 function switchView(view) {
     if(currentView === view) return;
-    const oldView = currentView;
+
     currentView = view;
     if(currentTimeInterval) { clearInterval(currentTimeInterval); currentTimeInterval = null; }
 
@@ -162,6 +162,32 @@ function loadUsers() {
     fetch('/dashboard/calendar/api/users').then(r => r.json()).then(u => cachedUsers = u).catch(() => cachedUsers = []);
 }
 
+// HELPER LOGICA VISUALIZZAZIONE
+/**
+ * Determina se un evento o task deve essere mostrato in un determinato giorno.
+ * - Task: Solo nel giorno di scadenza (data_fine).
+ * - Eventi: In qualsiasi giorno compreso nel range inizio-fine.
+ */
+function isEventActiveInDay(ev, dateObj) {
+    const dayStart = new Date(dateObj);
+    dayStart.setHours(0,0,0,0);
+
+    const dayEnd = new Date(dateObj);
+    dayEnd.setHours(23,59,59,999);
+
+    if (ev.type === 'task') {
+        // TASK: Si visualizza SOLO nel giorno di scadenza (data_fine)
+        // Se non ha data_fine, usiamo data_ora_inizio come fallback
+        const targetDate = ev.data_fine ? new Date(ev.data_fine) : new Date(ev.data_ora_inizio);
+        return targetDate >= dayStart && targetDate <= dayEnd;
+    } else {
+        // EVENTO: Si visualizza se il range dell'evento interseca il giorno corrente
+        const evStart = new Date(ev.data_ora_inizio);
+        const evEnd = ev.data_fine ? new Date(ev.data_fine) : evStart;
+        return evStart <= dayEnd && evEnd >= dayStart;
+    }
+}
+
 // RENDERING
 function renderView() {
     updateHeaderLabel();
@@ -169,7 +195,7 @@ function renderView() {
     else renderMonthView();
 }
 
-// WEEK VIEW (Con algoritmo overlapping colonne)
+// WEEK VIEW
 function renderWeekView() {
     const weekBody = document.querySelector('.week-body');
     const headerContainer = document.querySelector('.week-header');
@@ -223,26 +249,8 @@ function renderWeekView() {
         // Click destro: Context Menu
         col.addEventListener('contextmenu', (e) => handleContextMenu(e, d));
 
-        // RENDER EVENTI DELLA GIORNATA
-        const dayEvents = eventsData.filter(e => {
-            const start = new Date(e.data_ora_inizio);
-            const end = e.data_fine ? new Date(e.data_fine) : start;
-
-            // Per task multi-giorno: mostra se il giorno corrente è nel range
-            if(e.type === 'task' && e.data_fine) {
-                const dayStart = new Date(d);
-                dayStart.setHours(0,0,0,0);
-                const dayEnd = new Date(d);
-                dayEnd.setHours(23,59,59,999);
-
-                return start <= dayEnd && end >= dayStart;
-            }
-
-            // Per eventi normali: solo se inizia quel giorno
-            return start.getDate() === d.getDate() &&
-                start.getMonth() === d.getMonth() &&
-                start.getFullYear() === d.getFullYear();
-        });
+        // Filtra eventi per la colonna corrente usando la nuova logica centralizzata
+        const dayEvents = eventsData.filter(e => isEventActiveInDay(e, d));
 
         if(dayEvents.length > 0) {
             layoutDayEvents(dayEvents, col, d);
@@ -255,7 +263,6 @@ function renderWeekView() {
     weekBody.appendChild(content);
 }
 
-// Algoritmo per gestire eventi sovrapposti visivamente
 function layoutDayEvents(events, container, currentDay) {
     events.sort((a,b) => new Date(a.data_ora_inizio) - new Date(b.data_ora_inizio));
 
@@ -263,30 +270,33 @@ function layoutDayEvents(events, container, currentDay) {
         const start = new Date(e.data_ora_inizio);
         const end = e.data_fine ? new Date(e.data_fine) : new Date(start.getTime()+3600000);
 
-        // Per task multi-giorno: calcola l'ora di inizio/fine per il giorno corrente
         let startH, endH;
 
-        if(e.type === 'task' && e.data_fine) {
-            const dayStart = new Date(currentDay);
-            dayStart.setHours(0,0,0,0);
-            const dayEnd = new Date(currentDay);
-            dayEnd.setHours(23,59,59,999);
+        // Definiamo i limiti del giorno corrente
+        const dayStart = new Date(currentDay); dayStart.setHours(0,0,0,0);
+        const dayEnd = new Date(currentDay); dayEnd.setHours(23,59,59,999);
 
-            // Se il task inizia prima di oggi, parte da mezzanotte
-            startH = start <= dayStart ? 0 : (start.getHours() + start.getMinutes()/60);
+        if (e.type === 'event') {
+            // Logica Multi-giorno per Eventi
+            // Se inizia prima di oggi, startH = 0 (mezzanotte)
+            startH = start < dayStart ? 0 : (start.getHours() + start.getMinutes()/60);
 
-            // Se il task finisce dopo oggi, arriva a mezzanotte
-            endH = end >= dayEnd ? 24 : (end.getHours() + end.getMinutes()/60);
+            // Se finisce dopo oggi, endH = 24 (fine giornata)
+            endH = end > dayEnd ? 24 : (end.getHours() + end.getMinutes()/60);
+
+            // Fix visivo minimo
+            if(endH <= startH) endH = startH + 0.5;
         } else {
+            // Task: visualizzati nel loro orario reale, ma confinati al giorno (logica isEventActiveInDay garantisce che siamo nel giorno giusto)
             startH = start.getHours() + start.getMinutes()/60;
             endH = end.getHours() + end.getMinutes()/60;
-            if(endH <= startH) endH = startH + 1;
+            if(endH <= startH) endH = startH + 1; // Durata default 1h se errore
         }
 
         return { event: e, start: startH, end: endH, col: 0, maxCols: 1 };
     });
 
-    // Calcola colonne
+    // Calcolo colonne per sovrapposizioni
     const columns = [];
     items.forEach(item => {
         let placed = false;
@@ -309,23 +319,23 @@ function layoutDayEvents(events, container, currentDay) {
 
     items.forEach(item => {
         const el = document.createElement('div');
-        const isMultiDay = item.event.type === 'task' && item.event.data_fine &&
+        const isMultiDay = item.event.type === 'event' && item.event.data_fine &&
             (new Date(item.event.data_fine) - new Date(item.event.data_ora_inizio)) > 86400000;
 
-        el.className = `week-event ${item.event.type === 'task' ? 'task-event' : ''} ${isMultiDay ? 'multi-day-task' : ''}`;
+        el.className = `week-event ${item.event.type === 'task' ? 'task-event' : ''} ${isMultiDay ? 'multi-day-event' : ''}`;
 
         if(item.event.type === 'task') {
             el.style.backgroundColor = '#fff3cd';
             el.style.borderLeft = '4px solid #ffc107';
             el.style.color = '#856404';
+        } else if (isMultiDay) {
+            // Stile differenziato per eventi lunghi se desiderato, o standard
+            el.style.borderLeft = '4px solid #0d6efd';
         }
 
-        // Mostra indicatore per task multi-giorno
-        const taskLabel = isMultiDay ?
-            `📅 ${item.event.nome}` :
-            item.event.nome;
-
-        el.textContent = taskLabel;
+        // Label
+        el.textContent = (isMultiDay || item.event.type === 'task') ?
+            `${item.event.nome}` : item.event.nome;
         el.style.top = `${item.start * 60}px`;
         el.style.height = `${(item.end - item.start) * 60}px`;
 
@@ -366,28 +376,17 @@ function renderMonthView() {
         cell.setAttribute('data-date', d.toISOString());
         cell.innerHTML = `<span class="month-day-number">${d.getDate()}</span>`;
 
-        // Filtra eventi per il giorno, includendo task multi-giorno
-        const dayEvents = eventsData.filter(e => {
-            const start = new Date(e.data_ora_inizio);
-            const end = e.data_fine ? new Date(e.data_fine) : start;
-
-            if(e.type === 'task' && e.data_fine) {
-                const dayStart = new Date(d);
-                dayStart.setHours(0,0,0,0);
-                const dayEnd = new Date(d);
-                dayEnd.setHours(23,59,59,999);
-                return start <= dayEnd && end >= dayStart;
-            }
-
-            return isSameDay(start, d);
-        });
+        // Filtra eventi usando la logica centralizzata (Multi-giorno ok)
+        const dayEvents = eventsData.filter(e => isEventActiveInDay(e, d));
 
         const evCont = document.createElement('div');
         evCont.className = 'month-events-container';
 
-        dayEvents.slice(0, 3).forEach(ev => {
+        // MODIFICA: Visualizza massimo 2 eventi, poi +X
+        const MAX_VISIBLE = 2;
+        dayEvents.slice(0, MAX_VISIBLE).forEach(ev => {
             const el = document.createElement('div');
-            const isMultiDay = ev.type === 'task' && ev.data_fine &&
+            const isMultiDay = ev.type === 'event' && ev.data_fine &&
                 (new Date(ev.data_fine) - new Date(ev.data_ora_inizio)) > 86400000;
 
             el.className = `month-event ${isMultiDay ? 'multi-day-task' : ''}`;
@@ -395,13 +394,17 @@ function renderMonthView() {
                 el.style.backgroundColor = '#ffc107';
                 el.style.color = '#000';
             }
-            el.textContent = isMultiDay ? `📅 ${ev.nome}` : ev.nome;
+            // Indicatore visivo se è un evento che continua
+            let label = ev.nome;
+            if(isMultiDay) label = '↔ ' + label;
+
+            el.textContent = label;
             el.onclick = (e) => { e.stopPropagation(); showEventDetails(ev); };
             evCont.appendChild(el);
         });
 
-        if(dayEvents.length > 3) {
-            evCont.innerHTML += `<div class="month-event-more">+${dayEvents.length-3} altri</div>`;
+        if(dayEvents.length > MAX_VISIBLE) {
+            evCont.innerHTML += `<div class="month-event-more">+${dayEvents.length - MAX_VISIBLE} altri</div>`;
         }
 
         cell.appendChild(evCont);
@@ -421,21 +424,8 @@ function handleContextMenu(e, date) {
     const content = document.getElementById('ctxContent');
     const dateLabel = document.getElementById('ctxDateLabel');
 
-    // Filtra eventi per quel giorno, includendo task multi-giorno
-    const items = eventsData.filter(ev => {
-        const start = new Date(ev.data_ora_inizio);
-        const end = ev.data_fine ? new Date(ev.data_fine) : start;
-
-        if(ev.type === 'task' && ev.data_fine) {
-            const dayStart = new Date(date);
-            dayStart.setHours(0,0,0,0);
-            const dayEnd = new Date(date);
-            dayEnd.setHours(23,59,59,999);
-            return start <= dayEnd && end >= dayStart;
-        }
-
-        return isSameDay(start, date);
-    });
+    // Usa la logica centralizzata per popolare il menu
+    const items = eventsData.filter(ev => isEventActiveInDay(ev, date));
 
     items.sort((a,b) => new Date(a.data_ora_inizio) - new Date(b.data_ora_inizio));
 
@@ -452,15 +442,11 @@ function handleContextMenu(e, date) {
             const badgeClass = ev.type === 'task' ? 'badge-task' : 'badge-event';
             const typeLabel = ev.type === 'task' ? 'TASK' : 'EVENTO';
 
-            const isMultiDay = ev.type === 'task' && ev.data_fine &&
-                (new Date(ev.data_fine) - new Date(ev.data_ora_inizio)) > 86400000;
-            const multiDayIcon = isMultiDay ? '📅 ' : '';
-
             row.innerHTML = `
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
                         <span class="badge ${badgeClass} me-2" style="font-size:0.7rem">${typeLabel}</span>
-                        <strong>${time}</strong> ${multiDayIcon}${escapeHtml(ev.nome)}
+                        <strong>${time}</strong> ${escapeHtml(ev.nome)}
                     </div>
                 </div>
             `;
@@ -532,7 +518,7 @@ function saveEvent() {
         partecipanti: selectedUsers.map(u => u.id_utente)
     };
 
-    // Update ottimistico: aggiungi temporaneamente l'evento
+    // Update ottimistico
     const tempEvent = {
         id_evento: 'temp_' + Date.now(),
         nome: payload.nome,
@@ -554,7 +540,6 @@ function saveEvent() {
         .then(async response => {
             const data = await response.json();
             if (!response.ok) {
-                // Rimuovi evento temporaneo in caso di errore
                 storedEvents = storedEvents.filter(e => !e.temp);
                 mergeEventsAndTasks();
                 renderView();
@@ -565,12 +550,10 @@ function saveEvent() {
             }
             if(data.status === 'success') {
                 bootstrap.Modal.getInstance(document.getElementById('createEventModal')).hide();
-                // Ricarica per ottenere i dati reali dal server
                 setTimeout(() => fetchEvents(), 300);
             }
         })
         .catch(() => {
-            // Rimuovi evento temporaneo in caso di errore
             storedEvents = storedEvents.filter(e => !e.temp);
             mergeEventsAndTasks();
             renderView();
@@ -595,8 +578,7 @@ function updateEvent() {
         partecipanti: editSelectedUsers.map(u => u.id_utente)
     };
 
-    // Update ottimistico
-    const eventIndex = storedEvents.findIndex(e => e.id_evento == payload.id);
+    const eventIndex = storedEvents.findIndex(e => e.id_evento === payload.id);
     const oldEvent = eventIndex >= 0 ? {...storedEvents[eventIndex]} : null;
 
     if(eventIndex >= 0) {
@@ -619,7 +601,6 @@ function updateEvent() {
     }).then(async response => {
         const data = await response.json();
         if(!response.ok) {
-            // Ripristina vecchio evento in caso di errore
             if(oldEvent && eventIndex >= 0) {
                 storedEvents[eventIndex] = oldEvent;
                 mergeEventsAndTasks();
@@ -639,7 +620,6 @@ function updateEvent() {
             setTimeout(() => fetchEvents(), 300);
         }
     }).catch(e => {
-        // Ripristina vecchio evento in caso di errore
         if(oldEvent && eventIndex >= 0) {
             storedEvents[eventIndex] = oldEvent;
             mergeEventsAndTasks();
@@ -650,11 +630,8 @@ function updateEvent() {
 }
 
 function deleteEventFromEdit() {
-    if(!confirm('Eliminare?')) return;
-
-    // Update ottimistico
     const eventId = selectedEvent.id_evento;
-    const eventIndex = storedEvents.findIndex(e => e.id_evento == eventId);
+    const eventIndex = storedEvents.findIndex(e => e.id_evento === eventId);
     const oldEvent = eventIndex >= 0 ? {...storedEvents[eventIndex]} : null;
 
     if(eventIndex >= 0) {
@@ -669,7 +646,6 @@ function deleteEventFromEdit() {
         body: JSON.stringify({id: eventId})
     }).then(response => {
         if(!response.ok && oldEvent && eventIndex >= 0) {
-            // Ripristina in caso di errore
             storedEvents.splice(eventIndex, 0, oldEvent);
             mergeEventsAndTasks();
             renderView();
@@ -679,7 +655,6 @@ function deleteEventFromEdit() {
         bootstrap.Modal.getInstance(document.getElementById('editEventModal')).hide();
         setTimeout(() => fetchEvents(), 300);
     }).catch(e => {
-        // Ripristina in caso di errore
         if(oldEvent && eventIndex >= 0) {
             storedEvents.splice(eventIndex, 0, oldEvent);
             mergeEventsAndTasks();

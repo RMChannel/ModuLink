@@ -24,6 +24,7 @@ public class PartecipazioneEntity {
     private int id_azienda;
 
     @ManyToOne
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumns({
             @JoinColumn(name = "ID_Utente", referencedColumnName = "ID_Utente", insertable = false, updatable = false),
             @JoinColumn(name = "ID_Azienda", referencedColumnName = "ID_Azienda", insertable = false, updatable = false)
@@ -31,6 +32,7 @@ public class PartecipazioneEntity {
     private UtenteEntity utente;
 
     @ManyToOne
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumns({
             @JoinColumn(name = "id_evento", referencedColumnName = "id_evento", insertable = false, updatable = false),
             @JoinColumn(name = "ID_Azienda", referencedColumnName = "id_azienda", insertable = false, updatable = false)
