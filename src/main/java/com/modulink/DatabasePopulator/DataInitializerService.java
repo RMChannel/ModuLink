@@ -51,11 +51,12 @@ public class DataInitializerService {
         this.partecipazioneRepository = partecipazioneRepository;
     }
 
-    @Transactional // Qui la transazione funzionerà correttamente!
-    public void runInitialization() {
+    public void addDemoAzienda() {
         AziendaEntity azienda = new AziendaEntity("Test","12345678901","Via Nazionale","Santa Maria a Vico","81028","+393205397560","");
+
         UtenteEntity utente = new UtenteEntity(azienda, "robbencito@gmail.com", PasswordUtility.hashPassword("ciaociao"), "Roberto", "Cito", "+393471304385", "");
         UtenteEntity u2 = new UtenteEntity(azienda, "rdiskonline@gmail.com", PasswordUtility.hashPassword("ciaociao"), "Test", "Test", "+393205397560", "");
+
 
         // Importante: riassegna sempre l'oggetto restituito dal save/registrazione
         azienda = aziendaService.registraAzienda(azienda);
@@ -98,6 +99,7 @@ public class DataInitializerService {
         attivazioneRepository.save(new AttivazioneEntity(GDM, azienda));
 
 
+
         affiliazioneRepository.save(new AffiliazioneEntity(ruoloResponsabile.getId_ruolo(),GDU.getId_modulo(),azienda.getId_azienda()));
         affiliazioneRepository.save(new AffiliazioneEntity(ruoloResponsabile.getId_ruolo(),GDR.getId_modulo(),azienda.getId_azienda()));
         affiliazioneRepository.save(new AffiliazioneEntity(ruoloResponsabile.getId_ruolo(),GMA.getId_modulo(),azienda.getId_azienda()));
@@ -108,7 +110,7 @@ public class DataInitializerService {
 
         // --- CREAZIONE EVENTI DI PROVA ---
         LocalDateTime now = LocalDateTime.now();
-        
+
         EventoEntity evento1 = new EventoEntity(0, azienda, "Riunione Staff", "Sala Riunioni A", now.plusHours(2), now.plusHours(4));
         EventoEntity evento2 = new EventoEntity(1, azienda, "Pranzo Aziendale", "Ristorante 'Da Mario'", now.plusDays(1).withHour(13).withMinute(0), now.plusDays(1).withHour(15).withMinute(0));
         EventoEntity evento3 = new EventoEntity(2, azienda, "Corso Formazione", "Online", now.minusDays(1).withHour(10).withMinute(0), now.minusDays(1).withHour(12).withMinute(0));
@@ -124,5 +126,29 @@ public class DataInitializerService {
         partecipazioneRepository.save(new PartecipazioneEntity(utente.getId_utente(), evento2.getId_evento(), azienda.getId_azienda()));
         partecipazioneRepository.save(new PartecipazioneEntity(utente.getId_utente(), evento3.getId_evento(), azienda.getId_azienda()));
         partecipazioneRepository.save(new PartecipazioneEntity(utente.getId_utente(), evento4.getId_evento(), azienda.getId_azienda()));
+    }
+
+    public void addModulinkAzienda() {
+        AziendaEntity modulink = new AziendaEntity("Modulink","1111111111","Via Nazionale","Santa Maria a Vico","81028","+393471304385","");
+        UtenteEntity u3 = new UtenteEntity(modulink,"r.cito@studenti.unisa.it",PasswordUtility.hashPassword("ciaociao"),"Roberto","Cito","+393471304385","");
+        modulink = aziendaService.registraAzienda(modulink);
+        customUserDetailsService.registraUtente(u3, modulink.getId_azienda());
+        RuoloEntity ruoloResponsabile2 = new RuoloEntity(0, modulink, "Responsabile", "#000000", "Responsabile dell'azienda");
+        RuoloEntity ruoloNewUser2 = new RuoloEntity(1,modulink,"Utente Nuovo","blue","Utente non ancora ufficialmente registrato");
+        RuoloEntity ruoloStandard2 = new RuoloEntity(2,modulink,"Utente","grey","Utente Standard");
+        ruoloRepository.save(ruoloResponsabile2);
+        ruoloRepository.save(ruoloNewUser2);
+        ruoloRepository.save(ruoloStandard2);
+        associazioneRepository.save(new AssociazioneEntity(u3, ruoloResponsabile2));
+        ModuloEntity Support = new ModuloEntity(7,"Supporto", "Modulo dedicato al supporto tecnico", "/dashboard/support/", "bi bi-life-preserver",false);
+        Support = moduloRepository.save(Support);
+        attivazioneRepository.save(new AttivazioneEntity(Support, modulink));
+        affiliazioneRepository.save(new AffiliazioneEntity(ruoloResponsabile2.getId_ruolo(),Support.getId_modulo(),modulink.getId_azienda()));
+    }
+
+    @Transactional // Qui la transazione funzionerà correttamente!
+    public void runInitialization() {
+        addDemoAzienda();
+        addModulinkAzienda();
     }
 }

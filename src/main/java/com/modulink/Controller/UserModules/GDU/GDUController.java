@@ -1,9 +1,8 @@
-package com.modulink.Controller.GDU;
+package com.modulink.Controller.UserModules.GDU;
 
 import com.modulink.Alert;
 import com.modulink.Controller.ModuloController;
 import com.modulink.Model.Azienda.AziendaEntity;
-import com.modulink.Model.Modulo.ModuloEntity;
 import com.modulink.Model.Modulo.ModuloService;
 import com.modulink.Model.Relazioni.Associazione.AssociazioneEntity;
 import com.modulink.Model.Relazioni.Associazione.AssociazioneService;
