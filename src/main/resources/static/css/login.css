@@ -188,7 +188,25 @@ body {
 .register-link a:hover { text-decoration: underline; }
 
 .alert { padding: 12px; margin-bottom: 20px; border-radius: 6px; text-align: left; font-size: 14px; }
-.alert-danger { background-color: var(--bg-alert-danger); color: var(--text-danger-dark); border: 1px solid var(--border-alert-danger); }
+.alert-danger { 
+    background-color: var(--bg-alert-danger); 
+    color: var(--text-danger); 
+    border: 1px solid var(--border-alert-danger); 
+    font-weight: 500;
+}
+
+.alert-danger p {
+    margin: 5px 0;
+    color: var(--text-danger);
+}
+
+.text-danger {
+    color: var(--text-danger);
+    font-size: 13px;
+    margin-top: 5px;
+    display: block;
+    font-weight: 600;
+}
 
 /* ============================
    5. RESPONSIVE / MOBILE

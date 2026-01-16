@@ -29,6 +29,7 @@ public class RegisterResponsabileForm {
      */
     @NotBlank(message = "il campo email non può essere vuoto")
     @Size(min = 5, max = 50, message = "l''email deve essere compresa tra 5 e 50 caratteri")
+    @Pattern(regexp = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$", message = "Inserire un'email valida.")
     private String email;
 
     /**

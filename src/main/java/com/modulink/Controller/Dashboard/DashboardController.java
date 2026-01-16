@@ -18,11 +18,10 @@ import java.util.Optional;
 @Controller
 public class DashboardController {
     private final CustomUserDetailsService customUserDetailsService;
-    private final ModuloService moduloService;
 
-    public DashboardController(CustomUserDetailsService customUserDetailsService, ModuloService moduloService) {
+
+    public DashboardController(CustomUserDetailsService customUserDetailsService) {
         this.customUserDetailsService=customUserDetailsService;
-        this.moduloService=moduloService;
     }
 
     @GetMapping({"/dashboard","/dashboard/"})
@@ -34,13 +33,10 @@ public class DashboardController {
         Optional<UtenteEntity> utenteOpt = customUserDetailsService.findByEmail(email);
         if (utenteOpt.isPresent()) {
             UtenteEntity utente = utenteOpt.get();
-            model.addAttribute("utente", utente);
             if(customUserDetailsService.isThisaNewUtente(utente)) { //Se è un nuovo utente allora viene portato alla schermata del 1°login
                 return "user/firstlogin";
             }
             else { //Altrimenti viene caricata la dashboard normalmente
-                List<ModuloEntity> moduli = moduloService.findModuliByUtente(utente);
-                model.addAttribute("moduli", moduli != null ? moduli : List.of());
                 return "user/dashboard";
             }
         } else {
