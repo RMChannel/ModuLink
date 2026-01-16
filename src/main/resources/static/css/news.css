@@ -1,0 +1,103 @@
+@import 'user/colors.css';
+
+ /* Contenitore principale */
+ .news-page-container {
+     max-width: 800px;
+     margin: 40px auto;
+     padding: 0 20px;
+     min-height: 60vh; /* Assicura che il footer non salga troppo */
+ }
+ .page-title {
+     text-align: center;
+     color: var(--text-heading);
+     margin-bottom: 40px;
+     font-family: 'Poppins', sans-serif;
+ }
+/* --- STILE DELLA CARD (Il rettangolo stondato) --- */
+ .news-card {
+     background-color: var(--bg-white);
+     border: 1px solid var(--border-color);
+     border-radius: 16px;
+     margin-bottom: 20px;
+     box-shadow: var(--shadow-card);
+     overflow: hidden; /* Fondamentale per l'animazione */
+     transition: all 0.3s ease;
+ }
+.news-card:hover {
+     box-shadow: var(--shadow-card-hover);
+     border-color: var(--border-color-hover);
+}
+/* --- HEADER DELLA CARD (La parte sempre visibile) --- */
+.news-header {
+     padding: 20px 25px;
+     display: flex;
+     justify-content: space-between;
+     align-items: center;
+     cursor: pointer; /* Fa capire che è cliccabile */
+     background-color: var(--bg-white);
+}
+
+.news-info {
+     flex-grow: 1;
+     padding-right: 20px;
+}
+.news-date {
+     display: inline-block;
+     font-size: 0.85rem;
+     font-weight: 600;
+     color: var(--color-primary);
+     background-color: var(--color-primary-light);
+     padding: 4px 10px;
+     border-radius: 20px;
+     margin-bottom: 8px;
+}
+
+.news-title {
+     font-size: 1.1rem;
+     font-weight: 600;
+     color: var(--text-heading);
+     margin: 0;
+}
+
+/* --- IL "TONDINO" (Bottone di espansione) --- */
+.expand-btn {
+     width: 40px;
+     height: 40px;
+     border-radius: 50%;
+     background-color: var(--bg-body);
+     border: 1px solid var(--border-color);
+     display: flex;
+     align-items: center;
+     justify-content: center;
+     color: var(--text-secondary);
+     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+     flex-shrink: 0; /* Impedisce al cerchio di schiacciarsi */
+}
+.news-card:hover .expand-btn {
+     background-color: var(--color-primary);
+     color: var(--color-white);
+     border-color: var(--color-primary);
+}
+/* --- CONTENUTO NASCOSTO (Descrizione) --- */
+.news-content {
+     max-height: 0; /* Altezza iniziale 0 = nascosto */
+     overflow: hidden;
+     padding: 0 25px;
+     color: var(--text-body);
+     line-height: 1.6;
+     background-color: var(--bg-body-alt); /* Sfondo leggermente diverso per il contenuto */
+     border-top: 1px solid transparent; /* Bordo invisibile inizialmente */
+     transition: max-height 0.4s ease-out, padding 0.4s ease, border-color 0.4s ease;
+}
+/* --- STATO "APERTO" (Attivato via Javascript) --- */
+.news-card.active .expand-btn {
+     transform: rotate(180deg); /* Ruota la freccia */
+     background-color: var(--text-heading);
+     color: white;
+}
+.news-card.active .news-content {
+     max-height: 500px; /* Altezza sufficiente per il testo */
+     padding-bottom: 25px;
+     padding-top: 15px;
+     border-top-color: var(--border-color-light);
+}
