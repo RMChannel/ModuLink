@@ -1,4 +1,4 @@
-package com.modulink.Controller.GDR;
+package com.modulink.Controller.UserModules.GDR;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;

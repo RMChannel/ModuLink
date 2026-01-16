@@ -74,8 +74,10 @@ public class AttivazioneService {
             return false;
         }
 
+        //Controllo se il modulo è disponibile per tutti, in caso contrario ritorna false
+        if (!modulo.isVisible()) return false;
         // Check if already purchased
-        if (attivazioneRepository.existsByAziendaAndModulo(managedAzienda, modulo)) {
+        else if (attivazioneRepository.existsByAziendaAndModulo(managedAzienda, modulo)) {
             return false;
         }
 

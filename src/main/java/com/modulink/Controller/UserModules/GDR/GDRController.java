@@ -1,7 +1,6 @@
-package com.modulink.Controller.GDR;
+package com.modulink.Controller.UserModules.GDR;
 
 import com.modulink.Controller.ModuloController;
-import com.modulink.Model.Modulo.ModuloEntity;
 import com.modulink.Model.Modulo.ModuloService;
 import com.modulink.Model.Ruolo.RuoloEntity;
 import com.modulink.Model.Ruolo.RuoloService;

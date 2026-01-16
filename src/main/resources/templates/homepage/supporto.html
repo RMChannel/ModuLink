@@ -65,20 +65,20 @@
     <div id="contactForm" class="contact-form-wrapper">
         <div class="form-header">
             <h3><i class="fa-regular fa-paper-plane"></i> Contatta l'Assistenza</h3>
-            <p>Compila il modulo sottostante. I nostri operatori rispondono solitamente entro 24 ore.</p>
+            <p th:if="${success == null}">Compila il modulo sottostante. I nostri operatori rispondono solitamente entro 24 ore.</p>
         </div>
 
-        <!-- L'evento onsubmit chiama la funzione JS invece di inviare davvero i dati -->
-        <form id="supportForm" onsubmit="sendTicket(event)">
+        <form id="supportForm" th:action="@{/supporto}" th:object="${support}" method="post" th:if="${success == null}">
             
             <div class="form-group">
                 <label for="email" class="form-label">La tua Email</label>
-                <input type="email" id="email" class="form-control" placeholder="nome@azienda.it" required>
+                <input type="email" th:field="*{email}" id="email" class="form-control" placeholder="nome@azienda.it" required>
+                <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="text-danger"></div>
             </div>
 
             <div class="form-group">
                 <label for="category" class="form-label">Categoria Problema</label>
-                <select id="category" class="form-control" required>
+                <select th:field="*{category}" id="category" class="form-control" required>
                     <option value="" disabled selected>Seleziona una categoria...</option>
                     <option value="tech">Problema Tecnico / Errore</option>
                     <option value="billing">Fatturazione e Pagamenti</option>
@@ -86,11 +86,13 @@
                     <option value="feature">Richiesta Nuova Funzionalità</option>
                     <option value="other">Altro</option>
                 </select>
+                <div th:if="${#fields.hasErrors('category')}" th:errors="*{category}" class="text-danger"></div>
             </div>
 
             <div class="form-group">
                 <label for="message" class="form-label">Descrizione del Problema</label>
-                <textarea id="message" class="form-control" placeholder="Descrivi qui i dettagli..." required></textarea>
+                <textarea th:field="*{message}" id="message" class="form-control" placeholder="Descrivi qui i dettagli..." required></textarea>
+                <div th:if="${#fields.hasErrors('message')}" th:errors="*{message}" class="text-danger"></div>
             </div>
 
             <button type="submit" class="btn btn-solid" style="width: 100%; padding: 15px; font-size: 1.1rem;">
@@ -99,9 +101,9 @@
 
         </form>
 
-        <!-- Messaggio di successo (nascosto inizialmente) -->
-        <div id="successBanner" class="success-message">
-            <i class="fa-solid fa-circle-check"></i> Messaggio inviato con successo! Ti risponderemo presto.
+        <!-- Messaggio di successo -->
+        <div id="successBanner" class="success-message" th:if="${success}" style="display: block;">
+            <i class="fa-solid fa-circle-check"></i> <span th:text="${message}">Messaggio inviato con successo! Ti risponderemo presto.</span>
         </div>
     </div>
 
@@ -116,29 +118,6 @@
     function toggleFaq(element) {
         const card = element.parentElement;
         card.classList.toggle('active');
-    }
-
-    // Funzione per simulare l'invio del form
-    function sendTicket(event) {
-        event.preventDefault(); // Blocca il ricaricamento della pagina
-
-        // Simuliamo un caricamento (opzionale, ma carino)
-        const btn = event.target.querySelector('button');
-        const originalText = btn.innerText;
-        btn.innerText = "Invio in corso...";
-        btn.disabled = true;
-
-        setTimeout(() => {
-            // Nascondi il form
-            document.getElementById('supportForm').style.display = 'none';
-            document.querySelector('.form-header p').style.display = 'none';
-            
-            // Mostra il messaggio di successo
-            document.getElementById('successBanner').style.display = 'block';
-            
-            // Scrolla leggermente per mostrare il messaggio
-            document.getElementById('contactForm').scrollIntoView({behavior: 'smooth'});
-        }, 1500); // Aspetta 1.5 secondi per realismo
     }
 </script>
 

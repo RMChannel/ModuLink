@@ -1,0 +1,162 @@
+/* 404 Page Styles */
+
+.error-container {
+    text-align: center;
+    padding: 60px 20px;
+    min-height: 70vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--bg-body-alt);
+}
+
+/* Cute Ghost Animation */
+.ghost-container {
+    margin-bottom: 20px;
+    position: relative;
+    height: 120px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.ghost {
+    position: relative;
+    width: 100px;
+    height: 110px;
+    background: #fff;
+    border-radius: 50px 50px 0 0;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    animation: float 3s ease-in-out infinite;
+}
+
+.ghost:after {
+    content: '';
+    position: absolute;
+    bottom: -10px; /* Adjust to sit right at the bottom */
+    left: 0;
+    width: 100%;
+    height: 20px;
+    /* Create the wavy bottom */
+    background: radial-gradient(circle at 10px 10px, #fff 10px, transparent 10px);
+    background-size: 20px 20px;
+    background-position: -10px 0; /* Shift to align waves */
+    /* This complex shape needs clip-path or multiple gradients for a perfect wave, 
+       but simple circles work for "cute" style */
+}
+
+/* More robust wave using SVG or clip-path is safer, but let's try a simple feet approach */
+.ghost-feet {
+    position: absolute;
+    bottom: -10px;
+    width: 100%;
+    height: 15px;
+    display: flex;
+}
+.ghost-foot {
+    flex: 1;
+    background: #fff;
+    border-radius: 0 0 50% 50%;
+    height: 100%;
+}
+
+
+.ghost-eyes {
+    position: absolute;
+    top: 40px;
+    left: 25px;
+    width: 12px;
+    height: 12px;
+    background: #333;
+    border-radius: 50%;
+    box-shadow: 38px 0 0 #333; /* Right eye */
+    animation: blink 4s infinite;
+}
+
+.ghost-mouth {
+    position: absolute;
+    top: 60px;
+    left: 42px;
+    width: 16px;
+    height: 8px;
+    border-radius: 50%;
+    background: #333;
+    opacity: 0.3;
+}
+
+/* Shadows */
+.ghost-shadow {
+    width: 80px;
+    height: 10px;
+    background: rgba(0,0,0,0.1);
+    border-radius: 50%;
+    margin: -10px auto 0;
+    animation: shadow-scale 3s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-15px); }
+}
+
+@keyframes shadow-scale {
+    0%, 100% { transform: scale(1); opacity: 0.1; }
+    50% { transform: scale(0.8); opacity: 0.05; }
+}
+
+@keyframes blink {
+    0%, 48%, 52%, 100% { transform: scaleY(1); }
+    50% { transform: scaleY(0.1); }
+}
+
+/* Typography */
+.error-code {
+    font-family: 'Poppins', sans-serif;
+    font-size: 8rem;
+    font-weight: 800;
+    color: var(--color-primary); /* Uses main.css var */
+    line-height: 1;
+    margin: 10px 0;
+    opacity: 0.1;
+    position: absolute;
+    z-index: 0;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+}
+
+.error-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--text-heading);
+    margin-bottom: 15px;
+    position: relative;
+    z-index: 1;
+}
+
+.error-message {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    max-width: 480px;
+    margin: 0 auto 30px;
+    line-height: 1.6;
+    position: relative;
+    z-index: 1;
+}
+
+/* Buttons */
+.btn-group {
+    display: flex;
+    gap: 15px;
+    position: relative;
+    z-index: 1;
+}
+
+@media (max-width: 600px) {
+    .error-code { font-size: 5rem; }
+    .error-title { font-size: 1.8rem; }
+    .btn-group { flex-direction: column; width: 100%; max-width: 300px; }
+    .btn { width: 100%; }
+}

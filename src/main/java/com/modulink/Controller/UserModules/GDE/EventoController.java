@@ -1,5 +1,5 @@
-package com.modulink.Controller.GDE;
-import com.modulink.Controller.GDU.UserRestApi.UserDTO;
+package com.modulink.Controller.UserModules.GDE;
+import com.modulink.Controller.UserModules.GDU.UserRestApi.UserDTO;
 import com.modulink.Controller.ModuloController;
 import com.modulink.Model.Azienda.AziendaEntity;
 import com.modulink.Model.Eventi.*;

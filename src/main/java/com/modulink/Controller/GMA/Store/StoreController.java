@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.security.Principal;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -42,12 +41,7 @@ public class StoreController extends ModuloController {
 
         if (utenteOpt.isPresent()) {
             List<ModuloEntity> moduliNonAcquistati = attivazioneService.getNotPurchased(utenteOpt.get().getAzienda());
-            if(moduliNonAcquistati.isEmpty()) {
-                model.addAttribute("moduliNonAcquistati",null);
-            }else {
-                model.addAttribute("moduliNon", moduliNonAcquistati);
-            }
-
+            model.addAttribute("moduliNon", moduliNonAcquistati);
         }
 
         return "moduli/gma/store/StoreModuli";

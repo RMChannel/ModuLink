@@ -1,10 +1,10 @@
-package com.modulink.Controller.GDM;
+package com.modulink.Controller.UserModules.GDM;
 
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
-public class UpdateProdottoForm {
-    private int idProdotto;
-
+public class NewProdottoForm {
+    @NotBlank(message = "Il campo nome non può essere vuoto")
     @Size(min = 2, max = 255, message = "Il nome deve essere compreso tra i 2 e i 50 caratteri")
     private String nome;
 
@@ -21,21 +21,12 @@ public class UpdateProdottoForm {
         return nome;
     }
 
-    public UpdateProdottoForm(int idProdotto, String nome, int quantita, double prezzo, String descrizione, String categoria) {
-        this.idProdotto = idProdotto;
+    public NewProdottoForm(String nome, int quantita, double prezzo, String descrizione, String categoria) {
         this.nome = nome;
         this.quantita = quantita;
         this.prezzo = prezzo;
         this.descrizione = descrizione;
         this.categoria = categoria;
-    }
-
-    public int getIdProdotto() {
-        return idProdotto;
-    }
-
-    public void setIdProdotto(int idProdotto) {
-        this.idProdotto = idProdotto;
     }
 
     public void setNome(String nome) {

@@ -1,4 +1,4 @@
-package com.modulink.Controller.GDE;
+package com.modulink.Controller.UserModules.GDE;
 
 import com.modulink.Controller.ModuloController;
 import com.modulink.Model.Eventi.EventoEntity;
