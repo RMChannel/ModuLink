@@ -44,6 +44,7 @@ public class ModuloService {
         return moduloRepository.findById(idModulo).orElseThrow(() -> new IllegalArgumentException("Modulo non trovato"));
     }
 
+
     @Transactional
     @CacheEvict(value = {"moduliByUtente", "moduloAccess", "modulo"}, allEntries = true)
     public void updateModuloAffiliations(AziendaEntity azienda, int idModulo, List<RuoloEntity> ruoli) {
