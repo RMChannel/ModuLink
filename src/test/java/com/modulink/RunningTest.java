@@ -10,7 +10,7 @@ import org.springframework.http.ResponseEntity;
 import static org.assertj.core.api.Assertions.assertThat;
 
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT, properties = "server.port=8080")
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT, properties = "server.port=80")
 class RunningTest {
 
     @Autowired
@@ -24,7 +24,7 @@ class RunningTest {
         assertThat(port).isEqualTo(80);
 
         // Effettua una chiamata GET alla root (o a /actuator/health se preferisci)
-        ResponseEntity<String> response = restTemplate.getForEntity("http://localhost:8080/", String.class);
+        ResponseEntity<String> response = restTemplate.getForEntity("http://localhost:80/", String.class);
 
         // Verifica che la risposta non sia un errore di connessione (es. 200 OK o 404 Not Found ma raggiungibile)
         // Se la porta fosse chiusa, questo test fallirebbe con un'eccezione I/O prima di arrivare qui
