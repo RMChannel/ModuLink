@@ -1,5 +1,6 @@
 package com.modulink.Controller.Login;
 
+import com.modulink.Model.Email.EmailService;
 import com.modulink.Model.OTP.OTPManager;
 import com.modulink.Model.Utente.CustomUserDetailsService;
 import com.modulink.Model.Utente.PasswordUtility;
@@ -8,7 +9,6 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -22,14 +22,14 @@ import java.util.regex.Pattern;
 public class LoginController {
     private final CustomUserDetailsService customUserDetailsService;
     private final OTPManager otpManager;
-    private final JavaMailSenderImpl mailSender;
     private final String senderEmail;
+    private final EmailService emailService;
 
-    public LoginController(CustomUserDetailsService customUserDetailsService, JavaMailSenderImpl mailSender, @Value("${spring.mail.username}") String senderEmail) {
+    public LoginController(CustomUserDetailsService customUserDetailsService, @Value("${spring.mail.username}") String senderEmail, EmailService emailService) {
         this.customUserDetailsService=customUserDetailsService;
         this.otpManager=new OTPManager();
-        this.mailSender=mailSender;
         this.senderEmail=senderEmail;
+        this.emailService=emailService;
     }
 
     @GetMapping("/login")
@@ -59,7 +59,7 @@ public class LoginController {
         message.setTo(email);
         message.setSubject("Richiesta Password Dimenticata");
         message.setText("Salve "+utenteToFind.getNome()+" "+utenteToFind.getCognome()+", ecco il codice OTP per il recupero della password: "+otpManager.getOTPEmail(email));
-        mailSender.send(message);
+        emailService.sendEmail(message);
     }
 
     @PostMapping("/forgot-password")
