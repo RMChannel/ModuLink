@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Gestione Azienda</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/user/colors.css}">
+    <link rel="stylesheet" th:href="@{/css/user/dashboard-layout.css}">
+    <link rel="stylesheet" th:href="@{/css/common/alerts.css}">
+    <script th:src="@{/javascript/theme.js}"></script>
+    <style>
+        .card-header {
+            background-color: transparent;
+            border-bottom: 1px solid var(--border-color);
+            padding: 1.5rem;
+        }
+        .card-body {
+            padding: 1.5rem;
+            background-color: var(--bg-light);
+        }
+        .form-label {
+            color: var(--text-heading);
+            font-weight: 500;
+        }
+        .form-control {
+            background-color: var(--bg-input);
+            border-color: var(--border-color);
+            color: var(--text-body);
+        }
+        .form-control:focus {
+            background-color: var(--bg-input-focus);
+            border-color: var(--color-primary);
+            box-shadow: var(--shadow-input-focus);
+            color: var(--text-heading);
+        }
+        .text-primary {
+            color: var(--color-primary) !important;
+        }
+        .btn-primary {
+            background-color: var(--color-primary);
+            border-color: var(--color-primary);
+            color: var(--color-white);
+        }
+        .btn-primary:hover {
+            background-color: var(--color-primary-dark);
+            border-color: var(--color-primary-dark);
+        }
+        .section-divider {
+            display: flex;
+            align-items: center;
+            margin: 2rem 0;
+            color: var(--text-muted);
+        }
+        .section-divider::before, .section-divider::after {
+            content: "";
+            flex: 1;
+            border-bottom: 1px solid var(--border-color-light);
+        }
+        .section-divider .section-title {
+            padding: 0 1rem;
+            font-weight: 500;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .file-upload-wrapper {
+            border: 2px dashed var(--border-color);
+            border-radius: 0.5rem;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .file-upload-wrapper:hover {
+            border-color: var(--color-primary);
+            background-color: var(--bg-module-card-hover);
+        }
+        .file-upload-input {
+            display: none;
+        }
+        .logo-preview {
+            max-width: 200px;
+            margin-top: 1rem;
+            display: none;
+            border-radius: 0.5rem;
+            border: 1px solid var(--border-color);
+        }
+        .current-logo {
+            max-width: 150px;
+            margin-bottom: 1rem;
+            border-radius: 0.5rem;
+            border: 1px solid var(--border-color);
+        }
+    </style>
+</head>
+<body>
+<div class="dashboard-wrapper">
+    <!-- Sidebar Fragment -->
+    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+    <div th:replace="~{fragments/messageFromParam :: alertsFromParam}"></div>
+
+    <!-- Main Content -->
+    <div id="content">
+        <div class="container-fluid p-4">
+             <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="h3 mb-0" style="color: var(--text-heading)">Gestione Azienda</h2>
+             </div>
+             
+             <!-- Alert Messages -->
+             <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="bi bi-check-circle-fill me-2"></i>
+                <span th:text="${message}">Operazione completata con successo</span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+             </div>
+             <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                <span th:text="${message}">Si è verificato un errore</span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+             </div>
+
+             <div class="card shadow-sm border-0" style="background-color: var(--bg-light);">
+                <div class="card-header">
+                    <h5 class="mb-0" style="color: var(--text-heading)"><i class="bi bi-building me-2 text-primary"></i>Dati Aziendali</h5>
+                </div>
+                <div class="card-body">
+                    <form th:action="@{/dashboard/gdr/edit}" th:object="${registerAziendaForm}" method="post" enctype="multipart/form-data">
+                        
+                        <div class="mb-4">
+                            <label for="nomeAzienda" class="form-label">
+                                <i class="bi bi-building-fill text-primary me-2"></i>Nome Azienda
+                            </label>
+                            <input type="text" class="form-control" id="nomeAzienda" th:field="*{nomeAzienda}" 
+                                   th:classappend="${#fields.hasErrors('nomeAzienda')} ? 'is-invalid' : ''">
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('nomeAzienda')}" th:errors="*{nomeAzienda}"></div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="piva" class="form-label">
+                                <i class="bi bi-receipt text-primary me-2"></i>Partita IVA
+                            </label>
+                            <input type="text" class="form-control" id="piva" th:field="*{piva}" 
+                                   th:classappend="${#fields.hasErrors('piva')} ? 'is-invalid' : ''" maxlength="11">
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('piva')}" th:errors="*{piva}"></div>
+                        </div>
+
+                        <div class="section-divider">
+                            <span class="section-title">Sede Aziendale</span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="indirizzo" class="form-label">
+                                <i class="bi bi-geo-alt-fill text-primary me-2"></i>Indirizzo
+                            </label>
+                            <input type="text" class="form-control" id="indirizzo" th:field="*{indirizzo}" 
+                                   th:classappend="${#fields.hasErrors('indirizzo')} ? 'is-invalid' : ''">
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('indirizzo')}" th:errors="*{indirizzo}"></div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-8 mb-4">
+                                <label for="citta" class="form-label">
+                                    <i class="bi bi-pin-map-fill text-primary me-2"></i>Città
+                                </label>
+                                <input type="text" class="form-control" id="citta" th:field="*{citta}" 
+                                       th:classappend="${#fields.hasErrors('citta')} ? 'is-invalid' : ''">
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('citta')}" th:errors="*{citta}"></div>
+                            </div>
+
+                            <div class="col-md-4 mb-4">
+                                <label for="cap" class="form-label">
+                                    <i class="bi bi-mailbox text-primary me-2"></i>CAP
+                                </label>
+                                <input type="text" class="form-control" id="cap" th:field="*{cap}" 
+                                       th:classappend="${#fields.hasErrors('cap')} ? 'is-invalid' : ''" maxlength="5">
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('cap')}" th:errors="*{cap}"></div>
+                            </div>
+                        </div>
+
+                        <div class="section-divider">
+                            <span class="section-title">Contatti</span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="telefono" class="form-label">
+                                <i class="bi bi-telephone-fill text-primary me-2"></i>Telefono
+                            </label>
+                            <input type="tel" class="form-control" id="telefono" th:field="*{telefono}" 
+                                   th:classappend="${#fields.hasErrors('telefono')} ? 'is-invalid' : ''">
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('telefono')}" th:errors="*{telefono}"></div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label">
+                                <i class="bi bi-image-fill text-primary me-2"></i>Logo Aziendale
+                            </label>
+                            
+                            <div th:if="${currentLogoPath != null and !currentLogoPath.isEmpty()}" class="mb-2">
+                                <p class="text-muted small mb-1">Logo Attuale:</p>
+                                <img th:src="@{'/' + ${currentLogoPath}}" class="current-logo" alt="Logo Corrente">
+                            </div>
+
+                            <div class="file-upload-wrapper">
+                                <label for="logo" class="file-upload-label" style="width: 100%; height: 100%; display: block;">
+                                    <i class="bi bi-cloud-upload fs-3 d-block mb-2" style="color: var(--text-muted)"></i>
+                                    <span id="fileName" style="color: var(--text-body)">Clicca per caricare un nuovo logo</span>
+                                    <small class="d-block text-muted mt-1">Formati supportati: JPG, PNG, SVG</small>
+                                </label>
+                                <input type="file" class="file-upload-input" id="logo" th:field="*{logo}" accept="image/*" onchange="previewLogo(this)">
+                            </div>
+                            <img id="logoPreview" class="logo-preview" alt="Anteprima nuovo logo">
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                            <button type="submit" class="btn btn-primary px-4">
+                                <i class="bi bi-save me-2"></i>Salva Modifiche
+                            </button>
+                        </div>
+                    </form>
+                </div>
+             </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap JavaScript Bundle (include Popper) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    function previewLogo(input) {
+        const fileName = document.getElementById('fileName');
+        const preview = document.getElementById('logoPreview');
+
+        if (input.files && input.files[0]) {
+            fileName.textContent = input.files[0].name;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                preview.src = e.target.result;
+                preview.style.display = 'block';
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+</script>
+</body>
+</html>
