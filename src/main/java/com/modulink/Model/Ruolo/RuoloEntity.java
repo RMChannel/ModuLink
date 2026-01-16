@@ -54,7 +54,6 @@ public class RuoloEntity {
     @Id
     @ManyToOne
     @JoinColumn(name="ID_Azienda", referencedColumnName = "ID_Azienda", nullable = false, foreignKey = @ForeignKey(name = "FK_Ruolo_Azienda"))
-    @OnDelete(action = OnDeleteAction.CASCADE)
     private AziendaEntity azienda;
 
     /**

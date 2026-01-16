@@ -73,11 +73,11 @@ public class DataInitializerService {
         associazioneRepository.save(new AssociazioneEntity(utente, ruoloResponsabile));
         associazioneRepository.save(new AssociazioneEntity(u2, ruoloStandard));
 
-        ModuloEntity Admin = new ModuloEntity(-1,"Panello Admin", "Panello di controllo di Admin","/dashboard/admin/","bi bi-code-square", false);
+
         ModuloEntity GDU = new ModuloEntity(0, "Gestione Utenti", "Permette la gestione di tutti gli utenti della propria azienda", "/dashboard/gdu/", "bi bi-person-lines-fill",true);
         ModuloEntity GDR = new ModuloEntity(1, "Gestione Ruoli", "Permette la gestione e l'assegnazione dei ruoli", "/dashboard/gdr/", "bi bi-award-fill",true);
         ModuloEntity GMA = new ModuloEntity(2, "Gestione Moduli", "Permette la gestione di tutti i moduli integrati nella propria azienda","/dashboard/gma/","bi bi-database-gear",true );
-        ModuloEntity store = new ModuloEntity(3,"Store","Store dei moduli","/dashboard/store/","bi bi-cart-dash",true);
+        ModuloEntity store = new ModuloEntity(9999,"Store","Store dei moduli","/dashboard/store/","bi bi-cart-dash",true);
         ModuloEntity calendario = new ModuloEntity(4,"Calendario", "Permette di organizzare e creare eventi", "/dashboard/calendar", "bi bi-calendar",true);
         ModuloEntity GTM = new ModuloEntity(5,"Gestione Task", "Permette di gestire le tasche degli utenti", "/dashboard/gtm/", "bi bi-clipboard-data",true);
         ModuloEntity GDM = new ModuloEntity(6,"Gestione Magazzino", "Permette di gestire tutti i prodotti nel magazzino", "/dashboard/gdm/", "bi bi-box-seam",true);
@@ -89,7 +89,7 @@ public class DataInitializerService {
         calendario = moduloRepository.save(calendario);
         GTM = moduloRepository.save(GTM);
         GDM = moduloRepository.save(GDM);
-        Admin = moduloRepository.save(Admin);
+
 
         // Ora azienda e modulo sono MANAGED nella stessa transazione
         attivazioneRepository.save(new AttivazioneEntity(GDU, azienda));
@@ -101,7 +101,7 @@ public class DataInitializerService {
         attivazioneRepository.save(new AttivazioneEntity(GDM, azienda));
 
         //testing admin
-        attivazioneRepository.save(new AttivazioneEntity(Admin, azienda));
+
 
 
         affiliazioneRepository.save(new AffiliazioneEntity(ruoloResponsabile.getId_ruolo(),GDU.getId_modulo(),azienda.getId_azienda()));
@@ -111,7 +111,6 @@ public class DataInitializerService {
         affiliazioneRepository.save(new AffiliazioneEntity(ruoloResponsabile.getId_ruolo(),calendario.getId_modulo(),azienda.getId_azienda()));
         affiliazioneRepository.save(new AffiliazioneEntity(ruoloResponsabile.getId_ruolo(),GTM.getId_modulo(),azienda.getId_azienda()));
         affiliazioneRepository.save(new AffiliazioneEntity(ruoloResponsabile.getId_ruolo(),GDM.getId_modulo(),azienda.getId_azienda()));
-        affiliazioneRepository.save(new AffiliazioneEntity(ruoloResponsabile.getId_ruolo(),Admin.getId_modulo(),azienda.getId_azienda()));
         // --- CREAZIONE EVENTI DI PROVA ---
         LocalDateTime now = LocalDateTime.now();
 
@@ -138,21 +137,36 @@ public class DataInitializerService {
     }
 
     public void addModulinkAzienda() {
+
         AziendaEntity modulink = new AziendaEntity("Modulink","1111111111","Via Nazionale","Santa Maria a Vico","81028","+393471304385","");
         UtenteEntity u3 = new UtenteEntity(modulink,"r.cito@studenti.unisa.it",PasswordUtility.hashPassword("ciaociao"),"Roberto","Cito","+393471304385","");
+
         modulink = aziendaService.registraAzienda(modulink);
+
         customUserDetailsService.registraUtente(u3, modulink.getId_azienda());
+
         RuoloEntity ruoloResponsabile2 = new RuoloEntity(0, modulink, "Responsabile", "#000000", "Responsabile dell'azienda");
         RuoloEntity ruoloNewUser2 = new RuoloEntity(1,modulink,"Utente Nuovo","blue","Utente non ancora ufficialmente registrato");
         RuoloEntity ruoloStandard2 = new RuoloEntity(2,modulink,"Utente","grey","Utente Standard");
+
         ruoloRepository.save(ruoloResponsabile2);
         ruoloRepository.save(ruoloNewUser2);
         ruoloRepository.save(ruoloStandard2);
+
         associazioneRepository.save(new AssociazioneEntity(u3, ruoloResponsabile2));
-        ModuloEntity Support = new ModuloEntity(7,"Supporto", "Modulo dedicato al supporto tecnico", "/dashboard/support/", "bi bi-life-preserver",false);
+
+        ModuloEntity Support = new ModuloEntity(-2,"Supporto", "Modulo dedicato al supporto tecnico", "/dashboard/support/", "bi bi-life-preserver",false);
+        ModuloEntity Admin = new ModuloEntity(-1,"Panello Admin", "Panello di controllo di Admin","/dashboard/admin/","bi bi-code-square", false);
+
+        Admin = moduloRepository.save(Admin);
         Support = moduloRepository.save(Support);
+
+
+        attivazioneRepository.save(new AttivazioneEntity(Admin,modulink));
         attivazioneRepository.save(new AttivazioneEntity(Support, modulink));
+
         affiliazioneRepository.save(new AffiliazioneEntity(ruoloResponsabile2.getId_ruolo(),Support.getId_modulo(),modulink.getId_azienda()));
+        affiliazioneRepository.save(new AffiliazioneEntity(ruoloResponsabile2.getId_ruolo(),Admin.getId_modulo(),modulink.getId_azienda()));
     }
 
     @Transactional // Qui la transazione funzionerà correttamente!

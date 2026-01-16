@@ -16,7 +16,6 @@ public class ProdottoEntity {
     @Id
     @ManyToOne
     @JoinColumn(name = "id_azienda", referencedColumnName = "id_azienda", nullable = false, foreignKey = @ForeignKey(name = "FK_Prodotto_Azienda"))
-    @OnDelete(action = OnDeleteAction.CASCADE)
     private AziendaEntity azienda;
 
     @Column(name = "nome", nullable = false)

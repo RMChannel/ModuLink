@@ -20,7 +20,6 @@ public class TaskEntity {
 
     @Id
     @ManyToOne
-    @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "ID_Azienda", referencedColumnName = "ID_Azienda", nullable = false, foreignKey = @ForeignKey(name = "fk_task_azienda"))
     private AziendaEntity azienda;
 

@@ -20,7 +20,6 @@ public class AttivazioneEntity {
 
     @Id
     @ManyToOne
-    @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(
             name = "id_azienda",
             foreignKey = @ForeignKey(name = "fk_azienda_modulo")

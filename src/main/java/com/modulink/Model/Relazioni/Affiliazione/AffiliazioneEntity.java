@@ -22,7 +22,6 @@ public class AffiliazioneEntity {
 
     @Id
     @Column(name = "ID_Azienda")
-    @OnDelete(action = OnDeleteAction.CASCADE)
     public int id_azienda;
 
     @ManyToOne
