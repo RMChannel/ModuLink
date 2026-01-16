@@ -4,9 +4,8 @@ import com.modulink.Model.Azienda.AziendaEntity;
 import com.modulink.Model.Azienda.AziendaRepository;
 import com.modulink.Model.Modulo.ModuloEntity;
 import com.modulink.Model.Modulo.ModuloRepository;
-import com.modulink.Model.Relazioni.Affiliazione.AffiliazioneEntity;
-import com.modulink.Model.Relazioni.Affiliazione.AffiliazioneRepository;
-import com.modulink.Model.Relazioni.Affiliazione.AffiliazioneService;
+import com.modulink.Model.Relazioni.Pertinenza.PertinenzaEntity;
+import com.modulink.Model.Relazioni.Pertinenza.PertinenzaRepository;
 import com.modulink.Model.Ruolo.RuoloEntity;
 import com.modulink.Model.Ruolo.RuoloService;
 import org.springframework.cache.annotation.CacheEvict;
@@ -21,14 +20,14 @@ import java.util.Optional;
 public class AttivazioneService {
     private final AttivazioneRepository attivazioneRepository;
     private final ModuloRepository moduloRepository;
-    private final AffiliazioneRepository affiliazioneRepository;
+    private final PertinenzaRepository pertinenzaRepository;
     private final RuoloService ruoloService;
     private final AziendaRepository aziendaRepository;
 
-    public AttivazioneService(AttivazioneRepository attivazioneRepository, ModuloRepository moduloRepository, AffiliazioneRepository affiliazioneRepository, RuoloService ruoloService, AziendaRepository aziendaRepository) {
+    public AttivazioneService(AttivazioneRepository attivazioneRepository, ModuloRepository moduloRepository, PertinenzaRepository pertinenzaRepository, RuoloService ruoloService, AziendaRepository aziendaRepository) {
         this.attivazioneRepository=attivazioneRepository;
         this.moduloRepository=moduloRepository;
-        this.affiliazioneRepository=affiliazioneRepository;
+        this.pertinenzaRepository = pertinenzaRepository;
         this.ruoloService=ruoloService;
         this.aziendaRepository=aziendaRepository;
     }
@@ -91,12 +90,12 @@ public class AttivazioneService {
         // 2. Assign Responsabile Role for this Module
         RuoloEntity resp = ruoloService.getResponsabile(managedAzienda);
         if (resp != null) {
-            AffiliazioneEntity affiliazioneEntity = new AffiliazioneEntity(
+            PertinenzaEntity pertinenzaEntity = new PertinenzaEntity(
                     resp.getId_ruolo(),
                     modulo.getId_modulo(),
                     managedAzienda.getId_azienda()
             );
-            affiliazioneRepository.save(affiliazioneEntity);
+            pertinenzaRepository.save(pertinenzaEntity);
         }
 
         return true;

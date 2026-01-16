@@ -1,4 +1,4 @@
-package com.modulink.Model.Relazioni.Affiliazione;
+package com.modulink.Model.Relazioni.Pertinenza;
 
 import com.modulink.Model.Azienda.AziendaEntity;
 import com.modulink.Model.Modulo.ModuloEntity;
@@ -9,9 +9,9 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
-@IdClass(AffiliazioneID.class)
-@Table(name = "affiliazione", schema="modulink")
-public class AffiliazioneEntity {
+@IdClass(PertinenzaID.class)
+@Table(name = "pertinenza", schema="modulink")
+public class PertinenzaEntity {
     @Id
     @Column(name = "ID_Ruolo")
     public int id_ruolo;
@@ -42,9 +42,9 @@ public class AffiliazioneEntity {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private AttivazioneEntity attivazione;
 
-    public AffiliazioneEntity(){}
+    public PertinenzaEntity(){}
 
-    public AffiliazioneEntity(int id_ruolo, int id_modulo, int id_azienda) {
+    public PertinenzaEntity(int id_ruolo, int id_modulo, int id_azienda) {
         this.id_ruolo = id_ruolo;
         this.id_modulo = id_modulo;
         this.id_azienda = id_azienda;

@@ -6,12 +6,10 @@ import com.modulink.Model.Eventi.EventoEntity;
 import com.modulink.Model.Eventi.EventoRepository;
 import com.modulink.Model.Modulo.ModuloEntity;
 import com.modulink.Model.Modulo.ModuloRepository;
-import com.modulink.Model.Modulo.ModuloService;
-import com.modulink.Model.Relazioni.Affiliazione.AffiliazioneEntity;
-import com.modulink.Model.Relazioni.Affiliazione.AffiliazioneRepository;
+import com.modulink.Model.Relazioni.Pertinenza.PertinenzaEntity;
+import com.modulink.Model.Relazioni.Pertinenza.PertinenzaRepository;
 import com.modulink.Model.Relazioni.Associazione.AssociazioneEntity;
 import com.modulink.Model.Relazioni.Associazione.AssociazioneRepository;
-import com.modulink.Model.Relazioni.Associazione.AssociazioneService;
 import com.modulink.Model.Relazioni.Attivazione.AttivazioneEntity;
 import com.modulink.Model.Relazioni.Attivazione.AttivazioneRepository;
 import com.modulink.Model.Relazioni.Partecipazione.PartecipazioneEntity;
@@ -35,18 +33,18 @@ public class DataInitializerService {
     private final AssociazioneRepository associazioneRepository;
     private final ModuloRepository moduloRepository;
     private final AttivazioneRepository attivazioneRepository;
-    private final AffiliazioneRepository affiliazioneRepository;
+    private final PertinenzaRepository pertinenzaRepository;
     private final EventoRepository eventoRepository;
     private final PartecipazioneRepository partecipazioneRepository;
 
-    public DataInitializerService(AziendaService aziendaService, CustomUserDetailsService customUserDetailsService, RuoloRepository ruoloRepository, AssociazioneRepository associazioneRepository, ModuloRepository moduloRepository, AttivazioneRepository attivazioneRepository, AffiliazioneRepository affiliazioneRepository, EventoRepository eventoRepository, PartecipazioneRepository partecipazioneRepository) {
+    public DataInitializerService(AziendaService aziendaService, CustomUserDetailsService customUserDetailsService, RuoloRepository ruoloRepository, AssociazioneRepository associazioneRepository, ModuloRepository moduloRepository, AttivazioneRepository attivazioneRepository, PertinenzaRepository pertinenzaRepository, EventoRepository eventoRepository, PartecipazioneRepository partecipazioneRepository) {
         this.aziendaService = aziendaService;
         this.customUserDetailsService = customUserDetailsService;
         this.ruoloRepository = ruoloRepository;
         this.associazioneRepository = associazioneRepository;
         this.moduloRepository = moduloRepository;
         this.attivazioneRepository = attivazioneRepository;
-        this.affiliazioneRepository = affiliazioneRepository;
+        this.pertinenzaRepository = pertinenzaRepository;
         this.eventoRepository = eventoRepository;
         this.partecipazioneRepository = partecipazioneRepository;
     }
@@ -107,13 +105,13 @@ public class DataInitializerService {
 
 
 
-        affiliazioneRepository.save(new AffiliazioneEntity(ruoloResponsabile.getId_ruolo(),GDU.getId_modulo(),azienda.getId_azienda()));
-        affiliazioneRepository.save(new AffiliazioneEntity(ruoloResponsabile.getId_ruolo(),GRU.getId_modulo(),azienda.getId_azienda()));
-        affiliazioneRepository.save(new AffiliazioneEntity(ruoloResponsabile.getId_ruolo(),GMA.getId_modulo(),azienda.getId_azienda()));
-        affiliazioneRepository.save(new AffiliazioneEntity(ruoloResponsabile.getId_ruolo(),store.getId_modulo(),azienda.getId_azienda()));
-        affiliazioneRepository.save(new AffiliazioneEntity(ruoloResponsabile.getId_ruolo(),calendario.getId_modulo(),azienda.getId_azienda()));
-        affiliazioneRepository.save(new AffiliazioneEntity(ruoloResponsabile.getId_ruolo(),GTM.getId_modulo(),azienda.getId_azienda()));
-        affiliazioneRepository.save(new AffiliazioneEntity(ruoloResponsabile.getId_ruolo(),GDM.getId_modulo(),azienda.getId_azienda()));
+        pertinenzaRepository.save(new PertinenzaEntity(ruoloResponsabile.getId_ruolo(),GDU.getId_modulo(),azienda.getId_azienda()));
+        pertinenzaRepository.save(new PertinenzaEntity(ruoloResponsabile.getId_ruolo(),GRU.getId_modulo(),azienda.getId_azienda()));
+        pertinenzaRepository.save(new PertinenzaEntity(ruoloResponsabile.getId_ruolo(),GMA.getId_modulo(),azienda.getId_azienda()));
+        pertinenzaRepository.save(new PertinenzaEntity(ruoloResponsabile.getId_ruolo(),store.getId_modulo(),azienda.getId_azienda()));
+        pertinenzaRepository.save(new PertinenzaEntity(ruoloResponsabile.getId_ruolo(),calendario.getId_modulo(),azienda.getId_azienda()));
+        pertinenzaRepository.save(new PertinenzaEntity(ruoloResponsabile.getId_ruolo(),GTM.getId_modulo(),azienda.getId_azienda()));
+        pertinenzaRepository.save(new PertinenzaEntity(ruoloResponsabile.getId_ruolo(),GDM.getId_modulo(),azienda.getId_azienda()));
         // --- CREAZIONE EVENTI DI PROVA ---
 
         LocalDateTime now = LocalDateTime.now();
@@ -171,9 +169,9 @@ public class DataInitializerService {
         attivazioneRepository.save(new AttivazioneEntity(Support, modulink));
         attivazioneRepository.save(new AttivazioneEntity(News, modulink));
 
-        affiliazioneRepository.save(new AffiliazioneEntity(ruoloResponsabile2.getId_ruolo(),Support.getId_modulo(),modulink.getId_azienda()));
-        affiliazioneRepository.save(new AffiliazioneEntity(ruoloResponsabile2.getId_ruolo(),Admin.getId_modulo(),modulink.getId_azienda()));
-        affiliazioneRepository.save(new AffiliazioneEntity(ruoloResponsabile2.getId_ruolo(),News.getId_modulo(),modulink.getId_azienda()));
+        pertinenzaRepository.save(new PertinenzaEntity(ruoloResponsabile2.getId_ruolo(),Support.getId_modulo(),modulink.getId_azienda()));
+        pertinenzaRepository.save(new PertinenzaEntity(ruoloResponsabile2.getId_ruolo(),Admin.getId_modulo(),modulink.getId_azienda()));
+        pertinenzaRepository.save(new PertinenzaEntity(ruoloResponsabile2.getId_ruolo(),News.getId_modulo(),modulink.getId_azienda()));
     }
 
     @Transactional // Qui la transazione funzionerà correttamente!

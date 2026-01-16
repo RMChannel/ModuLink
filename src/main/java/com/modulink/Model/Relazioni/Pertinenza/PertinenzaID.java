@@ -1,16 +1,16 @@
-package com.modulink.Model.Relazioni.Affiliazione;
+package com.modulink.Model.Relazioni.Pertinenza;
 
 import java.io.Serializable;
 import java.util.Objects;
 
-public class AffiliazioneID implements Serializable {
+public class PertinenzaID implements Serializable {
     private int id_ruolo;
     private int id_modulo;
     private int id_azienda;
 
-    public AffiliazioneID(){}
+    public PertinenzaID(){}
 
-    public AffiliazioneID(int id_ruolo, int id_modulo, int id_azienda) {
+    public PertinenzaID(int id_ruolo, int id_modulo, int id_azienda) {
         this.id_ruolo = id_ruolo;
         this.id_modulo = id_modulo;
         this.id_azienda = id_azienda;
@@ -19,7 +19,7 @@ public class AffiliazioneID implements Serializable {
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
-        AffiliazioneID that = (AffiliazioneID) o;
+        PertinenzaID that = (PertinenzaID) o;
         return id_ruolo == that.id_ruolo && id_modulo == that.id_modulo && id_azienda == that.id_azienda;
     }
 

@@ -26,7 +26,11 @@
                 <li><a href="#sec-account">Primo Accesso & Account</a></li>
                 <li><a href="#sec-gdu">Gestione Utenti (GDU)</a></li>
                 <li><a href="#sec-gdr">Gestione Ruoli (GDR)</a></li>
+                <li><a href="#sec-gde">Calendario (GDE)</a></li>
+                <li><a href="#sec-gtm">Task Management (GTM)</a></li>
+                <li><a href="#sec-gdm">Magazzino (GDM)</a></li>
                 <li><a href="#sec-store">Store & Pagamenti</a></li>
+                <li><a href="#sec-support">Centro Supporto</a></li>
             </ul>
         </aside>
 
@@ -151,7 +155,106 @@
                 </div>
             </section>
 
-            <!-- SEZIONE 4: STORE -->
+            <!-- SEZIONE 4: GDE -->
+            <section id="sec-gde" class="manual-section">
+                <div class="section-heading">
+                    <i class="fa-solid fa-calendar-days"></i> Gestione Eventi (GDE)
+                </div>
+
+                <div class="manual-card">
+                    <div class="manual-header" onclick="toggleManual(this)">
+                        <h3 class="manual-question">Creare un nuovo evento aziendale</h3>
+                        <i class="fa-solid fa-chevron-down toggle-icon"></i>
+                    </div>
+                    <div class="manual-body">
+                        <p>Organizza riunioni o scadenze condivise.</p>
+                        <ol class="step-list">
+                            <li>Apri il modulo <strong>"Calendario"</strong>.</li>
+                            <li>Clicca su una data o sul pulsante <strong>"+ Nuovo Evento"</strong>.</li>
+                            <li>Inserisci Titolo, Luogo, Data Inizio/Fine.</li>
+                            <li>Seleziona i partecipanti dalla lista colleghi.</li>
+                            <li>Salva. L'evento apparirà nel calendario di tutti gli invitati.</li>
+                        </ol>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SEZIONE 5: GTM -->
+            <section id="sec-gtm" class="manual-section">
+                <div class="section-heading">
+                    <i class="fa-solid fa-list-check"></i> Task Management (GTM)
+                </div>
+
+                <div class="manual-card">
+                    <div class="manual-header" onclick="toggleManual(this)">
+                        <h3 class="manual-question">Assegnare un compito (Task)</h3>
+                        <i class="fa-solid fa-chevron-down toggle-icon"></i>
+                    </div>
+                    <div class="manual-body">
+                        <p>Gestisci il lavoro del team assegnando attività specifiche.</p>
+                        <ol class="step-list">
+                            <li>Vai nel modulo <strong>"Gestione Task"</strong>.</li>
+                            <li>Nel form "Crea Nuova Task", inserisci il titolo e la scadenza.</li>
+                            <li>Imposta una priorità (da 0 a 5).</li>
+                            <li>Assegna la task a singoli utenti o interi ruoli.</li>
+                            <li>Clicca su "Crea Task".</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <div class="manual-card">
+                    <div class="manual-header" onclick="toggleManual(this)">
+                        <h3 class="manual-question">Monitorare le mie attività</h3>
+                        <i class="fa-solid fa-chevron-down toggle-icon"></i>
+                    </div>
+                    <div class="manual-body">
+                        <p>Nella dashboard GTM trovi due sezioni:</p>
+                        <ul>
+                            <li><strong>Task Create da Te:</strong> Per monitorare il lavoro delegato.</li>
+                            <li><strong>Task Assegnate a Te:</strong> La tua "To-Do List" personale.</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SEZIONE 6: GDM -->
+            <section id="sec-gdm" class="manual-section">
+                <div class="section-heading">
+                    <i class="fa-solid fa-boxes-stacked"></i> Gestione Magazzino (GDM)
+                </div>
+
+                <div class="manual-card">
+                    <div class="manual-header" onclick="toggleManual(this)">
+                        <h3 class="manual-question">Aggiungere prodotti al magazzino</h3>
+                        <i class="fa-solid fa-chevron-down toggle-icon"></i>
+                    </div>
+                    <div class="manual-body">
+                        <p>Tieni traccia delle giacenze.</p>
+                        <ol class="step-list">
+                            <li>Accedi a <strong>"Gestione Magazzino"</strong>.</li>
+                            <li>Clicca su <strong>"Aggiungi Prodotto"</strong>.</li>
+                            <li>Compila i campi: Nome, Categoria, Prezzo e Quantità iniziale.</li>
+                            <li>Salva per aggiornare l'inventario.</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <div class="manual-card">
+                    <div class="manual-header" onclick="toggleManual(this)">
+                        <h3 class="manual-question">Acquistare e Vendere (Aggiornare Stock)</h3>
+                        <i class="fa-solid fa-chevron-down toggle-icon"></i>
+                    </div>
+                    <div class="manual-body">
+                        <p>Gestisci rapidamente i movimenti di merce usando i pulsanti rapidi nella tabella:</p>
+                        <ul>
+                            <li><strong>Rifornisci (Icona Verde):</strong> Aggiungi quantità in arrivo dai fornitori.</li>
+                            <li><strong>Vendi (Icona Gialla):</strong> Scarica le quantità vendute o utilizzate.</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SEZIONE 7: STORE -->
             <section id="sec-store" class="manual-section">
                 <div class="section-heading">
                     <i class="fa-solid fa-cart-shopping"></i> Store & Acquisti
@@ -169,6 +272,44 @@
                             <li>Sfoglia il catalogo dei moduli disponibili.</li>
                             <li>Clicca su "Acquista" nel riquadro del modulo desiderato.</li>
                             <li>Il modulo verrà attivato istantaneamente e apparirà nella tua sidebar.</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <div class="manual-card">
+                    <div class="manual-header" onclick="toggleManual(this)">
+                        <h3 class="manual-question">Richiedere un modulo personalizzato</h3>
+                        <i class="fa-solid fa-chevron-down toggle-icon"></i>
+                    </div>
+                    <div class="manual-body">
+                        <p>Non trovi quello che cerchi?</p>
+                        <ol class="step-list">
+                            <li>Nello Store, clicca sul pulsante <strong>"Richiedi Modulo"</strong> in alto a destra.</li>
+                            <li>Compila il form descrivendo le funzionalità di cui hai bisogno.</li>
+                            <li>Il nostro team valuterà la richiesta e ti contatterà per un preventivo.</li>
+                        </ol>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SEZIONE 8: SUPPORTO -->
+            <section id="sec-support" class="manual-section">
+                <div class="section-heading">
+                    <i class="fa-solid fa-headset"></i> Centro Supporto
+                </div>
+
+                <div class="manual-card">
+                    <div class="manual-header" onclick="toggleManual(this)">
+                        <h3 class="manual-question">Come contattare l'assistenza?</h3>
+                        <i class="fa-solid fa-chevron-down toggle-icon"></i>
+                    </div>
+                    <div class="manual-body">
+                        <p>Siamo qui per aiutarti con qualsiasi problema tecnico o commerciale.</p>
+                        <ol class="step-list">
+                            <li>Clicca su <strong>"Supporto"</strong> nel footer o nella homepage.</li>
+                            <li>Scorri fino al modulo di contatto in fondo alla pagina.</li>
+                            <li>Seleziona la categoria (es. Tecnico, Fatturazione) e descrivi il problema.</li>
+                            <li>Riceverai una risposta via email entro 24 ore.</li>
                         </ol>
                     </div>
                 </div>

@@ -1,9 +1,8 @@
 package com.modulink.Model.Ruolo;
 
 import com.modulink.Model.Azienda.AziendaEntity;
-import com.modulink.Model.Relazioni.Affiliazione.AffiliazioneEntity;
+import com.modulink.Model.Relazioni.Pertinenza.PertinenzaEntity;
 import com.modulink.Model.Relazioni.Associazione.AssociazioneEntity;
-import com.modulink.Model.Utente.UtenteEntity;
 import jakarta.persistence.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -91,7 +90,7 @@ public class RuoloEntity {
     private Set<AssociazioneEntity> associazioni = new HashSet<>();
 
     @OneToMany(mappedBy = "ruolo", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<AffiliazioneEntity> affiliazioni = new HashSet<>();
+    private Set<PertinenzaEntity> affiliazioni = new HashSet<>();
 
     /**
      * Costruttore vuoto predefinito.
@@ -224,11 +223,11 @@ public class RuoloEntity {
         this.associazioni = associazioni;
     }
 
-    public Set<AffiliazioneEntity> getAffiliazioni() {
+    public Set<PertinenzaEntity> getAffiliazioni() {
         return affiliazioni;
     }
 
-    public void setAffiliazioni(Set<AffiliazioneEntity> affiliazioni) {
+    public void setAffiliazioni(Set<PertinenzaEntity> affiliazioni) {
         this.affiliazioni = affiliazioni;
     }
 }
