@@ -103,11 +103,11 @@
                 <form id="createEventForm">
                     <div class="mb-3">
                         <label class="form-label">Nome Evento *</label>
-                        <input type="text" class="form-control" name="nome" placeholder="Riunione Amministrativa" required>
+                        <input type="text" class="form-control" name="nome" placeholder="Riunione Amministrativa" required maxlength="200">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Luogo</label>
-                        <input type="text" class="form-control" name="luogo" placeholder="Sala riunioni A">
+                        <input type="text" class="form-control" name="luogo" placeholder="Sala riunioni A" maxlength="200">
                     </div>
                     <div class="row">
                         <div class="col-6 mb-3"><label class="form-label">Inizio *</label><input type="datetime-local" class="form-control" name="inizio" required></div>
@@ -146,11 +146,11 @@
                     <input type="hidden" id="editEventId" name="id">
                     <div class="mb-3">
                         <label class="form-label">Nome Evento *</label>
-                        <input type="text" class="form-control" id="editEventName" name="nome" required>
+                        <input type="text" class="form-control" id="editEventName" name="nome" required maxlength="200">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Luogo</label>
-                        <input type="text" class="form-control" id="editEventLocation" name="luogo">
+                        <input type="text" class="form-control" id="editEventLocation" name="luogo" maxlength="200">
                     </div>
                     <div class="row">
                         <div class="col-6 mb-3"><label class="form-label">Inizio *</label><input type="datetime-local" class="form-control" id="editEventStart" name="inizio" required></div>
