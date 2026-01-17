@@ -8,7 +8,6 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="stylesheet" th:href="@{/css/user/colors.css}">
     <link rel="stylesheet" th:href="@{/css/user/dashboard-layout.css}">
-    <link rel="stylesheet" th:href="@{/css/moduli/store/store.css}">
     <link rel="stylesheet" th:href="@{/css/common/alerts.css}">
     <link rel="stylesheet" th:href="@{/css/moduli/GDE/calendario.css}">
     <script th:src="@{/javascript/theme.js}"></script>
@@ -144,15 +143,19 @@
                     <div class="mb-3">
                         <label class="form-label">
                             <i class="bi bi-people me-1"></i>
-                            Invita Partecipanti
+                            Partecipanti
                         </label>
-                        <div id="userSelectionList">
-                            <div class="text-center text-muted p-3">
-                                <div class="spinner-border spinner-border-sm" role="status">
-                                    <span class="visually-hidden">Caricamento...</span>
-                                </div>
-                                <div class="mt-2">Caricamento utenti...</div>
-                            </div>
+                        <div class="user-search-container">
+                            <input
+                                    type="text"
+                                    class="user-search-input"
+                                    id="userSearchInput"
+                                    placeholder="Cerca utente e premi Invio per aggiungere..."
+                            >
+                            <div class="user-search-results" id="userSearchResults"></div>
+                        </div>
+                        <div class="selected-users-list" id="selectedUsersList">
+                            <span class="text-muted small">Nessun partecipante selezionato</span>
                         </div>
                     </div>
 
@@ -176,6 +179,92 @@
     </div>
 </div>
 
+<!-- Edit Event Modal -->
+<div class="modal fade" id="editEventModal" tabindex="-1" aria-labelledby="editEventModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editEventModalLabel">
+                    <i class="bi bi-pencil-square me-2"></i>
+                    Modifica Evento
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editEventForm">
+                    <input type="hidden" id="editEventId" name="id">
+
+                    <div class="mb-3">
+                        <label class="form-label" for="editEventName">
+                            <i class="bi bi-card-heading me-1"></i>
+                            Nome Evento *
+                        </label>
+                        <input type="text" class="form-control" id="editEventName" name="nome" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label" for="editEventLocation">
+                            <i class="bi bi-geo-alt me-1"></i>
+                            Luogo
+                        </label>
+                        <input type="text" class="form-control" id="editEventLocation" name="luogo">
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label" for="editEventStart">
+                                <i class="bi bi-clock me-1"></i>
+                                Data e Ora Inizio *
+                            </label>
+                            <input type="datetime-local" class="form-control" id="editEventStart" name="inizio" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label" for="editEventEnd">
+                                <i class="bi bi-clock-fill me-1"></i>
+                                Data e Ora Fine *
+                            </label>
+                            <input type="datetime-local" class="form-control" id="editEventEnd" name="fine" required>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">
+                            <i class="bi bi-people me-1"></i>
+                            Partecipanti
+                        </label>
+                        <div class="user-search-container">
+                            <input
+                                    type="text"
+                                    class="user-search-input"
+                                    id="editUserSearchInput"
+                                    placeholder="Cerca utente e premi Invio per aggiungere..."
+                            >
+                            <div class="user-search-results" id="editUserSearchResults"></div>
+                        </div>
+                        <div class="selected-users-list" id="editSelectedUsersList">
+                            <span class="text-muted small">Nessun partecipante selezionato</span>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" onclick="deleteEventFromEdit()">
+                    <i class="bi bi-trash me-1"></i>
+                    Elimina
+                </button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-x-lg me-1"></i>
+                    Annulla
+                </button>
+                <button type="button" class="btn btn-primary" onclick="updateEvent()">
+                    <i class="bi bi-check-lg me-1"></i>
+                    Salva Modifiche
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Event Details Modal -->
 <div class="modal fade" id="eventDetailsModal" tabindex="-1" aria-labelledby="eventDetailsModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
@@ -185,28 +274,37 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <div class="mb-3 p-3 bg-body rounded">
-                    <div class="d-flex align-items-start mb-2">
-                        <i class="bi bi-clock text-primary me-2 mt-1"></i>
-                        <div>
-                            <div class="text-muted small">Quando</div>
-                            <div id="detailTime" class="fw-semibold"></div>
+                <div class="event-detail-section">
+                    <div class="d-flex align-items-start mb-3">
+                        <i class="bi bi-clock text-primary me-2 mt-1 fs-5"></i>
+                        <div class="flex-grow-1">
+                            <div class="event-detail-label">Quando</div>
+                            <div class="event-detail-value" id="detailTime"></div>
                         </div>
                     </div>
-                    <div class="d-flex align-items-start">
-                        <i class="bi bi-geo-alt text-danger me-2 mt-1"></i>
-                        <div>
-                            <div class="text-muted small">Dove</div>
-                            <div id="detailPlace" class="fw-semibold"></div>
+
+                    <div class="d-flex align-items-start mb-3">
+                        <i class="bi bi-geo-alt text-danger me-2 mt-1 fs-5"></i>
+                        <div class="flex-grow-1">
+                            <div class="event-detail-label">Dove</div>
+                            <div class="event-detail-value" id="detailPlace"></div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex align-items-start" id="detailParticipantsSection" style="display: none !important;">
+                        <i class="bi bi-people text-success me-2 mt-1 fs-5"></i>
+                        <div class="flex-grow-1">
+                            <div class="event-detail-label">Partecipanti</div>
+                            <div class="participants-list" id="detailParticipants"></div>
                         </div>
                     </div>
                 </div>
                 <input type="hidden" id="detailId">
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-danger" onclick="deleteEvent()">
-                    <i class="bi bi-trash me-1"></i>
-                    Elimina
+                <button type="button" class="btn btn-primary" onclick="openEditModal()">
+                    <i class="bi bi-pencil me-1"></i>
+                    Modifica
                 </button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                     <i class="bi bi-x-lg me-1"></i>
