@@ -102,6 +102,26 @@
         </button>
     </div>
 
+    <!-- Script immediato per evitare il "flash" della sidebar espansa -->
+    <script>
+        (function() {
+            try {
+                var sidebar = document.getElementById('sidebar');
+                if (sidebar && localStorage.getItem('sidebarCollapsed') === 'true') {
+                    sidebar.classList.add('collapsed');
+                    // Disabilita temporaneamente le transizioni per evitare l'animazione al caricamento
+                    var style = document.createElement('style');
+                    style.innerHTML = '#sidebar { transition: none !important; }';
+                    document.head.appendChild(style);
+                    requestAnimationFrame(function() {
+                        setTimeout(function() {
+                            if (style.parentNode) style.parentNode.removeChild(style);
+                        }, 100);
+                    });
+                }
+            } catch (e) { console.error('Sidebar state restore error', e); }
+        })();
+    </script>
 </nav>
 
 </body>
