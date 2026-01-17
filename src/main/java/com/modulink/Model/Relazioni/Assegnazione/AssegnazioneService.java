@@ -30,6 +30,7 @@ public class AssegnazioneService {
         assegnazioneRepository.deleteByTaskId(idTask, idAzienda);
     }
 
+    @Transactional
     public List<TaskEntity> getTaskAssegnate(UtenteEntity utente) {
         List<AssegnazioneEntity> assegnazioni = assegnazioneRepository.findByUtente(utente);
         return assegnazioni.stream().map(AssegnazioneEntity::getTask).toList();

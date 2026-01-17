@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Dashboard - ModuLink</title>
+    <title>Gestione Utenti - ModuLink</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -12,110 +12,429 @@
     <link rel="stylesheet" th:href="@{/css/moduli/GDU/gdu-modals.css}">
     <link rel="stylesheet" th:href="@{/css/common/alerts.css}">
     <script th:src="@{/javascript/theme.js}"></script>
+    
+    <style>
+        /* =========================================
+           STRICT THEME ADHERENCE
+           ========================================= */
+        body { background-color: var(--bg-body); color: var(--text-body); }
+        h1, h2, h3, h4, h5, h6 { color: var(--text-heading); }
+        
+        /* CARD THEME */
+        .user-card {
+            background-color: var(--bg-light);
+            border: 1px solid var(--border-color);
+            border-radius: 1rem;
+            box-shadow: var(--shadow-card);
+            transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+        }
+        .user-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-card-hover);
+            border-color: var(--border-color-hover);
+        }
+        
+        /* AVATAR */
+        .user-avatar-large {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background-color: var(--color-primary-light);
+            color: var(--color-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            box-shadow: inset 0 0 0 1px rgba(0,0,0,0.05);
+            overflow: hidden; /* Ensures image stays circular */
+            position: relative;
+        }
+
+        .user-avatar-large img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* TEXT UTILITIES */
+        .text-theme-heading { color: var(--text-heading) !important; }
+        .text-theme-body { color: var(--text-body) !important; }
+        .text-theme-muted { color: var(--text-muted) !important; }
+        .text-theme-secondary { color: var(--text-secondary) !important; }
+
+        /* CONTACT LINKS */
+        .contact-link {
+            color: var(--text-body);
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+        .contact-link:hover {
+            color: var(--color-primary);
+        }
+
+        /* BADGES */
+        .badge-role {
+            font-weight: 600;
+            padding: 0.35em 0.8em;
+            border-radius: 50rem;
+            font-size: 0.7rem;
+            color: #fff;
+            letter-spacing: 0.02em;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .badge-theme-primary {
+            background-color: var(--color-primary-light);
+            color: var(--color-primary);
+        }
+
+        /* BUTTONS */
+        .btn-theme-primary {
+            background-color: var(--color-primary);
+            color: var(--color-white);
+            border: none;
+            box-shadow: var(--shadow-btn-primary);
+            padding: 0.5rem 1.25rem;
+            font-weight: 500;
+            border-radius: 0.5rem;
+            transition: background-color 0.2s;
+        }
+        .btn-theme-primary:hover {
+            background-color: var(--color-primary-dark);
+            color: var(--color-white);
+        }
+
+        .btn-icon-theme {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            border: 1px solid var(--border-color);
+            background-color: transparent;
+            color: var(--text-secondary);
+            transition: all 0.2s;
+        }
+        .btn-icon-theme:hover {
+            background-color: var(--bg-body-alt);
+            color: var(--color-primary);
+            border-color: var(--color-primary);
+        }
+        .btn-icon-theme.danger:hover {
+            color: var(--text-danger);
+            border-color: var(--text-danger);
+            background-color: var(--bg-alert-danger);
+        }
+
+        /* INPUTS */
+        .form-control-theme {
+            background-color: var(--bg-input);
+            color: var(--text-body);
+            border: 1px solid var(--border-color);
+        }
+        .form-control-theme:focus {
+            background-color: var(--bg-input-focus);
+            border-color: var(--border-focus);
+            box-shadow: var(--shadow-input-focus);
+            color: var(--text-body);
+        }
+        .form-control-theme::placeholder {
+            color: var(--text-placeholder);
+        }
+
+        /* MODALS */
+        .modal-content-theme { background-color: var(--bg-light); border: 1px solid var(--border-color); }
+        .modal-header-theme { border-bottom: 1px solid var(--border-color); padding: 1.5rem; }
+        .modal-body-theme { padding: 1.5rem; }
+        .modal-footer-theme { border-top: 1px solid var(--border-color); padding: 1rem 1.5rem; }
+
+        /* EMPTY STATE */
+        .empty-state-box {
+            background-color: var(--bg-module-card);
+            border: 2px dashed var(--border-color);
+            border-radius: 1rem;
+            padding: 3rem 1rem;
+            text-align: center;
+        }
+    </style>
 </head>
 <body>
-<div class="dashboard-wrapper">
-    <!-- Sidebar Fragment -->
-    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
-    
-    <!-- Alerts Fragment -->
-    <div th:replace="~{fragments/messages :: alerts}"></div>
+    <!-- Wrapper -->
+    <div class="dashboard-wrapper">
+        <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+        <div th:replace="~{fragments/messages :: alerts}"></div>
 
-    <!-- Main Content -->
-    <div id="content">
-        <!-- Top Navbar mobile toggle could go here if needed -->
-        <div class="container-fluid">
-            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-5 pt-md-3 pb-2 mb-3 border-bottom">
-                <h1 class="h2">Gestione Utenti</h1>
-                <div class="btn-toolbar mb-2 mb-md-0">
-                    <button type="button" class="btn btn-sm btn-primary shadow-sm" data-bs-toggle="modal" data-bs-target="#addUserModal">
-                        <i class="bi bi-person-plus-fill"></i> Nuovo Utente
-                    </button>
+        <div id="content">
+            <div class="container-fluid px-3 px-md-4">
+                
+                <!-- Page Header (Consistent with Dashboard) -->
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-5 pt-md-4 pb-4 mb-4 border-bottom" style="border-color: var(--border-color) !important;">
+                    <div class="mb-3 mb-md-0 me-auto">
+                        <h1 class="h2 fw-bold text-theme-heading mb-0">Gestione Utenti</h1>
+                        <p class="text-theme-muted mb-0 small mt-1">Amministra gli accessi e i profili aziendali</p>
+                    </div>
+                    
+                    <div class="d-flex flex-column flex-md-row gap-3 w-100 w-md-auto align-items-stretch align-items-md-center">
+                        <!-- Search Bar -->
+                        <div class="input-group" style="min-width: 250px;">
+                            <span class="input-group-text border-0 ps-3" style="background-color: var(--bg-input); border: 1px solid var(--border-color) !important; border-right: none !important; border-radius: 0.5rem 0 0 0.5rem;">
+                                <i class="bi bi-search text-theme-muted"></i>
+                            </span>
+                            <input type="text" class="form-control form-control-theme border-start-0 ps-0" id="userSearchInput" placeholder="Cerca nome o email..." autocomplete="off">
+                        </div>
+                        
+                        <!-- Add Button (Standard Position) -->
+                        <button type="button" class="btn btn-theme-primary d-flex align-items-center justify-content-center text-nowrap" data-bs-toggle="modal" data-bs-target="#addUserModal">
+                            <i class="bi bi-person-plus-fill me-2"></i>Nuovo Utente
+                        </button>
+                    </div>
                 </div>
-            </div>
 
-            <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
-                <div class="table-responsive">
-                    <table class="table table-hover table-borderless align-middle mb-0">
-                        <thead class="table-light border-bottom">
-                        <tr>
-                            <th scope="col" class="ps-4">Nome</th>
-                            <th scope="col">Cognome</th>
-                            <th scope="col">Email</th>
-                            <th scope="col">Telefono</th>
-                            <th scope="col">Ruoli</th>
-                            <th scope="col" class="text-end pe-4">Azioni</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr th:each="utente : ${utenti}">
-                            <td class="ps-4 fw-medium" th:text="${utente.nome}">Nome</td>
-                            <td class="fw-medium" th:text="${utente.cognome}">Cognome</td>
-                            <td class="text-muted" th:text="${utente.email}">email@example.com</td>
-                            <td th:text="${utente.telefono}">-</td>
-                            <td>
-                                <span th:each="ruolo : ${utente.ruoli}"
-                                      th:text="${ruolo.nome}"
-                                      class="badge rounded-pill me-1 shadow-sm"
-                                      th:style="'background-color: ' + ${ruolo.colore} + ' !important; color:white; text-shadow: 0px 0px 2px rgba(0,0,0,0.5);'"
-                                >
-                                    Ruolo
-                                </span>
-                            </td>
-                            <td class="text-end pe-4">
-                                <div class="d-flex justify-content-end gap-2">
-                                    <button class="btn btn-sm btn-light text-primary border-0" title="Modifica"
-                                            th:data-email="${utente.email}"
-                                            th:data-nome="${utente.nome}"
-                                            th:data-cognome="${utente.cognome}"
-                                            th:data-telefono="${utente.telefono}"
-                                            onclick="openModifyModal(this)">
-                                        <i class="bi bi-pencil"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-light text-danger border-0" title="Elimina"
-                                            th:data-email="${utente.email}"
-                                            th:data-nome="${utente.nome}"
-                                            th:data-cognome="${utente.cognome}"
-                                            onclick="openDeleteModal(this)">
-                                        <i class="bi bi-trash"></i>
-                                    </button>
+                <!-- Stats Count -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div class="d-flex align-items-center">
+                            <span class="badge badge-theme-primary px-3 py-2 rounded-pill fw-medium">
+                                <i class="bi bi-people-fill me-2"></i>
+                                Totale Utenti: <span id="totalUsersBadge" th:text="${utenti != null ? utenti.size() : 0}">0</span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- User Grid -->
+                <div id="userGrid" class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-3 g-xl-4 mb-5" th:unless="${utenti == null or #lists.isEmpty(utenti)}">
+                    
+                    <div class="col user-col" th:each="utente : ${utenti}">
+                        <div class="user-card">
+                            <div class="p-4 d-flex flex-column h-100">
+                                
+                                <!-- Card Header: Avatar + Identity -->
+                                <div class="d-flex align-items-center mb-4">
+                                    <!-- Avatar Logic: Image if exists, Initials fallback -->
+                                    <div class="user-avatar-large me-3 flex-shrink-0">
+                                        <img th:if="${utente.path_immagine_profilo != null and !utente.path_immagine_profilo.isEmpty()}"
+                                             th:src="@{'/'+${utente.path_immagine_profilo}}"
+                                             alt="Avatar"
+                                             class="w-100 h-100 object-fit-cover">
+                                             
+                                        <span th:if="${utente.path_immagine_profilo == null or utente.path_immagine_profilo.isEmpty()}"
+                                              th:text="${#strings.substring(utente.nome,0,1) + #strings.substring(utente.cognome,0,1)}">
+                                            AB
+                                        </span>
+                                    </div>
+                                    
+                                    <div class="overflow-hidden">
+                                        <h5 class="fw-bold text-theme-heading text-truncate mb-1 user-name" th:text="${utente.nome + ' ' + utente.cognome}">Nome Cognome</h5>
+                                        <div class="d-flex flex-wrap gap-1">
+                                            <span th:each="ruolo : ${utente.ruoli}"
+                                                  th:text="${ruolo.nome}"
+                                                  class="badge-role"
+                                                  th:style="'background-color: ' + ${ruolo.colore} + ';'">
+                                                Admin
+                                            </span>
+                                        </div>
+                                    </div>
                                 </div>
-                            </td>
-                        </tr>
-                        <tr th:if="${utenti == null or #lists.isEmpty(utenti)}">
-                            <td colspan="6" class="text-center text-muted py-5">
-                                <i class="bi bi-people display-6 d-block mb-3 opacity-50"></i>
-                                <em>Nessun utente trovato nel sistema.</em>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
+
+                                <!-- Card Body: Contact Info -->
+                                <div class="d-flex flex-column gap-3 mb-4 flex-grow-1">
+                                    <div class="d-flex align-items-center text-theme-secondary">
+                                        <div class="d-flex align-items-center justify-content-center rounded-circle me-3 flex-shrink-0" style="width: 36px; height: 36px; background-color: var(--bg-body-alt);">
+                                            <i class="bi bi-envelope-fill text-theme-muted"></i>
+                                        </div>
+                                        <a th:href="'mailto:' + ${utente.email}" class="text-truncate contact-link user-email" th:text="${utente.email}" style="font-size: 0.95rem;">email@example.com</a>
+                                    </div>
+                                    <div class="d-flex align-items-center text-theme-secondary">
+                                        <div class="d-flex align-items-center justify-content-center rounded-circle me-3 flex-shrink-0" style="width: 36px; height: 36px; background-color: var(--bg-body-alt);">
+                                            <i class="bi bi-telephone-fill text-theme-muted"></i>
+                                        </div>
+                                        <a th:if="${utente.telefono != null and !utente.telefono.isEmpty()}" 
+                                           th:href="'tel:' + ${utente.telefono}" 
+                                           class="text-truncate contact-link" 
+                                           th:text="${utente.telefono}" 
+                                           style="font-size: 0.95rem;">+39 123 456 7890</a>
+                                        <span th:unless="${utente.telefono != null and !utente.telefono.isEmpty()}" 
+                                              style="font-size: 0.95rem;">N/D</span>
+                                    </div>
+                                </div>
+
+                                <!-- Card Footer: Actions -->
+                                <div class="pt-3 border-top d-flex justify-content-between align-items-center" style="border-color: var(--border-color) !important;">
+                                    <small class="text-theme-muted fst-italic">Gestisci</small>
+                                    <div class="d-flex gap-2">
+                                        <button class="btn-icon-theme" title="Modifica"
+                                                th:data-email="${utente.email}"
+                                                th:data-nome="${utente.nome}"
+                                                th:data-cognome="${utente.cognome}"
+                                                th:data-telefono="${utente.telefono}"
+                                                onclick="openModifyModal(this)">
+                                            <i class="bi bi-pencil-fill"></i>
+                                        </button>
+                                        <button class="btn-icon-theme danger" title="Elimina"
+                                                th:data-email="${utente.email}"
+                                                th:data-nome="${utente.nome}"
+                                                th:data-cognome="${utente.cognome}"
+                                                onclick="openDeleteModal(this)">
+                                            <i class="bi bi-trash-fill"></i>
+                                        </button>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
+
+                <!-- Empty State (No users in DB) -->
+                <div id="defaultEmptyState" th:if="${utenti == null or #lists.isEmpty(utenti)}" class="empty-state-box mb-5">
+                    <i class="bi bi-people display-4 text-theme-muted opacity-50 mb-3 d-block"></i>
+                    <h5 class="text-theme-heading">Nessun utente trovato</h5>
+                    <p class="text-theme-muted">Inizia aggiungendo i collaboratori alla tua azienda.</p>
+                </div>
+                
+                <!-- Search Empty State (Hidden by default) -->
+                <div id="searchEmptyState" class="empty-state-box mb-5" style="display: none;">
+                    <i class="bi bi-search display-4 text-theme-muted opacity-50 mb-3 d-block"></i>
+                    <h5 class="text-theme-heading">Nessun risultato</h5>
+                    <p class="text-theme-muted">Prova a cercare con un altro nome o email.</p>
+                </div>
+
             </div>
         </div>
     </div>
-</div>
 
-    <!-- Delete User Modal -->
-    <div class="modal fade gdu-modal" id="deleteUserModal" tabindex="-1" aria-hidden="true">
+    <!-- ADD USER MODAL -->
+    <div class="modal fade" id="addUserModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Elimina Utente</h5>
+            <div class="modal-content modal-content-theme shadow-lg rounded-4">
+                <form th:action="@{/dashboard/gdu/add-user}" th:object="${newUserForm}" method="post">
+                    <div class="modal-header modal-header-theme">
+                        <h5 class="modal-title fw-bold text-theme-heading">Nuovo Utente</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body modal-body-theme">
+                        <div class="row g-3 mb-3">
+                            <div class="col-6">
+                                <label for="nome" class="form-label fw-medium text-theme-secondary">Nome</label>
+                                <input type="text" class="form-control form-control-theme" id="nome" th:field="*{nome}" th:classappend="${#fields.hasErrors('nome')} ? 'is-invalid'" placeholder="Es. Mario">
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('nome')}" th:errors="*{nome}"></div>
+                            </div>
+                            <div class="col-6">
+                                <label for="cognome" class="form-label fw-medium text-theme-secondary">Cognome</label>
+                                <input type="text" class="form-control form-control-theme" id="cognome" th:field="*{cognome}" th:classappend="${#fields.hasErrors('cognome')} ? 'is-invalid'" placeholder="Es. Rossi">
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('cognome')}" th:errors="*{cognome}"></div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label fw-medium text-theme-secondary">Email</label>
+                            <input type="email" class="form-control form-control-theme" id="email" th:field="*{email}" th:classappend="${#fields.hasErrors('email')} ? 'is-invalid'" placeholder="es. mario.rossi@email.com">
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="telefono" class="form-label fw-medium text-theme-secondary">Telefono</label>
+                            <input type="tel" class="form-control form-control-theme" id="telefono" th:field="*{telefono}" th:classappend="${#fields.hasErrors('telefono')} ? 'is-invalid'" placeholder="+39 ...">
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('telefono')}" th:errors="*{telefono}"></div>
+                        </div>
+                    </div>
+                    <div class="modal-footer modal-footer-theme">
+                        <button type="button" class="btn btn-outline-secondary rounded-pill" data-bs-dismiss="modal">Annulla</button>
+                        <button type="submit" class="btn btn-theme-primary rounded-pill px-4">Crea Utente</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODIFY USER MODAL -->
+    <div class="modal fade" id="modifyUserModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content modal-content-theme shadow-lg rounded-4">
+                <form id="modifyUserForm" th:action="@{/dashboard/gdu/modify-user}" th:object="${editUserForm}" method="post">
+                    <div class="modal-header modal-header-theme">
+                        <h5 class="modal-title fw-bold text-theme-heading">Modifica Utente</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body modal-body-theme">
+                        <input type="hidden" name="oldEmail" id="modifyOldEmail">
+                        
+                        <div class="row g-3 mb-3">
+                            <div class="col-6">
+                                <label for="modifyNome" class="form-label fw-medium text-theme-secondary">Nome</label>
+                                <input type="text" class="form-control form-control-theme" id="modifyNome" name="nome" th:value="*{nome}" th:classappend="${#fields.hasErrors('nome')} ? 'is-invalid'" required>
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('nome')}" th:errors="*{nome}"></div>
+                            </div>
+                            <div class="col-6">
+                                <label for="modifyCognome" class="form-label fw-medium text-theme-secondary">Cognome</label>
+                                <input type="text" class="form-control form-control-theme" id="modifyCognome" name="cognome" th:value="*{cognome}" th:classappend="${#fields.hasErrors('cognome')} ? 'is-invalid'" required>
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('cognome')}" th:errors="*{cognome}"></div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="modifyEmail" class="form-label fw-medium text-theme-secondary">Email</label>
+                            <input type="hidden" name="oldmail" id="oldModifyMail" th:value="*{oldmail}" required>
+                            <input type="email" class="form-control form-control-theme" id="modifyEmail" name="email" th:value="*{email}" th:classappend="${#fields.hasErrors('email')} ? 'is-invalid'" required>
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="modifyTelefono" class="form-label fw-medium text-theme-secondary">Telefono</label>
+                            <input type="tel" class="form-control form-control-theme" id="modifyTelefono" name="telefono" th:value="*{telefono}" th:classappend="${#fields.hasErrors('telefono')} ? 'is-invalid'">
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('telefono')}" th:errors="*{telefono}"></div>
+                        </div>
+                        
+                        <div class="border-top pt-3 mt-3" style="border-color: var(--border-color) !important;">
+                             <p class="text-theme-muted small mb-3 text-uppercase fw-bold" style="font-size: 0.75rem;">Sicurezza</p>
+                             <div class="mb-3">
+                                <label for="modifyPassword" class="form-label fw-medium text-theme-secondary">Nuova Password</label>
+                                <input type="password" class="form-control form-control-theme" id="modifyPassword" name="newPassword" th:value="*{newPassword}" th:classappend="${#fields.hasErrors('newPassword')} ? 'is-invalid'" placeholder="Lascia vuoto per non cambiare">
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('newPassword')}" th:errors="*{newPassword}"></div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="modifyConfirmPassword" class="form-label fw-medium text-theme-secondary">Conferma Password</label>
+                                <input type="password" class="form-control form-control-theme" id="modifyConfirmPassword" name="confirmNewPassword" th:value="*{confirmNewPassword}" th:classappend="${#fields.hasErrors('confirmNewPassword')} ? 'is-invalid'">
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('confirmNewPassword')}" th:errors="*{confirmNewPassword}"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer modal-footer-theme">
+                        <button type="button" class="btn btn-outline-secondary rounded-pill" data-bs-dismiss="modal">Annulla</button>
+                        <button type="submit" class="btn btn-theme-primary rounded-pill px-4">Salva Modifiche</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- DELETE USER MODAL -->
+    <div class="modal fade" id="deleteUserModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content modal-content-theme shadow-lg rounded-4">
+                <div class="modal-header modal-header-theme">
+                    <h5 class="modal-title fw-bold text-theme-heading">Elimina Utente</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
-                    <p>Stai per eliminare l'utente <strong id="deleteTargetName"></strong>.</p>
-                    <p class="text-danger-custom mb-3">Questa azione è irreversibile.</p>
+                <div class="modal-body modal-body-theme">
+                    <p class="text-theme-body">Stai per eliminare l'utente <strong id="deleteTargetName" class="text-theme-heading"></strong>.</p>
+                    <div class="alert alert-danger d-flex align-items-center mb-3" role="alert" style="background-color: var(--bg-alert-danger); border-color: var(--border-alert-danger); color: var(--text-danger);">
+                        <i class="bi bi-exclamation-triangle-fill me-2 fs-5"></i>
+                        <div>Attenzione: questa azione è irreversibile.</div>
+                    </div>
                     
-                    <label for="deleteConfirmInput" class="form-label">Digita il nome completo per confermare:</label>
-                    <input type="text" class="form-control" id="deleteConfirmInput">
+                    <label for="deleteConfirmInput" class="form-label text-theme-secondary mt-2">Digita il nome completo per confermare:</label>
+                    <input type="text" class="form-control form-control-theme" id="deleteConfirmInput">
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary-custom" data-bs-dismiss="modal">Annulla</button>
+                <div class="modal-footer modal-footer-theme">
+                    <button type="button" class="btn btn-outline-secondary rounded-pill" data-bs-dismiss="modal">Annulla</button>
                     <form th:action="@{/dashboard/gdu/remove-user}" method="post">
-                        <input type="hidden" name="email" id="deleteEmailInput" placeholder="Inserisci il nome">
-                        <button type="submit" class="btn btn-confirm-delete" id="confirmDeleteBtn" disabled>
+                        <input type="hidden" name="email" id="deleteEmailInput">
+                        <button type="submit" class="btn btn-danger rounded-pill px-4 shadow-sm" id="confirmDeleteBtn" disabled>
                             Elimina Definitivamente
                         </button>
                     </form>
@@ -124,109 +443,54 @@
         </div>
     </div>
 
-    <!-- Add User Modal -->
-    <div class="modal fade gdu-modal" id="addUserModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <form th:action="@{/dashboard/gdu/add-user}" th:object="${newUserForm}" method="post">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Nuovo Utente</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="mb-3">
-                            <label for="nome" class="form-label">Nome</label>
-                            <input type="text" class="form-control" id="nome" th:field="*{nome}" th:classappend="${#fields.hasErrors('nome')} ? 'is-invalid'" placeholder="Nome">
-                            <div class="invalid-feedback" th:if="${#fields.hasErrors('nome')}" th:errors="*{nome}"></div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="cognome" class="form-label">Cognome</label>
-                            <input type="text" class="form-control" id="cognome" th:field="*{cognome}" th:classappend="${#fields.hasErrors('cognome')} ? 'is-invalid'" placeholder="Rossi">
-                            <div class="invalid-feedback" th:if="${#fields.hasErrors('cognome')}" th:errors="*{cognome}"></div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="email" class="form-label">Email</label>
-                            <input type="email" class="form-control" id="email" th:field="*{email}" th:classappend="${#fields.hasErrors('email')} ? 'is-invalid'" placeholder="mario.rossi@email.com">
-                            <div class="invalid-feedback" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="telefono" class="form-label">Telefono</label>
-                            <input type="tel" class="form-control" id="telefono" th:field="*{telefono}" th:classappend="${#fields.hasErrors('telefono')} ? 'is-invalid'" placeholder="+39 3733676635">
-                            <div class="invalid-feedback" th:if="${#fields.hasErrors('telefono')}" th:errors="*{telefono}"></div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-primary-custom" data-bs-dismiss="modal">Annulla</button>
-                        <button type="submit" class="btn btn-primary-custom">Crea Utente</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modify User Modal -->
-    <div class="modal fade gdu-modal" id="modifyUserModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <form id="modifyUserForm" th:action="@{/dashboard/gdu/modify-user}" th:object="${editUserForm}" method="post">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Modifica Utente</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <!-- Identification field (old email) -->
-                        <input type="hidden" name="oldEmail" id="modifyOldEmail">
-                        
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="modifyNome" class="form-label">Nome</label>
-                                <input type="text" class="form-control" id="modifyNome" name="nome" th:value="*{nome}" th:classappend="${#fields.hasErrors('nome')} ? 'is-invalid'" required>
-                                <div class="invalid-feedback" th:if="${#fields.hasErrors('nome')}" th:errors="*{nome}"></div>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="modifyCognome" class="form-label">Cognome</label>
-                                <input type="text" class="form-control" id="modifyCognome" name="cognome" th:value="*{cognome}" th:classappend="${#fields.hasErrors('cognome')} ? 'is-invalid'" required>
-                                <div class="invalid-feedback" th:if="${#fields.hasErrors('cognome')}" th:errors="*{cognome}"></div>
-                            </div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="modifyEmail" class="form-label">Email</label>
-                            <input type="hidden" name="oldmail" id="oldModifyMail" th:value="*{oldmail}" required>
-                            <input type="email" class="form-control" id="modifyEmail" name="email" th:value="*{email}" th:classappend="${#fields.hasErrors('email')} ? 'is-invalid'" required>
-                            <div class="invalid-feedback" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="modifyTelefono" class="form-label">Telefono</label>
-                            <input type="tel" class="form-control" id="modifyTelefono" name="telefono" th:value="*{telefono}" th:classappend="${#fields.hasErrors('telefono')} ? 'is-invalid'">
-                            <div class="invalid-feedback" th:if="${#fields.hasErrors('telefono')}" th:errors="*{telefono}"></div>
-                        </div>
-                        <hr class="my-4" style="border-color: var(--border-color-light);">
-                        <p class="text-muted small mb-3">Lascia la password vuota se non desideri cambiarla.</p>
-                        <div class="mb-3">
-                            <label for="modifyPassword" class="form-label">Nuova Password</label>
-                            <input type="password" class="form-control" id="modifyPassword" name="newPassword" th:value="*{newPassword}" th:classappend="${#fields.hasErrors('newPassword')} ? 'is-invalid'">
-                            <div class="invalid-feedback" th:if="${#fields.hasErrors('newPassword')}" th:errors="*{newPassword}"></div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="modifyConfirmPassword" class="form-label">Conferma Password</label>
-                            <input type="password" class="form-control" id="modifyConfirmPassword" name="confirmNewPassword" th:value="*{confirmNewPassword}" th:classappend="${#fields.hasErrors('confirmNewPassword')} ? 'is-invalid'">
-                            <div class="invalid-feedback" th:if="${#fields.hasErrors('confirmNewPassword')}" th:errors="*{confirmNewPassword}"></div>
-                            <div class="invalid-feedback">Le password non corrispondono.</div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-primary-custom" data-bs-dismiss="modal">Annulla</button>
-                        <button type="submit" class="btn btn-primary-custom">Salva Modifiche</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
+    <!-- Scripts -->
     <script th:src="@{/javascript/gdu-delete.js}"></script>
     <script th:src="@{/javascript/gdu-add.js}"></script>
     <script th:src="@{/javascript/gdu-modify.js}"></script>
+    
+    <!-- Search Script -->
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var searchInput = document.getElementById('userSearchInput');
+        if (searchInput) {
+            searchInput.addEventListener('keyup', function() {
+                var searchText = this.value.toLowerCase();
+                var userCols = document.querySelectorAll('.user-col');
+                var visibleCount = 0;
+                var searchEmptyState = document.getElementById('searchEmptyState');
+                var defaultEmptyState = document.getElementById('defaultEmptyState');
+                var counterBadge = document.getElementById('totalUsersBadge');
 
+                userCols.forEach(function(col) {
+                    var card = col.querySelector('.user-card');
+                    var name = card.querySelector('.user-name').textContent.toLowerCase();
+                    var email = card.querySelector('.user-email').textContent.toLowerCase();
+                    
+                    if (name.includes(searchText) || email.includes(searchText)) {
+                        col.style.display = '';
+                        visibleCount++;
+                    } else {
+                        col.style.display = 'none';
+                    }
+                });
+                
+                // Update counter
+                if(counterBadge) counterBadge.textContent = visibleCount;
+
+                // Handle Empty States
+                if (visibleCount === 0 && searchText.length > 0) {
+                    if(searchEmptyState) searchEmptyState.style.display = 'block';
+                    if(defaultEmptyState) defaultEmptyState.style.display = 'none';
+                } else {
+                    if(searchEmptyState) searchEmptyState.style.display = 'none';
+                    // Restore default state if grid was originally empty (unlikely if logic enters loop, but good safety)
+                }
+            });
+        }
+    });
+    </script>
+
+    <!-- Auto-open modals on error -->
     <script th:if="${#fields.hasErrors('newUserForm.*')}">
         document.addEventListener('DOMContentLoaded', function() {
             var addUserModal = new bootstrap.Modal(document.getElementById('addUserModal'));
@@ -241,6 +505,6 @@
         });
     </script>
 
-    <!-- Bootstrap JavaScript Bundle (include Popper) -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script></body>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
 </html>
