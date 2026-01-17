@@ -212,15 +212,88 @@ body {
    5. RESPONSIVE / MOBILE
    ============================ */
 
+.mobile-menu-toggle {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: var(--text-heading);
+    padding: 5px;
+}
+
 /* Uniformato breakpoint Nav a 900px come nel Main */
 @media (max-width: 900px) {
-    .nav-links { display: none; }
+    .mobile-menu-toggle {
+        display: block;
+        order: 3; /* Ensure it's on the right or positioned correctly */
+    }
+
+    .site-header {
+        position: relative; /* Needed for absolute positioning of nav */
+        flex-wrap: wrap;
+    }
+
+    .site-header > div:last-child {
+        margin-left: auto; /* Push buttons to the right */
+        margin-right: 15px;
+    }
+
+    .nav-links {
+        display: none;
+        width: 100%;
+        flex-direction: column;
+        background-color: var(--color-white);
+        position: absolute;
+        top: 100%;
+        left: 0;
+        padding: 20px;
+        box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+        gap: 15px;
+        border-bottom: 1px solid var(--border-color-light);
+        z-index: 999;
+    }
+
+    .nav-links.active {
+        display: flex;
+    }
+
+    .nav-links a {
+        display: block;
+        padding: 10px;
+        border-bottom: 1px solid var(--bg-light);
+        text-align: center;
+    }
+    
+    .nav-links a:last-child {
+        border-bottom: none;
+    }
 }
 
 @media (max-width: 480px) {
-    /* MANTENUTA LOGICA ORIGINALE LOGIN: Header nascosto su mobile */
+    /* MANTENUTA LOGICA ORIGINALE LOGIN: Header ORA VISIBILE su mobile */
     .site-header {
-        display: none;
+        display: flex;
+        padding: 10px 15px;
+        align-items: center;
+    }
+
+    .site-header > div:last-child {
+        display: none; /* Hide login/register buttons on very small screens inside header if space is tight? 
+                          Or maybe keep them? The prompt implies "header doesn't disappear". 
+                          Let's keep them but maybe simplify. */
+        display: flex;
+        gap: 5px;
+        margin-right: 10px;
+    }
+
+    .site-header > div:last-child .btn {
+        padding: 6px 12px;
+        font-size: 13px;
+    }
+    
+    .logo {
+        height: 30px;
     }
 
     body {
@@ -237,7 +310,7 @@ body {
     .login-box {
         width: 100%;
         max-width: none;
-        min-height: 100vh;
+        min-height: calc(100vh - 60px); /* Adjust for header height */
         border-radius: 0;
         box-shadow: none;
         display: flex;
@@ -248,4 +321,14 @@ body {
 
     .subtitle { font-size: 14px; }
     .input-group input { font-size: 16px; }
+}
+
+@media (max-width: 350px) {
+    .site-header > div:last-child {
+        display: none; /* Hide action buttons on extremely small screens to make room for logo and burger */
+    }
+    
+    .mobile-menu-toggle {
+        margin-left: auto;
+    }
 }
