@@ -9,7 +9,7 @@
             <i class="bi bi-exclamation-circle-fill"></i>
         </div>
         <div class="floating-alert-content">
-            <span th:text="${param.message != null} ? ${param.message} : 'Si è verificato un errore durante l\'operazione.'">Errore generico</span>
+            <span class="text-break" th:text="${param.message != null} ? ${param.message} : 'Si è verificato un errore durante l\'operazione.'">Errore generico</span>
         </div>
         <button type="button" class="floating-alert-close" onclick="this.parentElement.remove()" aria-label="Close">
             <i class="bi bi-x"></i>
@@ -22,7 +22,7 @@
             <i class="bi bi-check-circle-fill"></i>
         </div>
         <div class="floating-alert-content">
-            <span th:text="${param.message != null} ? ${param.message} : 'Operazione completata con successo.'">Successo</span>
+            <span class="text-break" th:text="${param.message != null} ? ${param.message} : 'Operazione completata con successo.'">Successo</span>
         </div>
         <button type="button" class="floating-alert-close" onclick="this.parentElement.remove()" aria-label="Close">
             <i class="bi bi-x"></i>
