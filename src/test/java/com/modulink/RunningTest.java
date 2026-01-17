@@ -20,7 +20,7 @@ class RunningTest {
     private int port;
 
     @Test
-    void applicationShouldRespondOnPort80() {
+    void applicationShouldRespondOnPort8080() {
         assertThat(port).isEqualTo(8080);
 
         // Effettua una chiamata GET alla root (o a /actuator/health se preferisci)

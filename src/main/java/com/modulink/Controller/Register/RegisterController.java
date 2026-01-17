@@ -17,10 +17,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -29,6 +26,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.Principal;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Controller Spring MVC che gestisce il flusso di registrazione (Onboarding) di una nuova Azienda e del suo Responsabile.
@@ -54,6 +53,7 @@ public class RegisterController {
     private final AssociazioneService associazioneService;
     private final AttivazioneService attivazioneService;
     private final PertinenzaService pertinenzaService;
+    private final List<String> supportedImageTypes = Arrays.asList("image/jpeg", "image/png");
 
     /**
      * Costruttore per l'iniezione delle dipendenze.
@@ -187,6 +187,18 @@ public class RegisterController {
             return "redirect:/register";
         }
         else {
+            if (registerUtenteForm.getImmagineProfilo() != null && !registerUtenteForm.getImmagineProfilo().isEmpty()) {
+                if (!supportedImageTypes.contains(registerUtenteForm.getImmagineProfilo().getContentType())) {
+                    bindingResult.rejectValue("immagineProfilo", "error.immagineProfilo", "Il file caricato deve essere un'immagine (JPEG o PNG)");
+                    model.addAttribute("registerUtenteForm", registerUtenteForm);
+                    return "register/RegistraUtente";
+                }
+                if (registerUtenteForm.getImmagineProfilo().getSize() > 12 * 1024 * 1024) {
+                    bindingResult.rejectValue("immagineProfilo", "size.exceeded", "La dimensione dell’immagine supera 12MB");
+                    model.addAttribute("registerUtenteForm", registerUtenteForm);
+                    return "register/RegistraUtente";
+                }
+            }
             if(bindingResult.hasErrors()) {
                 model.addAttribute("registerUtenteForm", registerUtenteForm);
                 return "register/RegistraUtente";
