@@ -1,0 +1,265 @@
+@import 'user/colors.css';
+
+.affiliazioni-container {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 0 20px;
+    min-height: 60vh;
+}
+
+.page-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.page-title {
+    color: var(--text-heading);
+    margin-bottom: 15px;
+    font-weight: 700;
+}
+
+.page-subtitle {
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+}
+
+/* --- ZONA FILTRI (Search + Select) --- */
+.filters-wrapper {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 50px;
+    flex-wrap: wrap;
+}
+
+.search-container {
+    position: relative;
+    flex: 1;
+    min-width: 300px;
+    max-width: 500px;
+}
+
+.sector-select {
+    padding: 15px 40px 15px 20px;
+    border: 2px solid var(--border-color);
+    border-radius: 50px;
+    font-size: 1rem;
+    background-color: var(--bg-white);
+    color: var(--text-heading);
+    cursor: pointer;
+    appearance: none; 
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 15px center;
+    background-size: 16px;
+    transition: all 0.3s ease;
+    min-width: 200px;
+    
+    /* CENTRATURA TESTO NEL SELECT */
+    text-align: center;
+    text-align-last: center; 
+}
+
+.sector-select:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+}
+
+.search-input {
+    width: 100%;
+    padding: 15px 20px 15px 50px;
+    border: 2px solid var(--border-color);
+    border-radius: 50px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background-color: var(--bg-white);
+    color: var(--text-heading);
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+}
+
+.search-icon {
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-secondary);
+    font-size: 1.2rem;
+}
+
+/* --- GRIGLIA --- */
+.affiliazioni-grid {
+    display: grid;
+    gap: 30px;
+    align-items: start;
+    grid-template-columns: 1fr; 
+}
+
+@media (min-width: 768px) {
+    .affiliazioni-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 1024px) {
+    .affiliazioni-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+.azienda-card {
+    background-color: var(--bg-white);
+    border: 1px solid var(--border-color);
+    border-radius: 24px;
+    padding: 30px;
+    text-align: center;
+    transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+    cursor: pointer;
+    box-shadow: var(--shadow-card);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+    order: 1; 
+    height: auto;
+    /* Margine per lo scroll automatico (evita che finisca sotto l'header) */
+    scroll-margin-top: 150px;
+}
+
+.azienda-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-card-hover);
+    border-color: var(--color-primary);
+}
+
+.azienda-logo-container {
+    width: 90px;
+    height: 90px;
+    background-color: var(--bg-body-alt);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+    border: 2px solid var(--border-color);
+    transition: all 0.4s ease;
+    flex-shrink: 0;
+}
+
+.azienda-logo-icon {
+    font-size: 2.5rem;
+    color: var(--color-primary);
+}
+
+.azienda-name {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--text-heading);
+    margin-bottom: 10px;
+    transition: all 0.4s ease;
+}
+
+/* --- DESCRIZIONE A COMPARSA --- */
+.azienda-description-wrapper {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.4s ease-out;
+    width: 100%;
+}
+
+.azienda-description {
+    overflow: hidden;
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    line-height: 1.6;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+/* --- STATO ATTIVO --- */
+.azienda-card.active {
+    order: -1; 
+    grid-column: span 1; 
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-template-areas: 
+        "logo name"
+        "logo desc";
+    text-align: left;
+    align-items: start;
+    gap: 0 20px;
+    padding: 25px;
+    background-color: #f8fafc;
+    border-color: var(--color-primary);
+}
+
+@media (max-width: 600px) {
+    .azienda-card.active {
+        grid-template-columns: 1fr;
+        grid-template-areas: 
+            "logo" 
+            "name" 
+            "desc";
+        text-align: center;
+        justify-items: center;
+    }
+}
+
+.azienda-card.active .azienda-logo-container {
+    grid-area: logo;
+    width: 60px;
+    height: 60px;
+    margin-bottom: 0;
+    margin-top: 5px;
+}
+
+.azienda-card.active .azienda-logo-icon {
+    font-size: 1.8rem;
+}
+
+.azienda-card.active .azienda-name {
+    grid-area: name;
+    margin-bottom: 0;
+    margin-top: 5px;
+    font-size: 1.1rem;
+    align-self: center;
+}
+
+.azienda-card.active .azienda-description-wrapper {
+    grid-area: desc;
+    grid-template-rows: 1fr;
+    margin-top: 5px;
+}
+
+.azienda-card.active .azienda-description {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.azienda-card.active .click-hint {
+    display: none;
+}
+
+.click-hint {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-top: 5px;
+    opacity: 0.7;
+}
+
+.no-results {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 40px;
+    color: var(--text-secondary);
+    font-size: 1.2rem;
+    display: none;
+    order: 100;
+}
