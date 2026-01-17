@@ -172,7 +172,7 @@
     flex: 1;
     text-align: center;
     padding: var(--gap-md) var(--gap-sm);
-    border-right: 1px solid var(--border-color-light);
+    border-right: 1px solid var(--border-color);
     font-weight: 600;
     font-size: 0.85rem;
     color: var(--text-secondary);
@@ -274,7 +274,7 @@
 
 .day-column {
     flex: 1;
-    border-right: 1px solid var(--border-color-light);
+    border-right: 1px solid var(--border-color);
     position: relative;
     background-color: var(--bg-white);
     cursor: pointer;
@@ -301,8 +301,8 @@
             to bottom,
             transparent,
             transparent calc(var(--hour-height) - 1px),
-            var(--border-color-light) calc(var(--hour-height) - 1px),
-            var(--border-color-light) var(--hour-height)
+            var(--border-color) calc(var(--hour-height) - 1px),
+            var(--border-color) var(--hour-height)
     );
     pointer-events: none;
     z-index: var(--z-base);
@@ -439,8 +439,8 @@
 }
 
 .month-day {
-    border-right: 1px solid var(--border-color-light);
-    border-bottom: 1px solid var(--border-color-light);
+    border-right: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
     padding: var(--gap-sm);
     display: flex;
     flex-direction: column;
@@ -470,11 +470,13 @@
 
 /* Today Styling - Consistent Variable Usage */
 .month-day.today {
-    background-color: var(--color-primary-light);
+    background-color: var(--bg-body); /*Easy Correction*/
 }
 
+
+
 [data-theme='dark'] .month-day.today {
-    background-color: var(--color-primary-light);
+    background-color: var(--bg-body);
     /* Se non esiste la variabile, creala invece di hardcoded */
 }
 
@@ -546,7 +548,7 @@
     display: none;
     position: fixed;
     z-index: var(--z-tooltip);
-    background: var(--bg-light);
+    background: var(--bg-body);
     border: 1px solid var(--border-color);
     border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
@@ -564,7 +566,7 @@
     background: var(--bg-body-alt);
     color: var(--text-heading);
     padding: 10px 15px;
-    border-bottom: 1px solid var(--border-color-light);
+    border-bottom: 1px solid var(--border-color);
     font-weight: 600;
     display: flex;
     justify-content: space-between;
@@ -627,7 +629,7 @@
    MODAL & FORMS
    ========================================= */
 .modal-content {
-    background-color: var(--bg-light);
+    background-color: var(--bg-body);
     color: var(--text-body);
     border: 1px solid var(--border-color);
     border-radius: 12px;
@@ -635,16 +637,16 @@
 }
 
 .modal-header {
-    border-bottom: 1px solid var(--border-color-light);
+    border-bottom: 1px solid var(--border-color);
     padding: var(--gap-lg);
-    background-color: var(--bg-light);
+    background-color: var(--bg-body);
     border-radius: 12px 12px 0 0;
 }
 
 .modal-footer {
-    border-top: 1px solid var(--border-color-light);
+    border-top: 1px solid var(--border-color);
     padding: var(--gap-lg);
-    background-color: var(--bg-light);
+    background-color: var(--bg-body);
     border-radius: 0 0 12px 12px;
 }
 
@@ -719,7 +721,7 @@
     background-color: var(--bg-body);
     border-radius: 8px;
     min-height: 50px;
-    border: 1px solid var(--border-color-light);
+    border: 1px solid var(--border-color);
 }
 
 .selected-user-tag {
@@ -774,7 +776,7 @@
 .user-search-item {
     padding: 0.75rem;
     cursor: pointer;
-    border-bottom: 1px solid var(--border-color-light);
+    border-bottom: 1px solid var(--border-color);
     transition: background-color 0.2s ease;
     color: var(--text-body);
 }
