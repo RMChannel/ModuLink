@@ -8,11 +8,10 @@
 body {
     background-color: var(--bg-body);
     margin: 0;
-    padding: 0;
     font-family: 'Inter', sans-serif;
     color: var(--text-body);
     overflow-x: hidden;
-    padding-bottom: 50px;
+    padding: 0 0 50px;
     line-height: 1.6;
 }
 
