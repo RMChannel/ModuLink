@@ -619,8 +619,8 @@ h1, h2, h3, h4, h5, h6 {
     
     /* Adjust sidebar internal layout for mobile if needed */
     .sidebar-header {
-        justify-content: flex-end; /* Move close button/logo to right or adjust */
-        padding-right: 20px;
+        justify-content: flex-start; /* Move logo to left */
+        padding-left: 20px;
     }
     
     /* Hide the desktop collapse pin on mobile */

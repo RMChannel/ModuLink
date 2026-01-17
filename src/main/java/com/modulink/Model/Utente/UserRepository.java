@@ -57,4 +57,6 @@ public interface UserRepository extends JpaRepository<UtenteEntity, UtenteID> {
 
 
     List<UtenteEntity> getAllByAziendaIs(AziendaEntity azienda);
+
+
 }
