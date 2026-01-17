@@ -24,6 +24,7 @@ import org.springframework.cache.annotation.EnableCaching;
  * @author Modulink Team
  * @version 1.0
  */
+
 @SpringBootApplication
 @EnableCaching
 public class ModuLinkApplication {
