@@ -221,3 +221,9 @@ jobs:
           context: .
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/modulink:latest
+          build-args: |
+            DB_URL=${{ secrets.DB_URL }}
+            DB_USER=${{ secrets.DB_USER }}
+            DB_PASS=${{ secrets.DB_PASS }}
+            MAIL=${{ secrets.MAIL }}
+            PASSWORD_MAIL=${{ secrets.PASSWORD_MAIL }}
