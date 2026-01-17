@@ -25,67 +25,72 @@
     <div id="content">
         <!-- Top Navbar mobile toggle could go here if needed -->
         <div class="container-fluid">
-            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-5 pt-md-3 pb-2 mb-3 border-bottom">
                 <h1 class="h2">Gestione Utenti</h1>
                 <div class="btn-toolbar mb-2 mb-md-0">
-                    <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#addUserModal">
+                    <button type="button" class="btn btn-sm btn-primary shadow-sm" data-bs-toggle="modal" data-bs-target="#addUserModal">
                         <i class="bi bi-person-plus-fill"></i> Nuovo Utente
                     </button>
                 </div>
             </div>
 
-            <div class="table-responsive">
-                <table class="table table-striped table-hover align-middle">
-                    <thead class="table-dark">
-                    <tr>
-                        <th scope="col">Nome</th>
-                        <th scope="col">Cognome</th>
-                        <th scope="col">Email</th>
-                        <th scope="col">Telefono</th>
-                        <th scope="col">Ruoli</th>
-                        <th scope="col" class="text-end">Azioni</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr th:each="utente : ${utenti}">
-                        <td th:text="${utente.nome}">Nome</td>
-                        <td th:text="${utente.cognome}">Cognome</td>
-                        <td th:text="${utente.email}">email@example.com</td>
-                        <td th:text="${utente.telefono}">-</td>
-                        <td>
-                            <span th:each="ruolo : ${utente.ruoli}"
-                                  th:text="${ruolo.nome}"
-                                  class="badge rounded-pill bg-secondary me-1"
-                                  th:style="'background-color: ' + ${ruolo.colore} + ' !important; color:white; text-shadow: -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000;'"
-                            >
-                                Ruolo
-                            </span>
-                        </td>
-                        <td class="text-end">
-                            <button class="btn btn-sm btn-outline-primary me-2" title="Modifica"
-                                    th:data-email="${utente.email}"
-                                    th:data-nome="${utente.nome}"
-                                    th:data-cognome="${utente.cognome}"
-                                    th:data-telefono="${utente.telefono}"
-                                    onclick="openModifyModal(this)">
-                                <i class="bi bi-pencil"></i>
-                            </button>
-                            <button class="btn btn-sm btn-outline-danger" title="Elimina"
-                                    th:data-email="${utente.email}"
-                                    th:data-nome="${utente.nome}"
-                                    th:data-cognome="${utente.cognome}"
-                                    onclick="openDeleteModal(this)">
-                                <i class="bi bi-trash"></i>
-                            </button>
-                        </td>
-                    </tr>
-                    <tr th:if="${utenti == null or #lists.isEmpty(utenti)}">
-                        <td colspan="6" class="text-center text-muted py-4">
-                            <em>Nessun utente trovato nel sistema.</em>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
+            <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
+                <div class="table-responsive">
+                    <table class="table table-hover table-borderless align-middle mb-0">
+                        <thead class="table-light border-bottom">
+                        <tr>
+                            <th scope="col" class="ps-4">Nome</th>
+                            <th scope="col">Cognome</th>
+                            <th scope="col">Email</th>
+                            <th scope="col">Telefono</th>
+                            <th scope="col">Ruoli</th>
+                            <th scope="col" class="text-end pe-4">Azioni</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="utente : ${utenti}">
+                            <td class="ps-4 fw-medium" th:text="${utente.nome}">Nome</td>
+                            <td class="fw-medium" th:text="${utente.cognome}">Cognome</td>
+                            <td class="text-muted" th:text="${utente.email}">email@example.com</td>
+                            <td th:text="${utente.telefono}">-</td>
+                            <td>
+                                <span th:each="ruolo : ${utente.ruoli}"
+                                      th:text="${ruolo.nome}"
+                                      class="badge rounded-pill me-1 shadow-sm"
+                                      th:style="'background-color: ' + ${ruolo.colore} + ' !important; color:white; text-shadow: 0px 0px 2px rgba(0,0,0,0.5);'"
+                                >
+                                    Ruolo
+                                </span>
+                            </td>
+                            <td class="text-end pe-4">
+                                <div class="d-flex justify-content-end gap-2">
+                                    <button class="btn btn-sm btn-light text-primary border-0" title="Modifica"
+                                            th:data-email="${utente.email}"
+                                            th:data-nome="${utente.nome}"
+                                            th:data-cognome="${utente.cognome}"
+                                            th:data-telefono="${utente.telefono}"
+                                            onclick="openModifyModal(this)">
+                                        <i class="bi bi-pencil"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-light text-danger border-0" title="Elimina"
+                                            th:data-email="${utente.email}"
+                                            th:data-nome="${utente.nome}"
+                                            th:data-cognome="${utente.cognome}"
+                                            onclick="openDeleteModal(this)">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr th:if="${utenti == null or #lists.isEmpty(utenti)}">
+                            <td colspan="6" class="text-center text-muted py-5">
+                                <i class="bi bi-people display-6 d-block mb-3 opacity-50"></i>
+                                <em>Nessun utente trovato nel sistema.</em>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>

@@ -41,75 +41,80 @@
     <!-- Main Content -->
     <div id="content">
         <div class="container-fluid">
-            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-5 pt-md-3 pb-2 mb-3 border-bottom">
                 <h1 class="h2">Gestione Ruoli</h1>
                 <div class="btn-toolbar mb-2 mb-md-0">
-                    <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#addRoleModal">
+                    <button type="button" class="btn btn-sm btn-primary shadow-sm" data-bs-toggle="modal" data-bs-target="#addRoleModal">
                         <i class="bi bi-plus-circle-fill"></i> Nuovo Ruolo
                     </button>
                 </div>
             </div>
 
-            <div class="table-responsive">
-                <table class="table table-striped table-hover align-middle">
-                    <thead class="table-dark">
-                    <tr>
-                        <th scope="col">ID</th>
-                        <th scope="col">Nome</th>
-                        <th scope="col">Colore</th>
-                        <th scope="col">Descrizione</th>
-                        <th scope="col" class="text-end">Azioni</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr th:each="ruolo : ${ruoli}">
-                        <td th:text="${ruolo.id_ruolo}">1</td>
-                        <td>
-                            <span class="badge rounded-pill" 
-                                  th:style="'background-color: ' + ${ruolo.colore} + '; color: white; text-shadow: 1px 1px 2px black;'"
-                                  th:text="${ruolo.nome}">Admin</span>
-                        </td>
-                        <td>
-                            <div class="d-flex align-items-center">
-                                <div th:style="'width: 20px; height: 20px; background-color: ' + ${ruolo.colore} + '; border: 1px solid #ccc; margin-right: 8px;'"></div>
-                                <span th:text="${ruolo.colore}">#000000</span>
-                            </div>
-                        </td>
-                        <td th:text="${ruolo.descrizione}">Descrizione ruolo</td>
-                        <td class="text-end">
-                            <!-- Assign Users Button -->
-                            <button class="btn btn-sm btn-outline-info me-2" title="Assegna Utenti"
-                                    th:data-id="${ruolo.id_ruolo}"
-                                    th:data-nome="${ruolo.nome}"
-                                    th:data-assigned-users="${ruolo.associazioni.![id_utente]}"
-                                    onclick="openAssignModal(this)">
-                                <i class="bi bi-people-fill"></i>
-                            </button>
-                            <!-- Modify Button -->
-                            <button class="btn btn-sm btn-outline-primary me-2" title="Modifica"
-                                    th:data-id="${ruolo.id_ruolo}"
-                                    th:data-nome="${ruolo.nome}"
-                                    th:data-colore="${ruolo.colore}"
-                                    th:data-descrizione="${ruolo.descrizione}"
-                                    onclick="openModifyRoleModal(this)">
-                                <i class="bi bi-pencil"></i>
-                            </button>
-                            <!-- Delete Button -->
-                            <button class="btn btn-sm btn-outline-danger" title="Elimina"
-                                    th:data-id="${ruolo.id_ruolo}"
-                                    th:data-nome="${ruolo.nome}"
-                                    onclick="openDeleteRoleModal(this)">
-                                <i class="bi bi-trash"></i>
-                            </button>
-                        </td>
-                    </tr>
-                    <tr th:if="${#lists.isEmpty(ruoli)}">
-                        <td colspan="5" class="text-center text-muted py-4">
-                            <em>Nessun ruolo trovato.</em>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
+            <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
+                <div class="table-responsive">
+                    <table class="table table-hover table-borderless align-middle mb-0">
+                        <thead class="table-light border-bottom">
+                        <tr>
+                            <th scope="col" class="ps-4">ID</th>
+                            <th scope="col">Nome</th>
+                            <th scope="col">Colore</th>
+                            <th scope="col">Descrizione</th>
+                            <th scope="col" class="text-end pe-4">Azioni</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="ruolo : ${ruoli}">
+                            <td class="ps-4 text-muted" th:text="${ruolo.id_ruolo}">1</td>
+                            <td>
+                                <span class="badge rounded-pill shadow-sm" 
+                                      th:style="'background-color: ' + ${ruolo.colore} + '; color: white; text-shadow: 0px 0px 2px rgba(0,0,0,0.5);'"
+                                      th:text="${ruolo.nome}">Admin</span>
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="rounded-circle shadow-sm" th:style="'width: 24px; height: 24px; background-color: ' + ${ruolo.colore} + '; border: 2px solid #fff; margin-right: 8px;'"></div>
+                                    <span class="text-muted small" th:text="${ruolo.colore}">#000000</span>
+                                </div>
+                            </td>
+                            <td th:text="${ruolo.descrizione}" class="text-secondary">Descrizione ruolo</td>
+                            <td class="text-end pe-4">
+                                <div class="d-flex justify-content-end gap-2">
+                                    <!-- Assign Users Button -->
+                                    <button class="btn btn-sm btn-light text-info border-0" title="Assegna Utenti"
+                                            th:data-id="${ruolo.id_ruolo}"
+                                            th:data-nome="${ruolo.nome}"
+                                            th:data-assigned-users="${ruolo.associazioni.![id_utente]}"
+                                            onclick="openAssignModal(this)">
+                                        <i class="bi bi-people-fill"></i>
+                                    </button>
+                                    <!-- Modify Button -->
+                                    <button class="btn btn-sm btn-light text-primary border-0" title="Modifica"
+                                            th:data-id="${ruolo.id_ruolo}"
+                                            th:data-nome="${ruolo.nome}"
+                                            th:data-colore="${ruolo.colore}"
+                                            th:data-descrizione="${ruolo.descrizione}"
+                                            onclick="openModifyRoleModal(this)">
+                                        <i class="bi bi-pencil"></i>
+                                    </button>
+                                    <!-- Delete Button -->
+                                    <button class="btn btn-sm btn-light text-danger border-0" title="Elimina"
+                                            th:data-id="${ruolo.id_ruolo}"
+                                            th:data-nome="${ruolo.nome}"
+                                            onclick="openDeleteRoleModal(this)">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(ruoli)}">
+                            <td colspan="5" class="text-center text-muted py-5">
+                                <i class="bi bi-shield-lock display-6 d-block mb-3 opacity-50"></i>
+                                <em>Nessun ruolo trovato.</em>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
