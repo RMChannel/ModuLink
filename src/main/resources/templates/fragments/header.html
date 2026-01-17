@@ -20,9 +20,28 @@
   </nav>
 
   <div class="header-buttons">
-    <a th:href="@{/login}" class="btn btn-outline">Login</a>
-    <a th:href="@{/register}" class="btn btn-solid">Registra Azienda</a>
+    <a th:href="@{/login}" class="btn btn-outline">
+      <span class="btn-text">Login</span>
+      <i class="bi bi-person-fill btn-icon"></i>
+    </a>
+    <a th:href="@{/register}" class="btn btn-solid">
+      <span class="btn-text">Registra Azienda</span>
+      <i class="bi bi-person-fill-add btn-icon"></i>
+    </a>
   </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const menuToggle = document.querySelector('.mobile-menu-toggle');
+      const navLinks = document.querySelector('.nav-links');
+
+      if (menuToggle && navLinks) {
+        menuToggle.addEventListener('click', function() {
+          navLinks.classList.toggle('active');
+        });
+      }
+    });
+  </script>
 </header>
 
 </body>

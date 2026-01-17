@@ -16,9 +16,15 @@
         <a href="#">Docs</a>
     </nav>
 
-    <div>
-        <a th:href="@{/login}" class="btn btn-outline">Login</a>
-        <a th:href="@{/register}" class="btn btn-solid">Registra Azienda</a>
+    <div class="header-buttons">
+        <a th:href="@{/login}" class="btn btn-outline">
+            <span class="btn-text">Login</span>
+            <i class="bi bi-person-fill btn-icon"></i>
+        </a>
+        <a th:href="@{/register}" class="btn btn-solid">
+            <span class="btn-text">Registra Azienda</span>
+            <i class="bi bi-person-fill-add btn-icon"></i>
+        </a>
     </div>
 </div>
 </body>

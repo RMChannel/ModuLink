@@ -92,7 +92,7 @@ h1, h2, h3, h4 {
 }
 
 /* Regola per il contenitore dei bottoni (l'ultimo div nell'header) */
-.site-header > div:last-child {
+.site-header .header-buttons {
     display: flex;
     align-items: center;
     gap: 10px; /* Spazio costante tra i bottoni */
@@ -118,8 +118,11 @@ h1, h2, h3, h4 {
 /* --- LINK DI NAVIGAZIONE --- */
 .nav-links { display: flex; gap: 40px; font-weight: bold; font-size: 16px; }
 .nav-links a { text-decoration: none; color: var(--text-secondary); transition: color 0.2s; }
-.nav-links a:hover { color: var(--color-primary); }
+    .nav-links a:hover { color: var(--color-primary); }
 
+/* Button Content Toggle (Desktop default) */
+.btn-icon { display: none; }
+.btn-text { display: inline; }
 /* =========================================
    5. SEZIONI HOMEPAGE
    ========================================= */
@@ -224,7 +227,55 @@ footer {
    ========================================= */
 
 @media (max-width: 900px) {
-    .nav-links { display: none; } /* Nasconde menu nav su tablet */
+    .mobile-menu-toggle {
+        display: block;
+        order: 3; /* Ensure it's on the right or positioned correctly */
+    }
+
+    .site-header {
+        position: relative; /* Needed for absolute positioning of nav */
+        flex-wrap: wrap;
+    }
+
+    .site-header .header-buttons {
+        margin-left: auto; /* Push buttons to the right */
+        margin-right: 15px;
+    }
+
+    .nav-links {
+        display: none;
+        width: 100%;
+        flex-direction: column;
+        background-color: var(--color-white);
+        position: absolute;
+        top: 100%;
+        left: 0;
+        padding: 20px;
+        box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+        gap: 15px;
+        border-bottom: 1px solid var(--border-color-light);
+        z-index: 999;
+    }
+
+    .nav-links.active {
+        display: flex;
+    }
+
+    .nav-links a {
+        display: block;
+        padding: 10px;
+        border-bottom: 1px solid var(--bg-light);
+        text-align: center;
+    }
+
+    .nav-links a:last-child {
+        border-bottom: none;
+    }
+    
+    /* Toggle buttons to icons on tablet/mobile */
+    .site-header .header-buttons .btn .btn-text { display: none; }
+    .site-header .header-buttons .btn .btn-icon { display: inline-block; font-size: 1.3rem; }
+    .site-header .header-buttons .btn { padding: 8px 12px; }
 }
 
 @media (max-width: 480px) {
@@ -238,13 +289,13 @@ footer {
 
     /* STILE SPECIFICO BOTTONI HEADER SU MOBILE */
     /* Li rende più piccoli per farli stare sulla stessa riga del logo */
-    .site-header > div:last-child .btn {
+    .site-header .header-buttons .btn {
         padding: 6px 12px;     /* Meno padding interno */
         font-size: 13px;       /* Testo leggermente più piccolo */
         white-space: nowrap;   /* Evita che il testo vada a capo */
     }
 
-    .site-header > div:last-child {
+    .site-header .header-buttons {
         gap: 8px; /* Gap ridotto tra i due bottoni */
     }
 
