@@ -104,4 +104,11 @@ public class AdminController extends ModuloController {
 
         return "redirect:/dashboard/admin/";
     }
+
+    //Modulo non disinstallabile
+    @Override
+    public void disinstallaModulo(AziendaEntity azienda) {
+        System.err.println("Modulo non disinstallabile");
+        return;
+    }
 }

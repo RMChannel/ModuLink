@@ -2,6 +2,7 @@ package com.modulink.Controller.UserModules.GDM;
 
 import com.modulink.Alert;
 import com.modulink.Controller.ModuloController;
+import com.modulink.Model.Azienda.AziendaEntity;
 import com.modulink.Model.Modulo.ModuloService;
 import com.modulink.Model.Prodotto.ProdottoEntity;
 import com.modulink.Model.Prodotto.ProdottoID;
@@ -151,5 +152,10 @@ public class GDMController extends ModuloController {
             }
         }
         else return "redirect:/";
+    }
+
+    @Override
+    public void disinstallaModulo(AziendaEntity azienda) {
+        prodottoService.deleteAllByAzienda(azienda);
     }
 }

@@ -254,4 +254,11 @@ public class GDUController extends ModuloController {
             return "redirect:/";
         }
     }
+
+    //Modulo non disinstallabile
+    @Override
+    public void disinstallaModulo(AziendaEntity azienda) {
+        System.err.println("Modulo non disinstallabile");
+        return;
+    }
 }

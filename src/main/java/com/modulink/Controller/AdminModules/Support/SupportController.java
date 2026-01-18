@@ -2,6 +2,7 @@ package com.modulink.Controller.AdminModules.Support;
 
 import com.modulink.Alert;
 import com.modulink.Controller.ModuloController;
+import com.modulink.Model.Azienda.AziendaEntity;
 import com.modulink.Model.Modulo.ModuloService;
 import com.modulink.Model.SupportForm.SupportFormEntity;
 import com.modulink.Model.SupportForm.SupportFormService;
@@ -63,5 +64,12 @@ public class SupportController extends ModuloController {
             return "redirect:/dashboard/support"+ Alert.success("Messaggio cancellato con successo");
         }
         else return "redirect:/";
+    }
+
+    //Modulo non disinstallabile
+    @Override
+    public void disinstallaModulo(AziendaEntity azienda) {
+        System.err.println("Modulo non disinstallabile");
+        return;
     }
 }

@@ -1,6 +1,7 @@
 package com.modulink.Controller.UserModules.GRU;
 
 import com.modulink.Controller.ModuloController;
+import com.modulink.Model.Azienda.AziendaEntity;
 import com.modulink.Model.Modulo.ModuloService;
 import com.modulink.Model.Ruolo.RuoloEntity;
 import com.modulink.Model.Ruolo.RuoloService;
@@ -169,5 +170,12 @@ public class GRUController extends ModuloController {
         else {
             return "redirect:/dashboard/gru";
         }
+    }
+
+    //Modulo non disinstallabile
+    @Override
+    public void disinstallaModulo(AziendaEntity azienda) {
+        System.err.println("Modulo non disinstallabile");
+        return;
     }
 }

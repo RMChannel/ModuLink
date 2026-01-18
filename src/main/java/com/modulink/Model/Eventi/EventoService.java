@@ -45,4 +45,11 @@ public class EventoService {
     public void update(EventoEntity evento) {
         eventoRepository.save(evento);
     }
+
+    @Transactional
+    public void deleteAllByAzienda(AziendaEntity aziendaEntity) {
+        System.out.println("Eliminazione eventi");
+        eventoRepository.deleteAllByAzienda(aziendaEntity);
+        eventoRepository.flush();
+    }
 }

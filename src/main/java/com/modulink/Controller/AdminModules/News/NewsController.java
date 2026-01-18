@@ -2,6 +2,7 @@ package com.modulink.Controller.AdminModules.News;
 
 import com.modulink.Alert;
 import com.modulink.Controller.ModuloController;
+import com.modulink.Model.Azienda.AziendaEntity;
 import com.modulink.Model.Modulo.ModuloService;
 import com.modulink.Model.News.NewsEntity;
 import com.modulink.Model.News.NewsService;
@@ -72,5 +73,12 @@ public class NewsController extends ModuloController {
             return "redirect:/dashboard/news"+ Alert.success("News cancellata con successo");
         }
         else return "redirect:/";
+    }
+
+    //Modulo non disinstallabile
+    @Override
+    public void disinstallaModulo(AziendaEntity azienda) {
+        System.err.println("Modulo non disinstallabile");
+        return;
     }
 }

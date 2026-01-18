@@ -18,4 +18,6 @@ public interface PertinenzaRepository extends JpaRepository<PertinenzaEntity, Pe
     List<ModuloEntity> findModuliByRuoloId(@Param("idRuolo") int idRuolo, @Param("idAzienda") int idAzienda);
 
     List<PertinenzaEntity> findAllByAttivazione(AttivazioneEntity attivazione);
+
+    void removeByAttivazione(AttivazioneEntity attivazione);
 }

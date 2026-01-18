@@ -2,6 +2,7 @@ package com.modulink.Controller.UserModules.GMA.Store;
 
 import com.modulink.Alert;
 import com.modulink.Controller.ModuloController;
+import com.modulink.Model.Azienda.AziendaEntity;
 import com.modulink.Model.Modulo.ModuloEntity;
 import com.modulink.Model.Modulo.ModuloService;
 import com.modulink.Model.Relazioni.Attivazione.AttivazioneService;
@@ -24,12 +25,16 @@ public class StoreController extends ModuloController {
     private final CustomUserDetailsService customUserDetailsService;
     private final AttivazioneService attivazioneService;
     private final SupportFormService supportFormService;
+    private final List<ModuloController> moduloControllers;
+    private final ModuloService moduloService;
 
-    public StoreController(CustomUserDetailsService customUserDetailsService, AttivazioneService attivazioneService, ModuloService moduloService, SupportFormService supportFormService) {
+    public StoreController(CustomUserDetailsService customUserDetailsService, AttivazioneService attivazioneService, ModuloService moduloService, SupportFormService supportFormService, List<ModuloController> moduloControllers) {
         super(moduloService,9999);
+        this.moduloService = moduloService;
         this.customUserDetailsService = customUserDetailsService;
         this.attivazioneService = attivazioneService;
         this.supportFormService = supportFormService;
+        this.moduloControllers = moduloControllers;
     }
 
     @GetMapping({"/dashboard/store/", "/dashboard/store"})
@@ -37,7 +42,9 @@ public class StoreController extends ModuloController {
         Optional<UtenteEntity> utenteOpt = customUserDetailsService.findByEmail(principal.getName());
         if(isAccessibleModulo(utenteOpt)) {
             List<ModuloEntity> moduliNonAcquistati = attivazioneService.getNotPurchased(utenteOpt.get().getAzienda());
+            List<ModuloEntity> moduliAcquistati = attivazioneService.getAllPurchased(utenteOpt.get().getAzienda());
             model.addAttribute("moduliNon", moduliNonAcquistati);
+            model.addAttribute("moduliAcquistati", moduliAcquistati);
             return "moduli/gma/store/StoreModuli";
         }
         else return "redirect:/";
@@ -52,6 +59,28 @@ public class StoreController extends ModuloController {
             else return "redirect:/dashboard/store" + Alert.error("Errore durante l'acquisto del modulo.");
         }
         return "redirect:/";
+    }
+
+    @PostMapping("dashboard/store/uninstall")
+    public String uninstallModule(@RequestParam("moduloId") int moduloId, Principal principal) {
+        Optional<UtenteEntity> utenteOpt = customUserDetailsService.findByEmail(principal.getName());
+        if(isAccessibleModulo(utenteOpt)) {
+            UtenteEntity utente=utenteOpt.get();
+            ModuloEntity modulo=moduloService.getModuloById(moduloId);
+            if(modulo==null) return "redirect:/dashboard/store"+Alert.error("Modulo non trovato.");
+            else if(!modulo.isVisible()) return "redirect:/dashboard/store"+Alert.error("Non è possibile disinstallare questo modulo.");
+            if(attivazioneService.sellModulo(utente.getAzienda(), moduloId)) {
+                for (ModuloController controller : moduloControllers) {
+                    if (controller.getId() == moduloId) {
+                        controller.disinstallaModulo(utente.getAzienda());
+                        break;
+                    }
+                }
+                return "redirect:/dashboard/store"+Alert.success("Modulo rimosso con successo!");
+            }
+            else return "redirect:/dashboard/store"+Alert.error("Errore durante la rimozione del modulo.");
+        }
+        else return "redirect:/";
     }
 
     @GetMapping({"/dashboard/store/request","/dashboard/store/request/"})
@@ -72,5 +101,12 @@ public class StoreController extends ModuloController {
             return "redirect:/dashboard/store/request"+Alert.success("Richiesta inviata con successo!");
         }
         else return "redirect:/";
+    }
+
+    @Override
+    //Modulo non disinstallabile
+    public void disinstallaModulo(AziendaEntity azienda) {
+        System.err.println("Modulo non disinstallabile");
+        return;
     }
 }

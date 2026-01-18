@@ -299,6 +299,11 @@ public class EventoController extends ModuloController {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public void disinstallaModulo(AziendaEntity azienda) {
+        return;
+    }
+
     // Record DTO per inviare eventi
     public record EventoDTO(int id_evento, String nome, String luogo, LocalDateTime data_ora_inizio, LocalDateTime data_fine) {}
     public record UpdateEventoRequest(int id, String nome, String luogo, LocalDateTime inizio, LocalDateTime fine, List<Integer> partecipanti){}

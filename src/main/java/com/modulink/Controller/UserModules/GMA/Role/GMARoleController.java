@@ -1,6 +1,7 @@
 package com.modulink.Controller.UserModules.GMA.Role;
 
 import com.modulink.Controller.ModuloController;
+import com.modulink.Model.Azienda.AziendaEntity;
 import com.modulink.Model.Modulo.ModuloService;
 import com.modulink.Model.Ruolo.RuoloEntity;
 import com.modulink.Model.Ruolo.RuoloNotFoundException;
@@ -74,5 +75,12 @@ public class GMARoleController extends ModuloController {
         else {
             return "redirect:/";
         }
+    }
+
+    //Modulo non disinstallabile
+    @Override
+    public void disinstallaModulo(AziendaEntity azienda) {
+        System.err.println("Modulo non disinstallabile");
+        return;
     }
 }

@@ -1,11 +1,12 @@
 package com.modulink.Controller;
 
+import com.modulink.Model.Azienda.AziendaEntity;
 import com.modulink.Model.Modulo.ModuloService;
 import com.modulink.Model.Utente.UtenteEntity;
 
 import java.util.Optional;
 
-public class ModuloController {
+public abstract class ModuloController {
     private int id;
     private final ModuloService moduloService;
 
@@ -27,4 +28,6 @@ public class ModuloController {
     public void setId(int id) {
         this.id = id;
     }
+
+    public abstract void disinstallaModulo(AziendaEntity azienda);
 }

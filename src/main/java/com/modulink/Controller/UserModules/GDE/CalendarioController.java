@@ -1,6 +1,7 @@
 package com.modulink.Controller.UserModules.GDE;
 
 import com.modulink.Controller.ModuloController;
+import com.modulink.Model.Azienda.AziendaEntity;
 import com.modulink.Model.Eventi.EventoEntity;
 import com.modulink.Model.Eventi.EventoService;
 import com.modulink.Model.Modulo.ModuloService;
@@ -42,5 +43,10 @@ public class CalendarioController extends ModuloController {
         model.addAttribute("eventi", eventi != null ? eventi : new ArrayList<EventoEntity>());
 
         return "moduli/gde/calendario";
+    }
+
+    @Override
+    public void disinstallaModulo(AziendaEntity azienda) {
+        eventoService.deleteAllByAzienda(azienda);
     }
 }
