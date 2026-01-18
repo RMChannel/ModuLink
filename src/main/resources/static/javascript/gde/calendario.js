@@ -222,12 +222,22 @@ function renderView() {
     else renderMonthView();
 }
 
-// WEEK VIEW
+// WEEK VIEW DISPATCHER
 function renderWeekView() {
+    if (window.innerWidth <= 768) {
+        renderMobileWeekView();
+    } else {
+        renderDesktopWeekView();
+    }
+}
+
+// DESKTOP WEEK VIEW (Original Logic)
+function renderDesktopWeekView() {
     const weekBody = document.querySelector('.week-body');
     const headerContainer = document.querySelector('.week-header');
-    if (!weekBody) return;
+    if (!weekBody || !headerContainer) return;
 
+    headerContainer.style.display = 'flex'; // Ensure visible on desktop
     headerContainer.innerHTML = '<div class="time-column-header"></div>';
     weekBody.innerHTML = '';
 
@@ -289,8 +299,102 @@ function renderWeekView() {
     content.append(timeGrid, eventsGrid);
     weekBody.appendChild(content);
 
-    // Setup scroll sync per mobile
+    // Setup scroll sync (unused on desktop typically, but kept for logic consistency)
     setupWeekViewScrollSync();
+}
+
+// MOBILE WEEK VIEW (New Logic)
+function renderMobileWeekView() {
+    const weekBody = document.querySelector('.week-body');
+    const headerContainer = document.querySelector('.week-header');
+    if (!weekBody) return;
+
+    if (headerContainer) headerContainer.style.display = 'none'; // Hide desktop header
+    weekBody.innerHTML = '';
+
+    const content = document.createElement('div');
+    content.className = 'week-mobile-content';
+
+    // 1. Day Selector Strip
+    const daySelector = document.createElement('div');
+    daySelector.className = 'mobile-day-selector';
+    
+    const startOfWeek = getStartOfWeek(currentDate);
+    
+    for (let i = 0; i < 7; i++) {
+        const d = new Date(startOfWeek);
+        d.setDate(d.getDate() + i);
+        
+        const isSelected = isSameDay(d, currentDate);
+        const isToday = isSameDay(d, new Date());
+        
+        const dayEl = document.createElement('div');
+        dayEl.className = `mobile-day ${isSelected ? 'active' : ''} ${isToday ? 'today-indicator' : ''}`;
+        dayEl.innerHTML = `
+            <span class="m-day-num">${d.getDate()}</span>
+            <span class="m-day-name">${d.toLocaleDateString('it-IT', { weekday: 'short' }).toUpperCase()}</span>
+        `;
+        
+        dayEl.onclick = () => {
+            currentDate = d;
+            renderView(); // Re-render to update selection and timeline
+        };
+        
+        daySelector.appendChild(dayEl);
+    }
+    
+    // 2. Timeline Area
+    const timelineContainer = document.createElement('div');
+    timelineContainer.className = 'mobile-timeline-container';
+    
+    // Time labels column
+    const timeCol = document.createElement('div');
+    timeCol.className = 'mobile-time-col';
+    for (let i = 0; i < 24; i++) {
+        timeCol.innerHTML += `<div class="mobile-time-slot">${i.toString().padStart(2, '0')}:00</div>`;
+    }
+    
+    // Events column
+    const eventsCol = document.createElement('div');
+    eventsCol.className = 'mobile-events-col';
+    
+    // Background lines
+    for (let i = 0; i < 24; i++) {
+        eventsCol.innerHTML += `<div class="mobile-grid-line"></div>`;
+    }
+    
+    // Click listener to create event
+    eventsCol.addEventListener('click', (e) => {
+        if (e.target.closest('.week-event')) return;
+        const rect = eventsCol.getBoundingClientRect();
+        // Since the container scrolls, we use e.clientY relative to the top of the element, which includes scroll offset effectively
+        // BUT getBoundingClientRect().top changes as we scroll.
+        // The click Y relative to the element top is (e.clientY - rect.top).
+        const clickY = e.clientY - rect.top;
+        const mins = Math.floor((clickY / 60) * 60);
+        const rounded = Math.round(mins / 30) * 30;
+        openCreateEventModal(currentDate, Math.floor(rounded / 60), rounded % 60);
+    });
+
+    // Render events
+    const dayEvents = eventsData.filter(e => isEventActiveInDay(e, currentDate));
+    layoutDayEvents(dayEvents, eventsCol, currentDate);
+    
+    // Current Time Line (Managed in updateCurrentTimeLine generally, but added here for immediate render)
+    // We let updateCurrentTimeLine handle it to avoid duplication logic, but call it.
+
+    timelineContainer.append(timeCol, eventsCol);
+    
+    content.append(daySelector, timelineContainer);
+    weekBody.appendChild(content);
+
+    // Ensure scroll to 9AM or current time
+    setTimeout(() => {
+        const now = new Date();
+        const hour = now.getHours();
+        const scrollY = (hour > 2 ? hour - 1 : 0) * 60;
+        timelineContainer.scrollTop = scrollY;
+    }, 0);
 }
 
 function layoutDayEvents(events, container, currentDay) {
@@ -636,9 +740,10 @@ function addLongPressListener(el, callback) {
     el.addEventListener('touchmove', () => clearTimeout(timer));
 }
 
-// SCROLL SYNC FOR MOBILE WEEK VIEW
+// SCROLL SYNC FOR DESKTOP WEEK VIEW
 function setupWeekViewScrollSync() {
-    if (window.innerWidth > 768) return;
+    // Only needed for desktop or when header and body are separate
+    if (window.innerWidth <= 768) return; // Mobile uses single view, no sync needed
 
     const weekHeader = document.querySelector('.week-header');
     const weekBody = document.querySelector('.week-body');
@@ -671,7 +776,7 @@ function syncHeaderScroll(e) {
 // Responsive listener
 window.addEventListener('resize', () => {
     if (currentView === 'week') {
-        setupWeekViewScrollSync();
+        renderView(); // Full re-render to switch between mobile and desktop layouts
     }
 });
 
@@ -1014,15 +1119,30 @@ function updateCurrentTimeLine() {
     document.querySelector('.current-time-line')?.remove();
     if (currentView !== 'week') return;
     const now = new Date();
-    const start = getStartOfWeek(currentDate);
-    const diff = now - start;
-    if (diff >= 0 && diff < 604800000) {
-        const col = document.querySelectorAll('.day-column')[Math.floor(diff / 86400000)];
-        if (col) {
-            const l = document.createElement('div');
-            l.className = 'current-time-line';
-            l.style.top = `${(now.getHours() + now.getMinutes() / 60) * 60}px`;
-            col.appendChild(l);
+    
+    // Logic for mobile view (only show if selected day is today)
+    if (window.innerWidth <= 768) {
+        if (isSameDay(currentDate, now)) {
+            const container = document.querySelector('.mobile-events-col');
+            if (container) {
+                const l = document.createElement('div');
+                l.className = 'current-time-line mobile'; 
+                l.style.top = `${(now.getHours() + now.getMinutes() / 60) * 60}px`;
+                container.appendChild(l);
+            }
+        }
+    } else {
+        // Desktop Logic
+        const start = getStartOfWeek(currentDate);
+        const diff = now - start;
+        if (diff >= 0 && diff < 604800000) {
+            const col = document.querySelectorAll('.day-column')[Math.floor(diff / 86400000)];
+            if (col) {
+                const l = document.createElement('div');
+                l.className = 'current-time-line';
+                l.style.top = `${(now.getHours() + now.getMinutes() / 60) * 60}px`;
+                col.appendChild(l);
+            }
         }
     }
 }
