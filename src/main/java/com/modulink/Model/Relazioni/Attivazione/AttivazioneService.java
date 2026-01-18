@@ -44,6 +44,7 @@ public class AttivazioneService {
         attivazioni.add(new AttivazioneEntity(moduloRepository.getReferenceById(1),aziendaEntity));
         attivazioni.add(new AttivazioneEntity(moduloRepository.getReferenceById(2),aziendaEntity));
         attivazioni.add(new AttivazioneEntity(moduloRepository.getReferenceById(3),aziendaEntity));
+        attivazioni.add(new AttivazioneEntity(moduloRepository.getReferenceById(9999),aziendaEntity));
 
         attivazioneRepository.saveAll(attivazioni);
     }

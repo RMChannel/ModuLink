@@ -41,7 +41,7 @@ public class GDUController extends ModuloController {
     private final String senderEmail;
     private final EmailService emailService;
 
-    public GDUController(ModuloService moduloService, CustomUserDetailsService customUserDetailsService, RuoloService ruoloService, AssociazioneService associazioneService, @Value("${spring.mail.username}") String senderEmail, EmailService emailService) {
+    public GDUController(ModuloService moduloService, CustomUserDetailsService customUserDetailsService, RuoloService ruoloService, AssociazioneService associazioneService, @Value("${spring.mail.properties.mail.smtp.from}") String senderEmail, EmailService emailService) {
         super(moduloService, 0);
         this.customUserDetailsService=customUserDetailsService;
         this.ruoloService=ruoloService;
@@ -147,6 +147,7 @@ public class GDUController extends ModuloController {
             message.setTo(newUserForm.getEmail());
             message.setSubject("Benvenuto in "+azienda.getNome()+" "+newUserForm.getNome()+" "+newUserForm.getCognome());
             message.setText("Benvenuto "+newUserForm.getNome()+" "+newUserForm.getCognome()+" in "+azienda.getNome()+"!!!\nSei stato appena registrato alla piattaforma Modulink, per entrare utilizza questa password: "+tempPassword+"\n\nUna volta effettuato il 1°login potrai modificare la tua password con una tua personale");
+            emailService.sendEmail(message);
 
             //Aggiungo l'utente alla lista degli utenti salvati prima così da poterli mostrare in grafica post-richiesta (Altrimenti la persistence non ha il tempo di salvare, separando le richieste si risolve il problema)
             utenti.add(newUser);
