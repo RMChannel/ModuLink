@@ -328,6 +328,11 @@ public class UtenteEntity {
             }
         }
     }
+
+    public void defaultRoles(RuoloEntity ruolo) {
+        associazioni.clear();
+        addRuolo(ruolo);
+    }
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
