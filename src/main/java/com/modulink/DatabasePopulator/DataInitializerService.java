@@ -105,10 +105,10 @@ public class DataInitializerService {
         // --- CREAZIONE EVENTI DI PROVA ---
         LocalDateTime now = LocalDateTime.now();
         
-        EventoEntity evento1 = new EventoEntity(0, azienda, "Riunione Staff", "Sala Riunioni A", now.plusHours(2), now.plusHours(4), utente);
-        EventoEntity evento2 = new EventoEntity(1, azienda, "Pranzo Aziendale", "Ristorante 'Da Mario'", now.plusDays(1).withHour(13).withMinute(0), now.plusDays(1).withHour(15).withMinute(0), utente);
-        EventoEntity evento3 = new EventoEntity(2, azienda, "Corso Formazione", "Online", now.minusDays(1).withHour(10).withMinute(0), now.minusDays(1).withHour(12).withMinute(0), utente);
-        EventoEntity evento4 = new EventoEntity(3, azienda, "Brainstorming", "Ufficio", now.withHour(9).withMinute(0), now.withHour(11).withMinute(0), utente); // Oggi
+        EventoEntity evento1 = new EventoEntity(0, azienda, "Riunione Staff", "Sala Riunioni A", now.plusHours(2), now.plusHours(4));
+        EventoEntity evento2 = new EventoEntity(1, azienda, "Pranzo Aziendale", "Ristorante 'Da Mario'", now.plusDays(1).withHour(13).withMinute(0), now.plusDays(1).withHour(15).withMinute(0));
+        EventoEntity evento3 = new EventoEntity(2, azienda, "Corso Formazione", "Online", now.minusDays(1).withHour(10).withMinute(0), now.minusDays(1).withHour(12).withMinute(0));
+        EventoEntity evento4 = new EventoEntity(3, azienda, "Brainstorming", "Ufficio", now.withHour(9).withMinute(0), now.withHour(11).withMinute(0)); // Oggi
 
         eventoRepository.save(evento1);
         eventoRepository.save(evento2);
