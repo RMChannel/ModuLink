@@ -74,14 +74,14 @@ public class DataInitializerService {
 
         ModuloEntity GDU = new ModuloEntity(0, "Gestione Utenti", "Permette la gestione di tutti gli utenti della propria azienda", "/dashboard/gdu/", "bi bi-person-lines-fill");
         ModuloEntity GDR = new ModuloEntity(1, "Gestione Ruoli", "Permette la gestione e l'assegnazione dei ruoli", "/dashboard/gdr/", "bi bi-award-fill");
-        ModuloEntity GDM = new ModuloEntity(2, "Gestione Moduli", "Permette la gestione di tutti i moduli integrati nella propria azienda","/dashboard/gdm/","bi bi-database-gear");
+        ModuloEntity GMA = new ModuloEntity(2, "Gestione Moduli", "Permette la gestione di tutti i moduli integrati nella propria azienda","/dashboard/gma/","bi bi-database-gear");
         ModuloEntity store = new ModuloEntity(3,"Store","Store dei moduli","/dashboard/store/","bi bi-cart-dash");
         ModuloEntity calendario = new ModuloEntity(4,"Calendario", "Permette di organizzare e creare eventi", "/dashboard/calendar", "bi bi-calendar");
         ModuloEntity GTM = new ModuloEntity(5,"Gestione Task", "Permette di gestire le tasche degli utenti", "/dashboard/gtm/", "bi bi-clipboard-data");
 
         GDU = moduloRepository.save(GDU);
         GDR = moduloRepository.save(GDR);
-        GDM = moduloRepository.save(GDM);
+        GMA = moduloRepository.save(GMA);
         store = moduloRepository.save(store);
         calendario = moduloRepository.save(calendario);
         GTM = moduloRepository.save(GTM);
@@ -89,7 +89,7 @@ public class DataInitializerService {
         // Ora azienda e modulo sono MANAGED nella stessa transazione
         attivazioneRepository.save(new AttivazioneEntity(GDU, azienda));
         attivazioneRepository.save(new AttivazioneEntity(GDR, azienda));
-        attivazioneRepository.save(new AttivazioneEntity(GDM, azienda));
+        attivazioneRepository.save(new AttivazioneEntity(GMA, azienda));
         attivazioneRepository.save(new AttivazioneEntity(store, azienda));
         attivazioneRepository.save(new AttivazioneEntity(calendario, azienda));
         attivazioneRepository.save(new AttivazioneEntity(GTM, azienda));
@@ -97,7 +97,7 @@ public class DataInitializerService {
 
         affiliazioneRepository.save(new AffiliazioneEntity(ruoloResponsabile.getId_ruolo(),GDU.getId_modulo(),azienda.getId_azienda()));
         affiliazioneRepository.save(new AffiliazioneEntity(ruoloResponsabile.getId_ruolo(),GDR.getId_modulo(),azienda.getId_azienda()));
-        affiliazioneRepository.save(new AffiliazioneEntity(ruoloResponsabile.getId_ruolo(),GDM.getId_modulo(),azienda.getId_azienda()));
+        affiliazioneRepository.save(new AffiliazioneEntity(ruoloResponsabile.getId_ruolo(),GMA.getId_modulo(),azienda.getId_azienda()));
         affiliazioneRepository.save(new AffiliazioneEntity(ruoloResponsabile.getId_ruolo(),store.getId_modulo(),azienda.getId_azienda()));
         affiliazioneRepository.save(new AffiliazioneEntity(ruoloResponsabile.getId_ruolo(),calendario.getId_modulo(),azienda.getId_azienda()));
         affiliazioneRepository.save(new AffiliazioneEntity(ruoloResponsabile.getId_ruolo(),GTM.getId_modulo(),azienda.getId_azienda()));
