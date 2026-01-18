@@ -22,7 +22,71 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
+
+    // --- LIVE PREVIEW FOR MODIFY MODAL ---
+    setupLivePreview('modifyNome', 'modifyColore', 'rolePreviewBadge', 'modifyModalColorStrip', 'modifyColoreHex', 'modifyModalIcon');
+    
+    // --- LIVE PREVIEW FOR ADD MODAL ---
+    setupLivePreview('addNome', 'addColore', 'addRolePreviewBadge', 'addModalColorStrip', 'addColoreHex', 'addModalIcon');
 });
+
+/**
+ * Sets up live preview for a modal's role badge
+ */
+function setupLivePreview(nomeId, coloreId, badgeId, stripId, hexId, iconId) {
+    const nomeInput = document.getElementById(nomeId);
+    const coloreInput = document.getElementById(coloreId);
+    const badge = document.getElementById(badgeId);
+    const strip = document.getElementById(stripId);
+    const hexInput = document.getElementById(hexId);
+    const icon = document.getElementById(iconId);
+
+    if (nomeInput && badge) {
+        nomeInput.addEventListener('input', function() {
+            badge.textContent = this.value || (nomeId.startsWith('add') ? 'Nuovo Ruolo' : 'Ruolo');
+        });
+    }
+
+    if (coloreInput) {
+        coloreInput.addEventListener('input', function() {
+            const color = this.value;
+            updateModalVisuals(color, badge, strip, hexInput, icon);
+        });
+        
+        // Initial sync for add modal or if values are pre-filled
+        if (coloreInput.value) {
+            updateModalVisuals(coloreInput.value, badge, strip, hexInput, icon);
+        }
+    }
+}
+
+/**
+ * Updates the visual elements of a modal based on a color
+ */
+function updateModalVisuals(color, badge, strip, hexInput, icon) {
+    if (badge) {
+        badge.style.backgroundColor = color;
+        badge.style.color = getContrastYIQ(color);
+    }
+    if (strip) strip.style.backgroundColor = color;
+    if (hexInput) hexInput.value = color.toUpperCase();
+    if (icon) {
+        icon.style.borderColor = color;
+        icon.style.color = color;
+    }
+}
+
+/**
+ * Helper to determine if text should be black or white based on background color
+ */
+function getContrastYIQ(hexcolor){
+    hexcolor = hexcolor.replace("#", "");
+    var r = parseInt(hexcolor.substr(0,2),16);
+    var g = parseInt(hexcolor.substr(2,2),16);
+    var b = parseInt(hexcolor.substr(4,2),16);
+    var yiq = ((r*299)+(g*587)+(b*114))/1000;
+    return (yiq >= 128) ? 'black' : 'white';
+}
 
 /**
  * Opens the "Modify Role" modal and populates it with data.
@@ -31,13 +95,23 @@ document.addEventListener('DOMContentLoaded', function() {
 function openModifyRoleModal(element) {
     const id = element.getAttribute('data-id');
     const nome = element.getAttribute('data-nome');
-    const colore = element.getAttribute('data-colore');
+    const colore = element.getAttribute('data-colore') || '#634BFF';
     const descrizione = element.getAttribute('data-descrizione');
 
     document.getElementById('modifyId').value = id;
     document.getElementById('modifyNome').value = nome;
     document.getElementById('modifyColore').value = colore;
+    document.getElementById('modifyColoreHex').value = colore.toUpperCase();
     document.getElementById('modifyDescrizione').value = descrizione;
+
+    // Update Live Preview Initial State
+    const badge = document.getElementById('rolePreviewBadge');
+    const strip = document.getElementById('modifyModalColorStrip');
+    const hexInput = document.getElementById('modifyColoreHex');
+    const icon = document.getElementById('modifyModalIcon');
+
+    if (badge) badge.textContent = nome;
+    updateModalVisuals(colore, badge, strip, hexInput, icon);
 
     const modal = new bootstrap.Modal(document.getElementById('modifyRoleModal'));
     modal.show();
