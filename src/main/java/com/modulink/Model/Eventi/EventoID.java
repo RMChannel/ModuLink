@@ -6,13 +6,13 @@ import java.util.Objects;
 public class EventoID implements Serializable {
 
     private int id_evento;
-    private int azienda;
+    private int id_azienda;
 
     public EventoID() {}
 
-    public EventoID(int id_evento, int azienda) {
+    public EventoID(int id_evento, int id_azienda) {
         this.id_evento = id_evento;
-        this.azienda = azienda;
+        this.id_azienda = id_azienda;
     }
 
     @Override
@@ -20,12 +20,12 @@ public class EventoID implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         EventoID eventoID = (EventoID) o;
-        return id_evento == eventoID.id_evento && azienda == eventoID.azienda;
+        return id_evento == eventoID.id_evento && id_azienda == eventoID.id_azienda;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id_evento, azienda);
+        return Objects.hash(id_evento, id_azienda);
     }
 
     public int getId_evento() {
@@ -36,11 +36,11 @@ public class EventoID implements Serializable {
         this.id_evento = id_evento;
     }
 
-    public int getAzienda() {
-        return azienda;
+    public int getId_azienda() {
+        return id_azienda;
     }
 
-    public void setAzienda(int azienda) {
-        this.azienda = azienda;
+    public void setId_azienda(int id_azienda) {
+        this.id_azienda = id_azienda;
     }
 }

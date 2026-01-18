@@ -56,7 +56,8 @@ public class EventoController {
                 request.nome(),
                 request.luogo(),
                 request.inizio(),
-                request.fine()
+                request.fine(),
+                currentUser
         );
 
         eventoService.create(evento);
