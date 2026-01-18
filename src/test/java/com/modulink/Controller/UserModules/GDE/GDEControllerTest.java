@@ -1,6 +1,7 @@
 package com.modulink.Controller.UserModules.GDE;
 
 import com.modulink.Model.Azienda.AziendaEntity;
+import com.modulink.Model.Eventi.EventoEntity;
 import com.modulink.Model.Eventi.EventoRepository;
 import com.modulink.Model.Eventi.EventoService;
 import com.modulink.Model.Modulo.ModuloService;
@@ -90,6 +91,12 @@ public class GDEControllerTest {
         when(customUserDetailsService.findByEmail("robbencito@gmail.com")).thenReturn(Optional.of(testUtente));
         when(moduloService.isAccessibleModulo(eq(4), any(UtenteEntity.class))).thenReturn(true);
         when(moduloService.findModuliByUtente(any(UtenteEntity.class))).thenReturn(new ArrayList<>());
+
+        when(eventoService.create(any(EventoEntity.class))).thenAnswer(invocation -> {
+            EventoEntity e = invocation.getArgument(0);
+            e.setId_evento(1);
+            return e;
+        });
     }
 
     /**
