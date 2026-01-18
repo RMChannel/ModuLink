@@ -72,7 +72,7 @@ jobs:
           DB_PASS: ${{ secrets.DB_PASS }}
           MAIL: ${{ secrets.MAIL }}
           PASSWORD_MAIL: ${{ secrets.PASSWORD_MAIL }}
-        run: mvn -B test -Dtest=com.modulink.Controller.Register.RegisterControllerTest
+        run: mvn -B test -Dtest=com.modulink.Controller.Register.RegisterControllerTest -Dactivate.databasepop=false -Dspring.jpa.hibernate.ddl-auto=update
 
       # 4. Pubblica Report dei Test (Grafico)
       - name: Publish Test Report
@@ -111,7 +111,7 @@ jobs:
           DB_PASS: ${{ secrets.DB_PASS }}
           MAIL: ${{ secrets.MAIL }}
           PASSWORD_MAIL: ${{ secrets.PASSWORD_MAIL }}
-        run: mvn -B test -Dtest=com.modulink.Controller.UserModules.GTM.GTMControllerTest
+        run: mvn -B test -Dtest=com.modulink.Controller.UserModules.GTM.GTMControllerTest -Dactivate.databasepop=false -Dspring.jpa.hibernate.ddl-auto=update
 
       # 4. Pubblica Report dei Test (Grafico)
       - name: Publish Test Report
@@ -150,7 +150,7 @@ jobs:
           DB_PASS: ${{ secrets.DB_PASS }}
           MAIL: ${{ secrets.MAIL }}
           PASSWORD_MAIL: ${{ secrets.PASSWORD_MAIL }}
-        run: mvn -B test -Dtest=com.modulink.Controller.UserModules.GDE.GDEControllerTest
+        run: mvn -B test -Dtest=com.modulink.Controller.UserModules.GDE.GDEControllerTest -Dactivate.databasepop=false -Dspring.jpa.hibernate.ddl-auto=update
 
       # 4. Pubblica Report dei Test (Grafico)
       - name: Publish Test Report
@@ -189,7 +189,7 @@ jobs:
           DB_PASS: ${{ secrets.DB_PASS }}
           MAIL: ${{ secrets.MAIL }}
           PASSWORD_MAIL: ${{ secrets.PASSWORD_MAIL }}
-        run: mvn -B test -Dtest=com.modulink.Controller.UserModules.GDM.GDMControllerTest
+        run: mvn -B test -Dtest=com.modulink.Controller.UserModules.GDM.GDMControllerTest -Dactivate.databasepop=false -Dspring.jpa.hibernate.ddl-auto=update
 
       # 4. Pubblica Report dei Test (Grafico)
       - name: Publish Test Report
