@@ -24,6 +24,7 @@ public class PertinenzaService {
         affiliazioni.add(new PertinenzaEntity(0,1,aziendaEntity.getId_azienda()));
         affiliazioni.add(new PertinenzaEntity(0,2,aziendaEntity.getId_azienda()));
         affiliazioni.add(new PertinenzaEntity(0,3,aziendaEntity.getId_azienda()));
+        affiliazioni.add(new PertinenzaEntity(0,9999,aziendaEntity.getId_azienda()));
 
         pertinenzaRepository.saveAll(affiliazioni);
     }
