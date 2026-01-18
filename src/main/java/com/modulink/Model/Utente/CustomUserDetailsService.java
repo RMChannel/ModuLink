@@ -185,4 +185,10 @@ public class CustomUserDetailsService implements UserDetailsService {
         }
         return utenti;
     }
+
+    public UtenteEntity getByID(int id, int id_azienda) throws UserNotFoundException {
+        Optional<UtenteEntity> utenteOpt=userRepository.findById(new UtenteID(id,id_azienda));
+        if(utenteOpt.isEmpty()) throw new UserNotFoundException();
+        return utenteOpt.get();
+    }
 }
