@@ -695,7 +695,7 @@ function handleContextMenu(e, date) {
         checkDate.setHours(0, 0, 0, 0);
 
         if (checkDate < now) {
-            alert("Non puoi creare eventi nel passato.");
+            showToast("Non puoi creare eventi nel passato.", "danger");
         } else {
             openCreateEventModal(date, 9, 0);
         }
@@ -839,10 +839,12 @@ function saveEvent() {
                 alertBox.classList.remove('d-none');
                 return;
             }
-            if (data.status === 'success') {
-                bootstrap.Modal.getInstance(document.getElementById('createEventModal')).hide();
-                setTimeout(() => fetchEvents(), 300);
-            }
+                    if (data.status === 'success') {
+                        bootstrap.Modal.getInstance(document.getElementById('createEventModal')).hide();
+                        showToast('Evento creato con successo', 'success');
+                        setTimeout(() => fetchEvents(), 300);
+                    }
+            
         })
         .catch(() => {
             storedEvents = storedEvents.filter(e => !e.temp);
@@ -902,12 +904,13 @@ function updateEvent() {
                 alertBox.innerHTML = `<i class="bi bi-exclamation-triangle-fill me-2"></i>${data.error || "Errore durante l'aggiornamento"}`;
                 alertBox.classList.remove('d-none');
             } else {
-                alert(data.error || "Errore durante l'aggiornamento");
+                showToast(data.error || "Errore durante l'aggiornamento", "danger");
             }
             return;
         }
         if (data.status === 'updated') {
             bootstrap.Modal.getInstance(document.getElementById('editEventModal')).hide();
+            showToast('Evento aggiornato con successo', 'success');
             setTimeout(() => fetchEvents(), 300);
         }
     }).catch(e => {
@@ -936,14 +939,17 @@ function deleteEventFromEdit() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id: eventId })
     }).then(response => {
-        if (!response.ok && oldEvent && eventIndex >= 0) {
-            storedEvents.splice(eventIndex, 0, oldEvent);
-            mergeEventsAndTasks();
-            renderView();
-            alert('Errore durante l\'eliminazione');
+        if (!response.ok) {
+            if (oldEvent && eventIndex >= 0) {
+                storedEvents.splice(eventIndex, 0, oldEvent);
+                mergeEventsAndTasks();
+                renderView();
+            }
+            showToast('Errore durante l\'eliminazione', 'danger');
             return;
         }
         bootstrap.Modal.getInstance(document.getElementById('editEventModal')).hide();
+        showToast('Evento cancellato con successo', 'success');
         setTimeout(() => fetchEvents(), 300);
     }).catch(e => {
         if (oldEvent && eventIndex >= 0) {
@@ -1160,7 +1166,89 @@ function formatDateTimeLocal(d) {
 }
 
 function escapeHtml(t) {
+
     const d = document.createElement('div');
+
     d.innerText = t || '';
+
     return d.innerHTML;
+
+}
+
+
+
+function showToast(message, type = 'success') {
+
+    const container = document.querySelector('.floating-alert-container');
+
+    if (!container) return;
+
+
+
+    const alertDiv = document.createElement('div');
+
+    alertDiv.className = `floating-alert alert-${type}`;
+
+    alertDiv.setAttribute('role', 'alert');
+
+
+
+    const iconClass = type === 'success' ? 'bi-check-circle-fill' : 'bi-exclamation-circle-fill';
+
+
+
+    alertDiv.innerHTML = `
+
+        <div class="floating-alert-icon">
+
+            <i class="bi ${iconClass}"></i>
+
+        </div>
+
+        <div class="floating-alert-content">
+
+            <span class="text-break">${message}</span>
+
+        </div>
+
+        <button type="button" class="floating-alert-close" aria-label="Close">
+
+            <i class="bi bi-x"></i>
+
+        </button>
+
+    `;
+
+
+
+    container.appendChild(alertDiv);
+
+
+
+    // Add close functionality
+
+    alertDiv.querySelector('.floating-alert-close').onclick = () => {
+
+        alertDiv.classList.add('fading-out');
+
+        setTimeout(() => alertDiv.remove(), 500);
+
+    };
+
+
+
+    // Auto-remove after 3 seconds
+
+    setTimeout(() => {
+
+        if (alertDiv.parentElement) {
+
+            alertDiv.classList.add('fading-out');
+
+            setTimeout(() => alertDiv.remove(), 500);
+
+        }
+
+    }, 3000);
+
 }

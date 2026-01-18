@@ -157,7 +157,8 @@ public class GTMController extends ModuloController {
             UtenteEntity utente = utenteOpt.get();
             TaskEntity task=taskService.findById(new TaskID(form.getIdTask(),utente.getAzienda().getId_azienda()));
             if(task==null) return "redirect:/dashboard/gtm"+Alert.error("Task non trovata");
-            if(form.getScadenza() != null && form.getScadenza().isBefore(LocalDate.now().minusDays(1))) bindingResult.rejectValue("scadenza","datanelpassato.error","La data di scadenza non può essere nel passato");
+            if(form.getScadenza() != null && form.getScadenza().isBefore(LocalDate.now().minusDays(1)))
+                bindingResult.rejectValue("scadenza","datanelpassato.error","La data di scadenza non può essere nel passato");
             if(form.getPriorita()<0 || form.getPriorita()>5) bindingResult.rejectValue("priorita","prioritanonvalida.error","La priorità deve essere compresa tra 0 e 5");
             if(bindingResult.hasErrors()) {
                 model.addAttribute("taskCreate",taskService.findByCreatore(utente));
