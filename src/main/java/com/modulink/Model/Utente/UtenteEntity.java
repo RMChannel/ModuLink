@@ -1,12 +1,14 @@
 package com.modulink.Model.Utente;
 
 import com.modulink.Model.Azienda.AziendaEntity;
+import com.modulink.Model.Relazioni.Assegnazione.AssegnazioneEntity;
 import com.modulink.Model.Ruolo.RuoloEntity;
 import com.modulink.Model.Relazioni.Associazione.AssociazioneEntity;
 import com.modulink.Model.Ruolo.RuoloService;
 import jakarta.persistence.*;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -322,5 +324,11 @@ public class UtenteEntity {
                 }
             }
         }
+    }
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        UtenteEntity utente = (UtenteEntity) o;
+        return id_utente == utente.id_utente && azienda.getId_azienda()==utente.azienda.getId_azienda();
     }
 }

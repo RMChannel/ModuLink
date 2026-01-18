@@ -8,7 +8,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="stylesheet" th:href="@{/css/user/colors.css}">
     <link rel="stylesheet" th:href="@{/css/user/dashboard-layout.css}">
-    <link rel="stylesheet" th:href="@{/css/moduli/GDM/gdm.css}">
+    <link rel="stylesheet" th:href="@{/css/moduli/GMA/gma.css}">
     <link rel="stylesheet" th:href="@{/css/common/alerts.css}">
     <script th:src="@{/javascript/theme.js}"></script>
 </head>
@@ -68,7 +68,7 @@
 <div class="modal fade" id="manageRolesModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content">
-            <form th:action="@{/dashboard/gdr/edit-modulo}" method="post">
+            <form th:action="@{/dashboard/gma/edit-modulo}" method="post">
                 <div class="modal-header">
                     <h5 class="modal-title">Gestisci Accesso: <span id="editModuloName"></span></h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -130,7 +130,7 @@
 
 <!-- Bootstrap JavaScript Bundle -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script th:src="@{/javascript/gdm.js}"></script>
+<script th:src="@{/javascript/gma.js}"></script>
 
 </body>
 </html>
