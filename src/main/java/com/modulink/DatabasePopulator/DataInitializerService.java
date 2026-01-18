@@ -4,6 +4,7 @@ import com.modulink.Model.Azienda.AziendaEntity;
 import com.modulink.Model.Azienda.AziendaService;
 import com.modulink.Model.Eventi.EventoEntity;
 import com.modulink.Model.Eventi.EventoRepository;
+import com.modulink.Model.Eventi.EventoService;
 import com.modulink.Model.Modulo.ModuloEntity;
 import com.modulink.Model.Modulo.ModuloRepository;
 import com.modulink.Model.Relazioni.Pertinenza.PertinenzaEntity;
@@ -34,18 +35,18 @@ public class DataInitializerService {
     private final ModuloRepository moduloRepository;
     private final AttivazioneRepository attivazioneRepository;
     private final PertinenzaRepository pertinenzaRepository;
-    private final EventoRepository eventoRepository;
+    private final EventoService eventoService;
     private final PartecipazioneRepository partecipazioneRepository;
 
-    public DataInitializerService(AziendaService aziendaService, CustomUserDetailsService customUserDetailsService, RuoloRepository ruoloRepository, AssociazioneRepository associazioneRepository, ModuloRepository moduloRepository, AttivazioneRepository attivazioneRepository, PertinenzaRepository pertinenzaRepository, EventoRepository eventoRepository, PartecipazioneRepository partecipazioneRepository) {
+    public DataInitializerService(AziendaService aziendaService, CustomUserDetailsService customUserDetailsService, RuoloRepository ruoloRepository, AssociazioneRepository associazioneRepository, ModuloRepository moduloRepository, AttivazioneRepository attivazioneRepository, PertinenzaRepository pertinenzaRepository, EventoService eventoService, PartecipazioneRepository partecipazioneRepository) {
         this.aziendaService = aziendaService;
         this.customUserDetailsService = customUserDetailsService;
         this.ruoloRepository = ruoloRepository;
         this.associazioneRepository = associazioneRepository;
         this.moduloRepository = moduloRepository;
+        this.eventoService = eventoService;
         this.attivazioneRepository = attivazioneRepository;
         this.pertinenzaRepository = pertinenzaRepository;
-        this.eventoRepository = eventoRepository;
         this.partecipazioneRepository = partecipazioneRepository;
     }
 
@@ -116,20 +117,20 @@ public class DataInitializerService {
 
         LocalDateTime now = LocalDateTime.now();
 
-        EventoEntity evento1 = new EventoEntity(0, azienda, "Riunione Staff", "Sala Riunioni A", now.plusHours(2), now.plusHours(4));
-        EventoEntity evento2 = new EventoEntity(1, azienda, "Pranzo Aziendale", "Ristorante 'Da Mario'", now.plusDays(1).withHour(13).withMinute(0), now.plusDays(1).withHour(15).withMinute(0));
-        EventoEntity evento3 = new EventoEntity(2, azienda, "Corso Formazione", "Online", now.minusDays(1).withHour(10).withMinute(0), now.minusDays(1).withHour(12).withMinute(0));
-        EventoEntity evento4 = new EventoEntity(3, azienda, "Brainstorming", "Ufficio", now.withHour(9).withMinute(0), now.withHour(11).withMinute(0)); // Oggi
+        EventoEntity evento1 = new EventoEntity(azienda, "Riunione Staff", "Sala Riunioni A", now.plusHours(2), now.plusHours(4));
+        EventoEntity evento2 = new EventoEntity(azienda, "Pranzo Aziendale", "Ristorante 'Da Mario'", now.plusDays(1).withHour(13).withMinute(0), now.plusDays(1).withHour(15).withMinute(0));
+        EventoEntity evento3 = new EventoEntity(azienda, "Corso Formazione", "Online", now.minusDays(1).withHour(10).withMinute(0), now.minusDays(1).withHour(12).withMinute(0));
+        EventoEntity evento4 = new EventoEntity(azienda, "Brainstorming", "Ufficio", now.withHour(9).withMinute(0), now.withHour(11).withMinute(0)); // Oggi
 
         evento1.setCreatore(utente);
         evento2.setCreatore(utente);
         evento3.setCreatore(utente);
         evento4.setCreatore(utente);
 
-        eventoRepository.save(evento1);
-        eventoRepository.save(evento2);
-        eventoRepository.save(evento3);
-        eventoRepository.save(evento4);
+        eventoService.create(evento1);
+        eventoService.create(evento2);
+        eventoService.create(evento3);
+        eventoService.create(evento4);
 
         // Associa eventi all'utente
         partecipazioneRepository.save(new PartecipazioneEntity(utente.getId_utente(), evento1.getId_evento(), azienda.getId_azienda()));

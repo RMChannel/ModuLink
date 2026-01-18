@@ -95,7 +95,10 @@ public class TaskService {
 
     @Transactional
     public void deleteAllByAzienda(AziendaEntity azienda) {
-        taskRepository.deleteAllByAzienda(azienda);
-        taskRepository.flush();
+        // Elimina tutte le assegnazioni dell'azienda
+        assegnazioneService.deleteAllByAzienda(azienda.getId_azienda());
+        
+        // Elimina tutti i task dell'azienda usando query nativa per evitare caricamento in memoria
+        taskRepository.deleteAllByAziendaNative(azienda.getId_azienda());
     }
 }

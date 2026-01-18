@@ -126,10 +126,7 @@ public class EventoController extends ModuloController {
         UtenteEntity currentUser = currentUserOpt.get();
         AziendaEntity azienda = currentUser.getAzienda();
 
-        int newId = eventoRepository.findMaxIdByAzienda(azienda) + 1;
-
         EventoEntity evento = new EventoEntity(
-                newId,
                 azienda,
                 request.nome(),
                 request.luogo(),
@@ -138,20 +135,21 @@ public class EventoController extends ModuloController {
         );
         evento.setCreatore(currentUser);
 
-        eventoService.create(evento);
+        evento=eventoService.create(evento);
         partecipazioneService.Invita(evento, currentUser);
 
         if (request.partecipanti() != null && !request.partecipanti().isEmpty()) {
             List<UtenteEntity> colleagues = userRepository.getAllByAziendaIs(azienda);
             for (Integer userId : request.partecipanti()) {
+                EventoEntity finalEvento = evento;
                 colleagues.stream()
                         .filter(u -> u.getId_utente() == userId)
                         .findFirst()
-                        .ifPresent(u -> partecipazioneService.Invita(evento, u));
+                        .ifPresent(u -> partecipazioneService.Invita(finalEvento, u));
             }
         }
 
-        return ResponseEntity.ok().body("{\"status\": \"success\", \"id\": " + newId + "}");
+        return ResponseEntity.ok().body("{\"status\": \"success\", \"id\": " + evento.getId_evento() + "}");
     }
 
     @PostMapping("/update")

@@ -1,42 +1,57 @@
 package com.modulink.Model.Azienda;
 
-import com.modulink.Model.Utente.UtenteEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
+import java.util.List;
 
 /**
- * Service layer per la gestione della logica di business relativa all'entità {@link AziendaEntity}.
+ * Service Layer incaricato dell'implementazione della logica di business per il dominio <strong>Azienda</strong>.
  * <p>
- * Questa classe agisce come intermediario tra il Controller e il Repository,
- * incapsulando le regole di gestione dei dati aziendali, come la generazione
- * manuale dell'ID e le verifiche di univocità sui campi sensibili.
+ * Questa classe orchestra le interazioni tra i controller REST/MVC e il layer di persistenza ({@link AziendaRepository}).
+ * Gestisce i confini transazionali, l'aggregazione dei dati e l'applicazione di regole di validazione business-specific
+ * (es. unicità P.IVA, formati contatti).
+ * </p>
+ * <p>
+ * Le operazioni di modifica (scrittura/aggiornamento/cancellazione) sono annotate con {@link Transactional} per garantire
+ * l'atomicità e la coerenza (ACID properties), delegando al container Spring la gestione del rollback in caso di eccezioni runtime.
+ * </p>
  *
  * @author Modulink Team
- * @version 1.2
+ * @version 1.6.0
+ * @since 1.0.0
  */
 @Service
 public class AziendaService {
+
     private final AziendaRepository aziendaRepository;
 
     /**
-     * Costruttore per l'iniezione delle dipendenze.
+     * Costruttore per Dependency Injection (Constructor Injection).
+     * <p>
+     * Spring IoC Container inietta automaticamente l'istanza singleton di {@link AziendaRepository}.
+     * Questo approccio favorisce l'immutabilità e facilita il testing unitario tramite mock.
+     * </p>
      *
-     * @param aziendaRepository Repository per l'accesso ai dati dell'azienda.
+     * @param aziendaRepository L'interfaccia DAO per l'accesso ai dati.
+     * @since 1.0.0
      */
     public AziendaService(AziendaRepository aziendaRepository) {
         this.aziendaRepository = aziendaRepository;
     }
 
     /**
-     * Recupera i dettagli di un'azienda tramite la Partita IVA.
+     * Recupera un'entità azienda in base alla Partita IVA.
      * <p>
-     * Utilizza il repository per cercare l'entità. Se l'azienda non viene trovata,
-     * gestisce l'{@link Optional} restituendo {@code null}.
+     * Esegue una lookup ottimizzata tramite indice univoco.
+     * Il metodo effettua l'unwrapping dell'{@link Optional} restituito dal repository.
+     * </p>
      *
-     * @param piva La Partita IVA da cercare.
-     * @return L'istanza di {@link AziendaEntity} se trovata, altrimenti {@code null}.
+     * @param piva La stringa contenente la P.IVA target.
+     * @return L'istanza di {@link AziendaEntity} se presente, altrimenti <code>null</code>.
+     * @see AziendaRepository#findByPiva(String)
+     * @since 1.0.0
      */
     public AziendaEntity getAziendaByPIVA(String piva) {
         Optional<AziendaEntity> azienda = aziendaRepository.findByPiva(piva);
@@ -44,14 +59,16 @@ public class AziendaService {
     }
 
     /**
-     * Persiste una nuova azienda nel database.
+     * Persiste una nuova anagrafica aziendale nel sistema.
      * <p>
-     * Il metodo implementa una logica custom per la generazione dell'ID:
-     * calcola l'ID massimo attuale e lo incrementa di 1.
-     * L'operazione è marcata come {@link Transactional} per garantire l'integrità dei dati.
+     * L'operazione è transazionale: in caso di violazione di vincoli (es. duplicate key exception su P.IVA)
+     * l'intera transazione viene annullata.
+     * L'ID viene generato automaticamente dal database (IDENTITY strategy) al momento del flush.
+     * </p>
      *
-     * @param azienda L'entità azienda con i dati da salvare (escluso l'ID).
-     * @return L'entità salvata, completa di ID assegnato.
+     * @param azienda L'oggetto DTO/Entity popolato con i dati di registrazione.
+     * @return L'entità persistita (attached state) aggiornata con l'ID generato.
+     * @since 1.0.0
      */
     @Transactional
     public AziendaEntity registraAzienda(AziendaEntity azienda) {
@@ -59,39 +76,55 @@ public class AziendaService {
     }
 
     /**
-     * Verifica l'esistenza di un'azienda associata al numero di telefono specificato.
+     * Verifica l'esistenza di un vincolo di unicità sul numero di telefono.
      * <p>
-     * Metodo di utilità per validare l'univocità del contatto telefonico
-     * durante la fase di registrazione o modifica anagrafica.
+     * Utilizzato tipicamente dai validator dei form di registrazione per fornire feedback immediato all'utente (fail-fast).
+     * </p>
      *
-     * @param telefono Il numero di telefono da verificare.
-     * @return {@code true} se esiste già un'azienda con questo telefono, {@code false} altrimenti.
+     * @param telefono Il recapito telefonico da controllare.
+     * @return <code>true</code> se il telefono è già presente in DB, <code>false</code> altrimenti.
+     * @since 1.2.5
      */
     public boolean findByTelefono(String telefono) {
         return aziendaRepository.findByTelefono(telefono).isPresent();
     }
 
     /**
-     * Recupera la lista completa delle aziende.
-     * @return Lista di tutte le aziende.
+     * Recupera l'elenco completo di tutte le aziende registrate nel sistema.
+     * <p>
+     * <strong>Attenzione:</strong> Questo metodo può generare carichi elevati su database popolati.
+     * Considerare l'uso di paginazione per dataset estesi.
+     * </p>
+     *
+     * @return Una {@link List} contenente tutte le entità azienda.
+     * @since 1.1.0
      */
-    public java.util.List<AziendaEntity> getAllAziende() {
+    public List<AziendaEntity> getAllAziende() {
         return aziendaRepository.findAll();
     }
 
     /**
-     * Recupera un'azienda tramite ID.
-     * @param id ID dell'azienda.
-     * @return Optional contenente l'azienda se trovata.
+     * Lookup di un'azienda tramite la sua chiave primaria (ID).
+     *
+     * @param id L'identificativo intero dell'azienda.
+     * @return Un {@link Optional} popolato se l'ID è valido, vuoto altrimenti.
+     * @since 1.0.0
      */
     public Optional<AziendaEntity> getAziendaById(int id) {
         return aziendaRepository.findById(id);
     }
 
     /**
-     * Aggiorna i dati di un'azienda esistente.
-     * @param azienda Entità con i nuovi dati.
-     * @return L'entità aggiornata.
+     * Esegue l'aggiornamento (UPDATE) dei dati aziendali.
+     * <p>
+     * Il metodo utilizza {@link AziendaRepository#save(Object)} che, in contesto JPA,
+     * esegue un <code>merge</code> se l'entità possiede un ID esistente.
+     * Richiede un contesto transazionale attivo.
+     * </p>
+     *
+     * @param azienda L'entità con i dati modificati.
+     * @return L'entità aggiornata e sincronizzata col DB.
+     * @since 1.4.0
      */
     @Transactional
     public AziendaEntity updateAzienda(AziendaEntity azienda) {
@@ -99,8 +132,15 @@ public class AziendaService {
     }
 
     /**
-     * Elimina un'azienda tramite ID.
-     * @param id ID dell'azienda da eliminare.
+     * Rimuove fisicamente (HARD DELETE) un'azienda dal sistema.
+     * <p>
+     * Questa operazione è irreversibile e potrebbe scatenare cancellazioni a cascata
+     * se configurate a livello di database (FK constraints con ON DELETE CASCADE).
+     * </p>
+     *
+     * @param id L'ID dell'azienda da eliminare.
+     * @throws org.springframework.dao.EmptyResultDataAccessException se l'entità non esiste.
+     * @since 1.5.0
      */
     @Transactional
     public void deleteAzienda(int id) {

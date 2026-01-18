@@ -20,4 +20,8 @@ public interface TaskRepository extends JpaRepository<TaskEntity, TaskID> {
     void deleteByIdNative(@Param("idTask") int idTask, @Param("idAzienda") int idAzienda);
 
     void deleteAllByAzienda(AziendaEntity azienda);
+
+    @Modifying
+    @Query(value = "DELETE FROM task WHERE ID_Azienda = :idAzienda", nativeQuery = true)
+    void deleteAllByAziendaNative(@Param("idAzienda") int idAzienda);
 }
