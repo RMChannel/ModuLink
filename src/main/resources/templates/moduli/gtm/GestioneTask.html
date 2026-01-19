@@ -388,22 +388,28 @@
                     <!-- Form Fields -->
                     <div class="mb-3">
                         <label for="titolo" class="form-label fw-medium text-theme-secondary">Titolo</label>
-                        <input type="text" class="form-control form-control-theme" id="titolo" name="titolo" th:value="*{titolo}" required minlength="2" maxlength="50" placeholder="Titolo breve...">
+                        <input type="text" class="form-control form-control-theme" id="titolo" name="titolo" th:value="*{titolo}" required minlength="2" maxlength="50" placeholder="Titolo breve..."
+                               th:classappend="${#fields.hasErrors('titolo')} ? 'is-invalid'">
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('titolo')}" th:errors="*{titolo}"></div>
                     </div>
                     <div class="row g-3 mb-3">
                         <div class="col-6">
                             <label for="priorita" class="form-label fw-medium text-theme-secondary">Priorità</label>
-                            <select class="form-select form-select-theme" id="priorita" name="priorita" th:value="*{priorita}">
+                            <select class="form-select form-select-theme" id="priorita" name="priorita" th:value="*{priorita}"
+                                    th:classappend="${#fields.hasErrors('priorita')} ? 'is-invalid'">
                                 <option value="1" th:selected="*{priorita == 1}">Bassa</option>
                                 <option value="2" th:selected="*{priorita == 2}">Medio-Bassa</option>
                                 <option value="3" th:selected="*{priorita == 3}">Normale</option>
                                 <option value="4" th:selected="*{priorita == 4}">Alta</option>
                                 <option value="5" th:selected="*{priorita == 5}">Urgente</option>
                             </select>
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('priorita')}" th:errors="*{priorita}"></div>
                         </div>
                         <div class="col-6">
                             <label for="scadenza" class="form-label fw-medium text-theme-secondary">Scadenza</label>
-                            <input type="date" class="form-control form-control-theme" id="scadenza" name="scadenza" th:value="*{scadenza}">
+                            <input type="date" class="form-control form-control-theme" id="scadenza" name="scadenza" th:value="*{scadenza}"
+                                   th:classappend="${#fields.hasErrors('scadenza')} ? 'is-invalid'">
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('scadenza')}" th:errors="*{scadenza}"></div>
                         </div>
                     </div>
                     <!-- Assignees -->
@@ -439,22 +445,28 @@
                 <div class="modal-body modal-body-theme">
                     <div class="mb-3">
                         <label for="edit_titolo" class="form-label fw-medium text-theme-secondary">Titolo</label>
-                        <input type="text" class="form-control form-control-theme" id="edit_titolo" name="titolo" th:value="*{titolo}" required>
+                        <input type="text" class="form-control form-control-theme" id="edit_titolo" name="titolo" th:value="*{titolo}" required
+                               th:classappend="${#fields.hasErrors('titolo')} ? 'is-invalid'">
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('titolo')}" th:errors="*{titolo}"></div>
                     </div>
                     <div class="row g-3 mb-3">
                          <div class="col-6">
                             <label for="edit_priorita" class="form-label fw-medium text-theme-secondary">Priorità</label>
-                            <select class="form-select form-select-theme" id="edit_priorita" name="priorita" th:value="*{priorita}">
+                            <select class="form-select form-select-theme" id="edit_priorita" name="priorita" th:value="*{priorita}"
+                                    th:classappend="${#fields.hasErrors('priorita')} ? 'is-invalid'">
                                 <option value="1" th:selected="*{priorita == 1}">Bassa</option>
                                 <option value="2" th:selected="*{priorita == 2}">Medio-Bassa</option>
                                 <option value="3" th:selected="*{priorita == 3}">Normale</option>
                                 <option value="4" th:selected="*{priorita == 4}">Alta</option>
                                 <option value="5" th:selected="*{priorita == 5}">Urgente</option>
                             </select>
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('priorita')}" th:errors="*{priorita}"></div>
                         </div>
                         <div class="col-6">
                             <label for="edit_scadenza" class="form-label fw-medium text-theme-secondary">Scadenza</label>
-                            <input type="date" class="form-control form-control-theme" id="edit_scadenza" name="scadenza" th:value="*{scadenza}">
+                            <input type="date" class="form-control form-control-theme" id="edit_scadenza" name="scadenza" th:value="*{scadenza}"
+                                   th:classappend="${#fields.hasErrors('scadenza')} ? 'is-invalid'">
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('scadenza')}" th:errors="*{scadenza}"></div>
                         </div>
                     </div>
                     <div class="mb-3 form-check">
