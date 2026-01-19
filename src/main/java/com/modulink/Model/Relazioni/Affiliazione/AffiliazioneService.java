@@ -24,8 +24,6 @@ public class AffiliazioneService {
         affiliazioni.add(new AffiliazioneEntity(0,1,aziendaEntity.getId_azienda()));
         affiliazioni.add(new AffiliazioneEntity(0,2,aziendaEntity.getId_azienda()));
         affiliazioni.add(new AffiliazioneEntity(0,3,aziendaEntity.getId_azienda()));
-        affiliazioni.add(new AffiliazioneEntity(1,4,aziendaEntity.getId_azienda()));
-        affiliazioni.add(new AffiliazioneEntity(1,5,aziendaEntity.getId_azienda()));
 
         affiliazioneRepository.saveAll(affiliazioni);
     }

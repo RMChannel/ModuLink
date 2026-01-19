@@ -43,6 +43,13 @@ public class GlobalControllerAdvice {
                 model.addAttribute("utente", utente);     // Keeping "utente" for backward compatibility with existing templates
 
                 List<ModuloEntity> moduli = moduloService.findModuliByUtente(utente);
+                for(ModuloEntity modulo : moduli) {
+                    if(modulo.getId_modulo()==3) {
+                        moduli.remove(modulo);
+                        moduli.add(modulo);
+                        break;
+                    }
+                }
                 model.addAttribute("moduli", moduli != null ? moduli : List.of());
             }
         }
