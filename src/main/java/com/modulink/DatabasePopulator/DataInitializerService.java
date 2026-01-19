@@ -31,6 +31,24 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+/**
+ * Servizio di dominio responsabile dell'inizializzazione e del popolamento del database con dati di seed.
+ * <p>
+ * Questa classe agisce come un <i>Seeder</i> applicativo, orchestrando la creazione di entità complesse
+ * come aziende, utenti, ruoli e moduli preconfigurati. È progettata per essere eseguita in fase di startup
+ * (tipicamente in ambienti di sviluppo o per la prima installazione) per garantire la presenza di un set
+ * minimo di dati coerenti necessari per il funzionamento e il collaudo della piattaforma Modulink.
+ * </p>
+ * <p>
+ * La classe gestisce dipendenze multiple verso repository e servizi di dominio per assicurare
+ * che le relazioni tra entità (es. associazioni utente-ruolo, attivazioni moduli-azienda) siano
+ * persistite rispettando i vincoli di integrità referenziale.
+ * </p>
+ *
+ * @author Modulink Team
+ * @version 1.4.2
+ * @since 1.0.0
+ */
 @Service
 public class DataInitializerService {
 
@@ -47,6 +65,26 @@ public class DataInitializerService {
     private final TaskService taskService;
     private final ProdottoService prodottoService;
 
+    /**
+     * Costruttore per l'iniezione delle dipendenze richieste dal contesto Spring.
+     * <p>
+     * Utilizza la <i>Constructor Injection</i> per garantire che il servizio sia istanziato
+     * solo quando tutti i collaboratori necessari (Service e Repository) sono disponibili.
+     * </p>
+     *
+     * @param aziendaService            Servizio per la gestione delle anagrafiche aziendali.
+     * @param customUserDetailsService  Servizio per la gestione e autenticazione degli utenti.
+     * @param ruoloRepository           Repository per la persistenza dei ruoli aziendali.
+     * @param associazioneRepository    Repository per associare utenti ai ruoli.
+     * @param moduloRepository          Repository per la gestione del catalogo moduli.
+     * @param attivazioneRepository     Repository per attivare moduli specifici per le aziende.
+     * @param pertinenzaRepository      Repository per definire i permessi (pertinenze) ruolo-modulo.
+     * @param eventoService             Servizio per la gestione del calendario ed eventi.
+     * @param partecipazioneRepository  Repository per gestire i partecipanti agli eventi.
+     * @param attivazioneService        Servizio di dominio per logiche complesse di attivazione moduli.
+     * @param taskService               Servizio per la gestione delle attività (Task).
+     * @param prodottoService           Servizio per la gestione del magazzino prodotti.
+     */
     public DataInitializerService(AziendaService aziendaService, CustomUserDetailsService customUserDetailsService, RuoloRepository ruoloRepository, AssociazioneRepository associazioneRepository, ModuloRepository moduloRepository, AttivazioneRepository attivazioneRepository, PertinenzaRepository pertinenzaRepository, EventoService eventoService, PartecipazioneRepository partecipazioneRepository, AttivazioneService attivazioneService, TaskService taskService, ProdottoService prodottoService) {
         this.aziendaService = aziendaService;
         this.customUserDetailsService = customUserDetailsService;
@@ -62,6 +100,22 @@ public class DataInitializerService {
         this.prodottoService = prodottoService;
     }
 
+    /**
+     * Genera e persiste un set di dati dimostrativi per aziende fittizie ("Tech Solutions" e "Green Energy").
+     * <p>
+     * Questo metodo simula uno scenario operativo realistico creando:
+     * <ul>
+     *     <li>Aziende con profili completi.</li>
+     *     <li>Utenti con diversi livelli di accesso (Admin, User, Manager, Tech).</li>
+     *     <li>Ruoli specifici per azienda con colori e descrizioni personalizzate.</li>
+     *     <li>Attivazione di sottoinsiemi di moduli (GTM, GDM, Calendario) differenziati per azienda.</li>
+     *     <li>Dati operativi come Prodotti di magazzino, Task assegnati e Eventi in calendario.</li>
+     * </ul>
+     * È utile per verificare il comportamento dell'applicazione in scenari multi-tenant.
+     *
+     *
+     * @since 1.0.0
+     */
     public void addDemoAzienda() {
         // Recupera i moduli necessari
         ModuloEntity modCalendario = moduloRepository.findById(4).orElse(null);
@@ -172,6 +226,22 @@ public class DataInitializerService {
         // Per coerenza non ne creo se non ho attivato il modulo.
     }
 
+    /**
+     * Inizializza l'azienda principale "ModuLink" con la configurazione completa di sistema.
+     * <p>
+     * Questo metodo crea l'entità aziendale master e registra gli utenti amministratori/fondatori
+     * (es. team di sviluppo). Inoltre:
+     * <ul>
+     *     <li>Definisce il catalogo completo dei moduli disponibili nel sistema (News, Supporto, Admin, GDU, GRU, GMA, ecc.).</li>
+     *     <li>Configura i ruoli gerarchici di base (Responsabile, Utente Nuovo, Utente Standard).</li>
+     *     <li>Attiva tutti i moduli per l'azienda master per scopi di amministrazione globale.</li>
+     *     <li>Assegna le pertinenze complete al ruolo Responsabile per la gestione totale della piattaforma.</li>
+     * </ul>
+     * Questa configurazione è essenziale per il funzionamento del pannello di controllo Super-Admin.
+     *
+     *
+     * @since 1.0.0
+     */
     public void addModulinkAzienda() {
 
 
@@ -242,6 +312,24 @@ public class DataInitializerService {
 
     }
 
+    /**
+     * Esegue la sequenza completa di inizializzazione dei dati.
+     * <p>
+     * Questo metodo agisce come <i>entry point</i> transazionale per il popolamento del DB.
+     * L'annotazione {@link Transactional} assicura che l'intera procedura sia atomica:
+     * in caso di errore runtime durante una qualsiasi delle fasi (creazione Modulink o aziende demo),
+     * viene eseguito il rollback completo per evitare stati inconsistenti del database.
+     * </p>
+     * <p>
+     * Sequenza operativa:
+     * <ol>
+     *     <li>Creazione azienda Modulink e moduli di sistema.</li>
+     *     <li>Creazione aziende demo e dati operativi correlati.</li>
+     * </ol>
+     * 
+     *
+     * @since 1.0.0
+     */
     @Transactional // Qui la transazione funzionerà correttamente!
     public void runInitialization() {
         addModulinkAzienda();
