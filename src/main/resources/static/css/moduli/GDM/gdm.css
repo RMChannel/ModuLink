@@ -1,0 +1,113 @@
+/* General Styles for GDM Module */
+
+/* Local variables for status colors adapting to theme */
+:root {
+    --gdm-success-color: #198754;
+    --gdm-warning-color: #ffc107;
+    --gdm-danger-color: #dc3545;
+    --gdm-info-color: #0dcaf0;
+}
+
+[data-theme='dark'] {
+    --gdm-success-color: #4ade80; /* Lighter green for dark mode */
+    --gdm-warning-color: #facc15; /* Lighter yellow */
+    --gdm-danger-color: #f87171;  /* Lighter red */
+    --gdm-info-color: #38bdf8;    /* Lighter cyan */
+}
+
+.gdm-container {
+    padding: 20px;
+}
+
+/* Table Styles */
+.table-responsive {
+    border-radius: 8px;
+    box-shadow: var(--shadow-card);
+    background-color: var(--bg-white);
+    padding: 1rem;
+    border: 1px solid var(--border-color);
+}
+
+.table {
+    color: var(--text-body);
+    margin-bottom: 0;
+}
+
+/* Ensure table header matches the theme's dark section look */
+.table thead {
+    background-color: var(--bg-dark-section);
+    color: var(--color-white);
+}
+
+/* In dark mode, Bootstrap's table-striped/hover might be too bright or dark. 
+   We rely on data-bs-theme="dark" doing most of the work, but refine here. */
+.table-hover tbody tr:hover {
+    background-color: rgba(0, 0, 0, 0.04);
+}
+
+[data-theme='dark'] .table-hover tbody tr:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.action-btn {
+    margin-right: 5px;
+}
+
+/* Badges for Category */
+.badge-category {
+    background-color: var(--gdm-info-color);
+    color: #000; /* Always black text on cyan */
+    font-weight: 500;
+}
+
+/* Modal Customization */
+/* Bootstrap 5.3 with data-bs-theme="dark" handles the basics. We refine. */
+.modal-content {
+    background-color: var(--bg-white);
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-card-hover);
+}
+
+.modal-header {
+    background-color: var(--bg-body); /* Slightly different from content */
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-heading);
+}
+
+.modal-footer {
+    background-color: var(--bg-body);
+    border-top: 1px solid var(--border-color);
+}
+
+.modal-title {
+    color: var(--text-heading);
+}
+
+.btn-close {
+    filter: var(--btn-close-filter, none); /* Bootstrap handles this with data-bs-theme */
+}
+
+/* Utility classes */
+.text-justify {
+    text-align: justify;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+/* Price formatting */
+.price-tag {
+    font-weight: bold;
+    color: var(--gdm-success-color);
+}
+
+/* Quantity formatting */
+.quantity-tag {
+    font-weight: bold;
+    color: var(--text-body);
+}
+
+.quantity-low {
+    color: var(--gdm-danger-color);
+}
