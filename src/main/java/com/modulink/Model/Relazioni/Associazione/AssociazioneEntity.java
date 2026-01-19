@@ -7,26 +7,22 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 /**
- * Entità intermedia che mappa la tabella di unione <strong>Associazione</strong>.
+ * Entità di persistenza <strong>Associazione</strong>, utilizzata per modellare la relazione molti-a-molti (Many-to-Many) tra Utenti e Ruoli.
  * <p>
- * Questa classe implementa il pattern "Join Entity" (o Associative Entity) per modellare la relazione
- * Molti-a-Molti tra {@link UtenteEntity} e {@link RuoloEntity}.
+ * Questa classe funge da entità associativa esplicita per gestire chiavi primarie composte in un ambiente multi-tenant.
+ * L'utilizzo di un'entità intermedia dedicata permette di superare i limiti delle annotazioni <code>@ManyToMany</code> standard
+ * di Hibernate, garantendo il controllo granulare sulla colonna <code>ID_Azienda</code> condivisa tra {@link UtenteEntity} e {@link RuoloEntity}.
+ * </p>
  * <p>
- * <h2>Perché non usare @ManyToMany?</h2>
- * <p>
- * Poiché sia <code>Utente</code> che <code>Ruolo</code> hanno una chiave primaria composta che include
- * la colonna condivisa <code>ID_Azienda</code>, l'annotazione standard <code>@ManyToMany</code> di Hibernate
- * genera conflitti di mapping (errore "Repeated column") non sapendo a quale delle due entità
- * attribuire la proprietà della colonna <code>ID_Azienda</code> nella tabella di join.
- * <p>
- * Questa entità risolve il problema mappando esplicitamente le colonne ID come attributi semplici
- * e definendo le relazioni come <code>@ManyToOne</code> in sola lettura (insertable=false, updatable=false).
+ * L'entità implementa la strategia di chiave composta tramite la classe {@link AssocazioneID}.
+ * </p>
  *
  * @see AssocazioneID
  * @see UtenteEntity
  * @see RuoloEntity
  * @author Modulink Team
- * @version 1.0
+ * @version 1.1.2
+ * @since 1.0.0
  */
 @Entity
 @Table(name = "Associazione", schema = "modulink")
@@ -34,29 +30,33 @@ import org.hibernate.annotations.OnDeleteAction;
 public class AssociazioneEntity {
 
     /**
-     * Parte della chiave primaria: ID dell'utente associato.
-     * Mappato direttamente sulla colonna fisica.
+     * Identificativo univoco dell'Utente.
+     * Parte della chiave primaria composta dell'associazione.
+     *
+     * @since 1.0.0
      */
     @Id
     @Column(name = "ID_Utente")
-
     private int id_utente;
 
     /**
-     * Parte della chiave primaria: ID del ruolo assegnato.
-     * Mappato direttamente sulla colonna fisica.
+     * Identificativo univoco del Ruolo.
+     * Parte della chiave primaria composta dell'associazione.
+     *
+     * @since 1.0.0
      */
     @Id
     @Column(name = "ID_Ruolo")
-
     private int id_ruolo;
 
     /**
-     * Parte della chiave primaria: ID dell'azienda condivisa.
+     * Identificativo univoco dell'Azienda (Tenant).
      * <p>
-     * Questo campo garantisce che l'associazione avvenga nello stesso contesto aziendale.
-     * Essendo parte della PK di entrambe le entità collegate, funge da discriminante
-     * per l'integrità dei dati (Multi-tenancy).
+     * Garantisce l'isolamento dei dati a livello aziendale. Una cancellazione a cascata
+     * sull'entità Azienda comporta la rimozione automatica di tutte le associazioni correlate.
+     * </p>
+     *
+     * @since 1.0.0
      */
     @Id
     @Column(name = "ID_Azienda")
@@ -64,11 +64,13 @@ public class AssociazioneEntity {
     private int id_azienda;
 
     /**
-     * Riferimento all'oggetto Utente.
+     * Riferimento oggettuale all'entità {@link UtenteEntity}.
      * <p>
-     * Mappato con <code>insertable = false, updatable = false</code> perché la gestione
-     * della persistenza dei valori avviene tramite i campi primitivi <code>id_utente</code> e <code>id_azienda</code>.
-     * Serve a JPA per navigare la relazione e caricare l'oggetto completo.
+     * Mappatura in sola lettura (insertable=false, updatable=false) per la navigazione del grafo degli oggetti.
+     * La persistenza degli ID è gestita tramite i campi primitivi.
+     * </p>
+     *
+     * @since 1.0.0
      */
     @ManyToOne
     @JoinColumns({
@@ -79,11 +81,13 @@ public class AssociazioneEntity {
     private UtenteEntity utente;
 
     /**
-     * Riferimento all'oggetto Ruolo.
+     * Riferimento oggettuale all'entità {@link RuoloEntity}.
      * <p>
-     * Mappato con <code>insertable = false, updatable = false</code>.
-     * Nota come <code>ID_Azienda</code> venga riutilizzato qui nella definizione delle JoinColumns
-     * senza causare conflitti ("Repeated column") grazie alla modalità sola lettura.
+     * Mappatura in sola lettura per garantire l'integrità del mapping della colonna <code>ID_Azienda</code>
+     * riutilizzata in più join.
+     * </p>
+     *
+     * @since 1.0.0
      */
     @ManyToOne
     @JoinColumns({
@@ -94,19 +98,22 @@ public class AssociazioneEntity {
     private RuoloEntity ruolo;
 
     /**
-     * Costruttore vuoto.
-     * Necessario per JPA per istanziare la classe via reflection.
+     * Costruttore predefinito richiesto dalle specifiche JPA.
+     *
+     * @since 1.0.0
      */
     public AssociazioneEntity() {}
 
     /**
-     * Costruttore principale per creare una nuova associazione.
+     * Costruttore parametrico per l'istanziazione di una nuova relazione Utente-Ruolo.
      * <p>
-     * Estrae automaticamente gli ID dalle entità passate e popola i campi della chiave primaria.
-     * Questo garantisce che lo stato dell'oggetto sia consistente prima del salvataggio.
+     * Popola automaticamente gli identificativi primitivi estraendoli dalle entità fornite,
+     * assicurando la coerenza del modello multi-tenant.
+     * </p>
      *
-     * @param utente L'utente a cui assegnare il ruolo.
-     * @param ruolo  Il ruolo da assegnare.
+     * @param utente Entità utente assegnataria.
+     * @param ruolo  Entità ruolo da assegnare.
+     * @since 1.0.0
      */
     public AssociazioneEntity(UtenteEntity utente, RuoloEntity ruolo) {
         this.utente = utente;
@@ -121,27 +128,42 @@ public class AssociazioneEntity {
     }
 
     /**
-     * Restituisce l'entità Utente associata.
-     * @return L'oggetto UtenteEntity completo.
+     * Recupera l'oggetto UtenteEntity.
+     * @return L'utente associato.
+     * @since 1.0.0
      */
     public UtenteEntity getUtente() { return utente; }
 
     /**
-     * Restituisce l'entità Ruolo associata.
-     * @return L'oggetto RuoloEntity completo.
+     * Recupera l'oggetto RuoloEntity.
+     * @return Il ruolo associato.
+     * @since 1.0.0
      */
     public RuoloEntity getRuolo() { return ruolo; }
 
-    // --- Getter per i campi ID (Opzionali ma utili per DTO o logica interna) ---
-
+    /**
+     * Recupera l'ID primitivo dell'utente.
+     * @return ID utente.
+     * @since 1.1.0
+     */
     public int getId_utente() {
         return id_utente;
     }
 
+    /**
+     * Recupera l'ID primitivo del ruolo.
+     * @return ID ruolo.
+     * @since 1.1.0
+     */
     public int getId_ruolo() {
         return id_ruolo;
     }
 
+    /**
+     * Recupera l'ID primitivo dell'azienda.
+     * @return ID azienda.
+     * @since 1.1.0
+     */
     public int getId_azienda() {
         return id_azienda;
     }
