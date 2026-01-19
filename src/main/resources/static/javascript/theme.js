@@ -18,13 +18,17 @@ function getPreferredTheme() {
 }
 
 // Apply the theme immediately (prevents flash of wrong theme)
-document.documentElement.setAttribute('data-theme', getPreferredTheme());
+const initialTheme = getPreferredTheme();
+document.documentElement.setAttribute('data-theme', initialTheme);
+document.documentElement.setAttribute('data-bs-theme', initialTheme);
 
 // Optional: Listen for system theme changes if user hasn't locked a preference
 if (window.matchMedia) {
     window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
         if (!localStorage.getItem('theme')) {
-            document.documentElement.setAttribute('data-theme', e.matches ? 'dark' : 'light');
+            const newSystemTheme = e.matches ? 'dark' : 'light';
+            document.documentElement.setAttribute('data-theme', newSystemTheme);
+            document.documentElement.setAttribute('data-bs-theme', newSystemTheme);
         }
     });
 }
@@ -67,6 +71,7 @@ document.addEventListener("DOMContentLoaded", function() {
             let newTheme = currentTheme === 'dark' ? 'light' : 'dark';
 
             document.documentElement.setAttribute('data-theme', newTheme);
+            document.documentElement.setAttribute('data-bs-theme', newTheme);
             localStorage.setItem('theme', newTheme);
         });
     }
