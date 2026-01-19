@@ -23,6 +23,18 @@ import java.time.LocalTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Controller REST per la gestione avanzata degli eventi e dell'integrazione calendario nel modulo <strong>GDE</strong>.
+ * <p>
+ * Fornisce un set completo di API per la manipolazione degli eventi aziendali, la gestione dei partecipanti
+ * e l'esposizione sincronizzata dei task assegnati. Implementa logiche di validazione stringenti sui periodi temporali
+ * e garantisce l'integrità dei dati tra Utenti, Aziende ed Eventi.
+ * </p>
+ *
+ * @author Modulink Team
+ * @version 2.1.5
+ * @since 1.2.0
+ */
 @Controller
 @RequestMapping("/dashboard/calendar/api")
 public class EventoController extends ModuloController {
@@ -32,21 +44,38 @@ public class EventoController extends ModuloController {
     private final PartecipazioneService partecipazioneService;
     private final CustomUserDetailsService customUserDetailsService;
     private final UserRepository userRepository;
-    private final TaskService taskService;
     private final AssegnazioneService assegnazioneService;
 
 
-    public EventoController(EventoService eventoService, EventoRepository eventoRepository, PartecipazioneService partecipazioneService, CustomUserDetailsService customUserDetailsService, UserRepository userRepository, ModuloService moduloService, TaskService taskService, AssegnazioneService assegnazioneService) {
+    /**
+     * Inizializza il controller iniettando i servizi necessari per l'interazione con eventi, task e utenze.
+     *
+     * @param eventoService            Servizio eventi.
+     * @param eventoRepository         Repository eventi.
+     * @param partecipazioneService    Servizio per la gestione degli inviti.
+     * @param customUserDetailsService Servizio utenti.
+     * @param userRepository           Repository utenti.
+     * @param moduloService            Servizio moduli.
+     * @param assegnazioneService      Servizio assegnazioni task.
+     * @since 1.2.0
+     */
+    public EventoController(EventoService eventoService, EventoRepository eventoRepository, PartecipazioneService partecipazioneService, CustomUserDetailsService customUserDetailsService, UserRepository userRepository, ModuloService moduloService, AssegnazioneService assegnazioneService) {
         super(moduloService, 4);
         this.eventoService = eventoService;
         this.eventoRepository = eventoRepository;
         this.partecipazioneService = partecipazioneService;
         this.customUserDetailsService = customUserDetailsService;
         this.userRepository = userRepository;
-        this.taskService = taskService;
         this.assegnazioneService = assegnazioneService;
     }
 
+    /**
+     * Recupera l'elenco di tutti gli eventi a cui partecipa l'utente corrente.
+     *
+     * @param principal Identità dell'utente autenticato.
+     * @return {@link ResponseEntity} contenente una lista di {@link EventoDTO} o stato FORBIDDEN.
+     * @since 1.2.0
+     */
     @GetMapping("/get")
     @ResponseBody
     public ResponseEntity<?> getEventi(Principal principal){
@@ -69,6 +98,17 @@ public class EventoController extends ModuloController {
     }
 
 
+    /**
+     * Recupera i task assegnati all'utente corrente, mappandoli come eventi di calendario.
+     * <p>
+     * Questo endpoint permette di visualizzare i task operativi direttamente nel calendario,
+     * impostando come orario l'intera giornata della scadenza.
+     * </p>
+     *
+     * @param principal Identità dell'utente.
+     * @return {@link ResponseEntity} con la lista di task trasformati in DTO.
+     * @since 1.3.0
+     */
     @GetMapping("/getet")
     public ResponseEntity<?> getEventiAndTask(Principal principal){
         if (principal==null){
@@ -91,6 +131,19 @@ public class EventoController extends ModuloController {
 
 
 
+    /**
+     * Gestisce la creazione di un nuovo evento aziendale.
+     * <p>
+     * Implementa validazioni sulla lunghezza dei campi, sull'obbligatorietà della data di inizio
+     * e impedisce la creazione di eventi in date passate. Associa automaticamente il creatore
+     * come partecipante e processa la lista degli invitati.
+     * </p>
+     *
+     * @param request   DTO contenente i dati dell'evento e i partecipanti.
+     * @param principal Identità dell'utente creatore.
+     * @return JSON con lo stato dell'operazione e l'ID dell'evento creato.
+     * @since 1.2.0
+     */
     @PostMapping("/create")
     @ResponseBody
     public ResponseEntity<?> createEvento(@RequestBody CreateEventoRequest request, Principal principal) {
@@ -139,7 +192,7 @@ public class EventoController extends ModuloController {
         partecipazioneService.Invita(evento, currentUser);
 
         if (request.partecipanti() != null && !request.partecipanti().isEmpty()) {
-            List<UtenteEntity> colleagues = userRepository.getAllByAziendaIs(azienda);
+            List<UtenteEntity> colleagues = customUserDetailsService.getAllByAziendaExcludingUser(azienda,currentUser.getId_utente());
             for (Integer userId : request.partecipanti()) {
                 EventoEntity finalEvento = evento;
                 colleagues.stream()
@@ -152,6 +205,18 @@ public class EventoController extends ModuloController {
         return ResponseEntity.ok().body("{\"status\": \"success\", \"id\": " + evento.getId_evento() + "}");
     }
 
+    /**
+     * Aggiorna un evento esistente.
+     * <p>
+     * Oltre ai dati base, gestisce la sincronizzazione dei partecipanti aggiungendo i nuovi
+     * e rimuovendo quelli deselezionati. Garantisce che il creatore non possa essere rimosso.
+     * </p>
+     *
+     * @param request   DTO con i dati aggiornati dell'evento.
+     * @param principal Identità dell'utente loggato.
+     * @return JSON di conferma aggiornamento.
+     * @since 1.2.0
+     */
     @PostMapping("/update")
     @ResponseBody
     public ResponseEntity<?> updateEvento(@RequestBody UpdateEventoRequest request, Principal principal) {
@@ -226,6 +291,14 @@ public class EventoController extends ModuloController {
         return ResponseEntity.ok().body("{\"status\": \"updated\"}");
     }
 
+    /**
+     * Rimuove un evento dal database.
+     *
+     * @param request   DTO contenente l'ID dell'evento da eliminare.
+     * @param principal Identità dell'utente loggato.
+     * @return JSON di conferma cancellazione.
+     * @since 1.2.0
+     */
     @PostMapping("/delete")
     @ResponseBody
     public ResponseEntity<?> deleteEvento(@RequestBody DeleteEventoRequest request, Principal principal) {
@@ -244,6 +317,18 @@ public class EventoController extends ModuloController {
         }
     }
 
+    /**
+     * Recupera la lista degli utenti aziendali o dei partecipanti a un evento.
+     * <p>
+     * Se il parametro 'id' è nullo, restituisce tutti i colleghi dell'azienda per popolare
+     * componenti di autocomplete. Se valorizzato, restituisce i soli partecipanti a quell'evento.
+     * </p>
+     *
+     * @param id        ID opzionale di un evento specifico.
+     * @param principal Identità utente.
+     * @return Lista di {@link UserDTO}.
+     * @since 1.4.0
+     */
     @GetMapping("/users")
     public ResponseEntity<?> getUsers(@RequestParam(required = false) Integer id, Principal principal) {
         if (principal == null) return ResponseEntity.status(401).build();
@@ -273,6 +358,13 @@ public class EventoController extends ModuloController {
         return ResponseEntity.ok(dtos);
     }
 
+    /**
+     * Recupera tutti gli eventi associati all'azienda del richiedente.
+     *
+     * @param principal Identità utente.
+     * @return Lista di tutti gli eventi aziendali in formato DTO.
+     * @since 1.5.0
+     */
     @GetMapping("/all")
     public ResponseEntity<?> getEventiAzienda(Principal principal) {
         if (principal == null) return ResponseEntity.status(401).build();
@@ -284,12 +376,25 @@ public class EventoController extends ModuloController {
         return ResponseEntity.ok(dtos);
     }
 
+    /**
+     * Utility per la conversione massiva di entità Evento in DTO.
+     *
+     * @param eventi Lista di entità.
+     * @return Lista di DTO.
+     */
     public static List<EventoDTO> parse(List<EventoEntity> eventi) {
         return eventi.stream()
                 .map(e -> new EventoDTO(e.getId_evento(), e.getNome(), e.getLuogo(), e.getData_ora_inizio(), e.getData_fine()))
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Utility per la conversione di Task in oggetti compatibili con il calendario.
+     * Filtra i task già completati.
+     *
+     * @param tasks Lista di entità Task.
+     * @return Lista di DTO eventi.
+     */
     public static List<EventoDTO> parseTask(List<TaskEntity> tasks) {
         for(TaskEntity task : tasks) if(task.isCompletato()) tasks.remove(task);
         return tasks.stream()
@@ -302,9 +407,23 @@ public class EventoController extends ModuloController {
         return;
     }
 
-    // Record DTO per inviare eventi
+    /**
+     * Data Transfer Object per la rappresentazione sintetica di un evento nel calendario.
+     */
     public record EventoDTO(int id_evento, String nome, String luogo, LocalDateTime data_ora_inizio, LocalDateTime data_fine) {}
+    
+    /**
+     * Oggetto di richiesta per l'aggiornamento di un evento.
+     */
     public record UpdateEventoRequest(int id, String nome, String luogo, LocalDateTime inizio, LocalDateTime fine, List<Integer> partecipanti){}
+    
+    /**
+     * Oggetto di richiesta per la creazione di un nuovo evento.
+     */
     public record CreateEventoRequest(String nome, String luogo, LocalDateTime inizio, LocalDateTime fine, List<Integer> partecipanti) {}
+    
+    /**
+     * Oggetto di richiesta per la cancellazione di un evento.
+     */
     public record DeleteEventoRequest(int id) {}
 }

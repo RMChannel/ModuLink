@@ -19,12 +19,32 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Controller per la gestione dei permessi RBAC (Role-Based Access Control) sui moduli attivi.
+ * <p>
+ * Parte integrante del modulo <strong>GMA (Gestione Moduli Aziendali)</strong>, questo controller
+ * permette agli amministratori di configurare quali ruoli aziendali hanno diritto di accesso
+ * a specifici moduli software acquistati dall'azienda.
+ * </p>
+ *
+ * @author Modulink Team
+ * @version 1.5.0
+ * @since 1.2.5
+ */
 @Controller
 public class GMARoleController extends ModuloController {
     private final CustomUserDetailsService customUserDetailsService;
     private final ModuloService moduloService;
     private final RuoloService ruoloService;
 
+    /**
+     * Costruttore per l'iniezione delle dipendenze.
+     *
+     * @param customUserDetailsService Servizio utenti.
+     * @param moduloService            Servizio moduli.
+     * @param ruoloService             Servizio ruoli.
+     * @since 1.2.5
+     */
     public GMARoleController(CustomUserDetailsService customUserDetailsService, ModuloService moduloService, RuoloService ruoloService) {
         super(moduloService,2);
         this.customUserDetailsService = customUserDetailsService;
@@ -32,6 +52,14 @@ public class GMARoleController extends ModuloController {
         this.ruoloService = ruoloService;
     }
 
+    /**
+     * Visualizza la dashboard di configurazione dei permessi ruoli-moduli.
+     *
+     * @param principal Identità dell'amministratore.
+     * @param model     Modello UI.
+     * @return Vista "moduli/gma/role/RoleModuli" o redirect.
+     * @since 1.2.5
+     */
     @GetMapping({"dashboard/gma","dashboard/gma/"})
     public String dashboardDispatcher(Principal principal, Model model) {
         String email =  principal.getName();
@@ -46,6 +74,21 @@ public class GMARoleController extends ModuloController {
         }
     }
 
+    /**
+     * Aggiorna le affiliazioni (permessi) per un determinato modulo.
+     * <p>
+     * Riceve una lista di ID ruolo e aggiorna le associazioni nel database, garantendo
+     * che i ruoli selezionati (e solo quelli) abbiano accesso al modulo specificato.
+     * Implementa una logica di fallback per assicurare che il ruolo "Responsabile" mantenga sempre l'accesso.
+     * </p>
+     *
+     * @param principal Identità amministratore.
+     * @param model     Modello UI.
+     * @param idModulo  ID del modulo da configurare.
+     * @param roleIds   Lista degli ID dei ruoli abilitati.
+     * @return Vista aggiornata con messaggio di successo/errore.
+     * @since 1.2.5
+     */
     @PostMapping("dashboard/gma/edit-modulo")
     public String editModulo(Principal principal, Model model, @RequestParam int idModulo, @RequestParam(required = false) List<Integer> roleIds) {
         String email =  principal.getName();

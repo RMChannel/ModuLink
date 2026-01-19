@@ -40,9 +40,11 @@ import java.util.List;
  * <p>
  * La classe utilizza l'annotazione {@link SessionAttributes} per mantenere persistente l'oggetto
  * {@link RegisterAziendaForm} tra le varie richieste HTTP finché l'intero processo non viene completato.
+ * </p>
  *
  * @author Modulink Team
- * @version 1.2
+ * @version 3.1.0
+ * @since 1.0.0
  */
 @Controller
 @SessionAttributes("registerAziendaForm")
@@ -58,10 +60,13 @@ public class RegisterController {
     /**
      * Costruttore per l'iniezione delle dipendenze.
      *
-     * @param userDetailsService     Servizio per la gestione degli utenti e autenticazione.
-     * @param aziendaService         Servizio per la logica di business relativa alle aziende.
-     * @param ruoloService        Repository per la persistenza dei ruoli.
-     * @param associazioneService Repository per collegare utenti e ruoli.
+     * @param userDetailsService     Servizio gestione utenti.
+     * @param aziendaService         Servizio gestione aziende.
+     * @param ruoloService           Servizio gestione ruoli.
+     * @param associazioneService    Servizio associazione utente-ruolo.
+     * @param attivazioneService     Servizio attivazione moduli.
+     * @param pertinenzaService      Servizio permessi moduli.
+     * @since 1.0.0
      */
     public RegisterController(CustomUserDetailsService userDetailsService, AziendaService aziendaService, RuoloService ruoloService, AssociazioneService associazioneService, AttivazioneService attivazioneService, PertinenzaService pertinenzaService) {
         this.userDetailsService = userDetailsService;
@@ -77,10 +82,12 @@ public class RegisterController {
      * <p>
      * Se l'utente è già autenticato, viene reindirizzato alla home.
      * Altrimenti, inizializza il form per i dati aziendali.
+     * </p>
      *
      * @param model     Il modello per la vista.
      * @param principal L'utente attualmente loggato (se presente).
      * @return Il nome della vista Thymeleaf per la registrazione azienda.
+     * @since 1.0.0
      */
     @GetMapping("/register")
     public String showRegistrationForm(Model model, Principal principal) {
@@ -101,12 +108,14 @@ public class RegisterController {
      * </ul>
      * Se tutto è corretto, prepara il model per il secondo step (Registrazione Utente).
      *
+     *
      * @param model               Il modello per la vista.
      * @param principal           L'utente loggato.
      * @param registerAziendaForm Il DTO popolato con i dati dell'azienda.
      * @param bindingResult       Risultato della validazione.
      * @return La vista successiva (RegistraUtente) o la stessa in caso di errori.
      * @throws IOException Se si verifica un errore nella lettura del file logo.
+     * @since 1.0.0
      */
     @PostMapping("/register")
     public String registerAzienda(Model model, Principal principal, @Valid @ModelAttribute("registerAziendaForm") RegisterAziendaForm registerAziendaForm, BindingResult bindingResult) throws IOException {
@@ -145,8 +154,10 @@ public class RegisterController {
      * Gestisce i tentativi di accesso diretto allo Step 2 via GET.
      * <p>
      * Reindirizza sempre all'inizio del processo per garantire che i dati aziendali siano presenti.
+     * </p>
      *
      * @return Redirect alla pagina di registrazione principale.
+     * @since 1.0.0
      */
     @GetMapping("/register-utente")
     public String redirectToRegisterUtente() {
@@ -170,6 +181,7 @@ public class RegisterController {
      * <li>Pulizia della sessione (rimozione attributi temporanei).</li>
      * </ol>
      *
+     *
      * @param registerAziendaForm DTO Azienda recuperato dalla sessione.
      * @param model               Il modello.
      * @param principal           L'utente loggato.
@@ -178,6 +190,7 @@ public class RegisterController {
      * @param sessionStatus       Oggetto per segnare la sessione come completata.
      * @return Redirect alla pagina di login in caso di successo.
      * @throws IOException Se fallisce la scrittura dei file su disco.
+     * @since 1.0.0
      */
     @PostMapping("/register-utente")
     @Transactional

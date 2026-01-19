@@ -23,6 +23,21 @@ import java.nio.file.Paths;
 import java.security.Principal;
 import java.util.Optional;
 
+/**
+ * Controller per il modulo <strong>GDR (Gestione Del Responsabile)</strong>.
+ * <p>
+ * Questo controller permette agli utenti autorizzati (es. amministratori aziendali) di visualizzare
+ * e modificare i dati anagrafici della propria azienda. Include la gestione del caricamento del logo
+ * e la verifica dei vincoli di unicità sui dati sensibili (P.IVA, Telefono).
+ * </p>
+ * <p>
+ * Estende {@link ModuloController} (ID Modulo: 3) per l'integrazione con il sistema di gestione moduli.
+ * </p>
+ *
+ * @author Modulink Team
+ * @version 1.8.3
+ * @since 1.2.0
+ */
 @Controller
 @RequestMapping("/dashboard/gdr")
 public class AziendaCotroller extends ModuloController {
@@ -30,6 +45,14 @@ public class AziendaCotroller extends ModuloController {
     private final ModuloService moduloService;
     private final AziendaService aziendaService;
 
+    /**
+     * Costruttore per l'iniezione delle dipendenze.
+     *
+     * @param customUserDetailsService Servizio recupero utenti.
+     * @param moduloService            Servizio moduli.
+     * @param aziendaService           Servizio gestione aziende.
+     * @since 1.2.0
+     */
     public AziendaCotroller(CustomUserDetailsService customUserDetailsService, ModuloService moduloService, AziendaService aziendaService) {
         super(moduloService, 3);
         this.customUserDetailsService = customUserDetailsService;
@@ -37,6 +60,17 @@ public class AziendaCotroller extends ModuloController {
         this.aziendaService = aziendaService;
     }
 
+    /**
+     * Prepara la vista per la modifica dei dati aziendali.
+     * <p>
+     * Recupera i dati attuali dell'azienda associata all'utente loggato e popola il form {@link EditAziendaForm}.
+     * </p>
+     *
+     * @param principal Identità dell'utente loggato.
+     * @param model     Modello UI.
+     * @return Vista "moduli/gdr/editAzienda" o redirect se non autorizzato.
+     * @since 1.2.0
+     */
     @GetMapping("/")
     public String DatiAzienda(Principal principal, Model model) {
         if (principal == null) {
@@ -65,6 +99,25 @@ public class AziendaCotroller extends ModuloController {
     }
 
 
+    /**
+     * Processa la richiesta di aggiornamento dei dati aziendali.
+     * <p>
+     * Esegue validazioni critiche:
+     * <ul>
+     *     <li>Unicità della P.IVA rispetto ad altre aziende nel sistema.</li>
+     *     <li>Unicità del numero di telefono (normalizzato).</li>
+     *     <li>Gestione del logo: cancellazione vecchio file e salvataggio nuovo upload.</li>
+     * </ul>
+     *
+     *
+     * @param principal Identità dell'utente.
+     * @param model     Modello UI.
+     * @param form      DTO con i nuovi dati aziendali.
+     * @param result    Risultati validazione form.
+     * @return Redirect alla stessa pagina con messaggio di esito.
+     * @throws IOException In caso di errori I/O sul filesystem.
+     * @since 1.2.0
+     */
     @PostMapping("/edit")
     public String edit(Principal principal, Model model, @Valid @ModelAttribute("registerAziendaForm") EditAziendaForm form, BindingResult result) throws IOException {
         if (principal == null) {
@@ -147,6 +200,13 @@ public class AziendaCotroller extends ModuloController {
         }
     }
 
+    /**
+     * Inibisce la disinstallazione del modulo GDR.
+     * Essendo il modulo che gestisce l'identità aziendale, non può essere rimosso.
+     *
+     * @param azienda Azienda target.
+     * @since 1.2.0
+     */
     //Modulo non disinstallabile
     @Override
     public void disinstallaModulo(AziendaEntity azienda) {

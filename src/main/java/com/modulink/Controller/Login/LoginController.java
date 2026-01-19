@@ -18,6 +18,23 @@ import java.security.Principal;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
+/**
+ * Controller dedicato alla gestione delle procedure di autenticazione e recupero credenziali.
+ * <p>
+ * Oltre a servire la pagina di login, gestisce l'intero flusso di "Password Dimenticata" (Forgot Password),
+ * che include:
+ * <ol>
+ *     <li>Richiesta di reset tramite email.</li>
+ *     <li>Generazione e invio di codici OTP (One-Time Password) via email.</li>
+ *     <li>Verifica dell'OTP e aggiornamento sicuro della password.</li>
+ * </ol>
+ * Utilizza {@link OTPManager} per la gestione temporanea dei codici e {@link EmailService} per le comunicazioni.
+ *
+ *
+ * @author Modulink Team
+ * @version 2.0.0
+ * @since 1.0.0
+ */
 @Controller
 public class LoginController {
     private final CustomUserDetailsService customUserDetailsService;
@@ -25,6 +42,14 @@ public class LoginController {
     private final String senderEmail;
     private final EmailService emailService;
 
+    /**
+     * Costruttore con iniezione delle dipendenze.
+     *
+     * @param customUserDetailsService Servizio gestione utenti.
+     * @param senderEmail              Indirizzo email mittente configurato nelle properties.
+     * @param emailService             Servizio per l'invio di email.
+     * @since 1.0.0
+     */
     public LoginController(CustomUserDetailsService customUserDetailsService, @Value("${spring.mail.properties.mail.smtp.from}") String senderEmail, EmailService emailService) {
         this.customUserDetailsService=customUserDetailsService;
         this.otpManager=new OTPManager();
@@ -32,12 +57,29 @@ public class LoginController {
         this.emailService=emailService;
     }
 
+    /**
+     * Visualizza la pagina di Login.
+     * Se l'utente è già autenticato, esegue un redirect alla dashboard.
+     *
+     * @param model     Modello UI.
+     * @param principal Utente autenticato.
+     * @return Vista "login/login" o redirect.
+     * @since 1.0.0
+     */
     @GetMapping("/login")
     public String login(Model model, Principal principal) {
         if(principal != null) return "redirect:/dashboard";
         else return "login/login";
     }
 
+    /**
+     * Visualizza la pagina per la richiesta di recupero password.
+     *
+     * @param model     Modello UI.
+     * @param principal Utente autenticato.
+     * @return Vista "login/forgot-password" o redirect.
+     * @since 1.0.0
+     */
     @GetMapping("/forgot-password")
     public String forgotPasswordGetter(Model model, Principal principal) {
         if(principal != null) return "redirect:/dashboard";
@@ -52,6 +94,12 @@ public class LoginController {
         return email != null && EMAIL_PATTERN.matcher(email).matches();
     }
 
+    /**
+     * Metodo helper privato per generare e inviare un OTP via email.
+     *
+     * @param email        Indirizzo destinatario.
+     * @param utenteToFind Entità utente associata.
+     */
     private void sendEmailWithOTP(String email, UtenteEntity utenteToFind) {
         otpManager.addOTP(email,utenteToFind);
         SimpleMailMessage message = new SimpleMailMessage();
@@ -62,6 +110,18 @@ public class LoginController {
         emailService.sendEmail(message);
     }
 
+    /**
+     * Elabora la richiesta di recupero password inviata dal form.
+     * <p>
+     * Verifica l'esistenza dell'email nel sistema. Se trovata, invia l'OTP e reindirizza alla pagina di verifica.
+     * </p>
+     *
+     * @param model     Modello UI.
+     * @param principal Utente autenticato.
+     * @param email     Email fornita dall'utente.
+     * @return Vista "login/otp-check" in caso di successo, o ricarica la pagina con errore.
+     * @since 1.1.0
+     */
     @PostMapping("/forgot-password")
     public String forgotPasswordController(Model model, Principal principal, @RequestParam String email) {
         if(principal!=null) return "redirect:/dashboard";
@@ -86,6 +146,15 @@ public class LoginController {
         }
     }
 
+    /**
+     * Endpoint AJAX per il rinvio del codice OTP.
+     *
+     * @param model               Modello UI.
+     * @param principal           Utente autenticato.
+     * @param confirmPasswordForm DTO contenente l'email.
+     * @return ResponseEntity OK o BadRequest.
+     * @since 1.1.0
+     */
     @PostMapping("/resend-otp")
     @ResponseBody
     public ResponseEntity<Void> reSendOTP(Model model, Principal principal, @ModelAttribute ConfirmPasswordForm confirmPasswordForm) {
@@ -98,6 +167,20 @@ public class LoginController {
         }
     }
 
+    /**
+     * Processa la conferma del cambio password tramite OTP.
+     * <p>
+     * Verifica la validità dell'OTP, la corrispondenza delle password e che la nuova password sia diversa dalla precedente.
+     * In caso di successo, aggiorna la password criptata nel database.
+     * </p>
+     *
+     * @param model               Modello UI.
+     * @param principal           Utente autenticato.
+     * @param confirmPasswordForm DTO con i dati di conferma.
+     * @param bindingResult       Risultati validazione.
+     * @return Vista di conferma successo o pagina di errore OTP.
+     * @since 1.1.0
+     */
     @PostMapping("/confirm-new-password")
     public String confirmNewPassword(Model model, Principal principal, @Valid @ModelAttribute ConfirmPasswordForm confirmPasswordForm, BindingResult bindingResult) {
         if(principal!=null) return "redirect:/dashboard";

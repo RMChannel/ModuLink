@@ -6,17 +6,16 @@ import jakarta.validation.constraints.Size;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
- * Classe Form (DTO) per la gestione dei dati di registrazione di una nuova <strong>Azienda</strong>.
+ * Data Transfer Object (DTO) per il form di modifica dei dati aziendali (Modulo GDR).
  * <p>
- * Questo DTO raccoglie le informazioni anagrafiche e di contatto dell'azienda durante la fase di onboarding.
- * Le annotazioni di <strong>Jakarta Validation</strong> assicurano che i dati inseriti rispettino
- * i formati richiesti (es. lunghezza P.IVA, formato telefono) prima di essere passati al Service Layer.
- * <p>
- * Oltre ai campi di input utente, contiene campi ausiliari per la gestione del file di logo (bytes e nome file)
- * per facilitare il passaggio di dati o il ripristino della vista in caso di errori di validazione.
+ * Estende le validazioni standard per garantire che le modifiche ai dati core dell'azienda
+ * (Ragione Sociale, P.IVA, Contatti) rispettino i requisiti di sistema.
+ * Include logica per la gestione (sostituzione/rimozione) del logo.
+ * </p>
  *
  * @author Modulink Team
- * @version 1.0
+ * @version 1.3.0
+ * @since 1.2.0
  */
 public class EditAziendaForm {
 
@@ -108,6 +107,9 @@ public class EditAziendaForm {
      */
     private String logoFileName;
 
+    /**
+     * Flag che indica la volontà dell'utente di rimuovere il logo esistente.
+     */
     private boolean deleteFoto;
 
     /**
@@ -254,10 +256,18 @@ public class EditAziendaForm {
         this.logoFileName = logoFileName;
     }
 
+    /**
+     * Verifica se è stata richiesta l'eliminazione della foto.
+     * @return true se da eliminare.
+     */
     public boolean isDeleteFoto() {
         return deleteFoto;
     }
 
+    /**
+     * Imposta il flag di eliminazione foto.
+     * @param deleteFoto true per eliminare.
+     */
     public void setDeleteFoto(boolean deleteFoto) {
         this.deleteFoto = deleteFoto;
     }

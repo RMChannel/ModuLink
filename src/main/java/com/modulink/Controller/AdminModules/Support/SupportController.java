@@ -20,17 +20,46 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.security.Principal;
 import java.util.Optional;
 
+/**
+ * Controller dedicato alla gestione del modulo Supporto/Ticket.
+ * <p>
+ * Permette agli utenti di inviare richieste di assistenza tramite un form pubblico
+ * e agli amministratori di visualizzare e gestire (cancellare) i ticket ricevuti.
+ * Estende {@link ModuloController} per l'integrazione architetturale con il sistema moduli.
+ * </p>
+ *
+ * @author Modulink Team
+ * @version 1.8.1
+ * @since 1.2.0
+ */
 @Controller
 public class SupportController extends ModuloController {
     private final SupportFormService supportFormService;
     private final CustomUserDetailsService customUserDetailsService;
 
+    /**
+     * Costruttore per l'iniezione dei servizi.
+     *
+     * @param moduloService            Servizio base gestione moduli.
+     * @param supportFormService       Servizio gestione ticket di supporto.
+     * @param customUserDetailsService Servizio recupero utenti.
+     * @since 1.2.0
+     */
     public SupportController(ModuloService moduloService, SupportFormService supportFormService, CustomUserDetailsService customUserDetailsService) {
         super(moduloService, -2);
         this.supportFormService = supportFormService;
         this.customUserDetailsService = customUserDetailsService;
     }
 
+    /**
+     * Gestisce l'invio di una richiesta di supporto da parte di un utente.
+     *
+     * @param supportForm   DTO contenente i dati del ticket (email, categoria, messaggio).
+     * @param bindingResult Risultato della validazione del form.
+     * @param model         Modello UI.
+     * @return Nome della vista da renderizzare.
+     * @since 1.2.0
+     */
     @PostMapping("/supporto")
     public String support(@Valid @ModelAttribute("support") SupportForm supportForm, BindingResult bindingResult, Model model) {
         if(bindingResult.hasErrors()) {
@@ -46,6 +75,15 @@ public class SupportController extends ModuloController {
         return "homepage/supporto";
     }
 
+    /**
+     * Visualizza la lista dei messaggi di supporto nel pannello di amministrazione.
+     * Accessibile solo agli amministratori con permessi adeguati.
+     *
+     * @param principal Utente amministratore.
+     * @param model     Modello UI.
+     * @return Vista amministrazione supporto o redirect.
+     * @since 1.2.0
+     */
     @GetMapping({"/dashboard/support","/dashboard/support/"})
     public String getMessaggi(Principal principal, Model model) {
         Optional<UtenteEntity> utenteOpt=customUserDetailsService.findByEmail(principal.getName());
@@ -56,6 +94,15 @@ public class SupportController extends ModuloController {
         else return "redirect:/";
     }
 
+    /**
+     * Rimuove un messaggio di supporto dal sistema.
+     *
+     * @param principal   Utente amministratore.
+     * @param model       Modello UI.
+     * @param idMessaggio ID del ticket da cancellare.
+     * @return Redirect alla pagina di supporto con messaggio di successo.
+     * @since 1.2.0
+     */
     @PostMapping({"/dashboard/remove-support","/dashboard/remove-support/"})
     public String removeMessaggio(Principal principal, Model model, @RequestParam int idMessaggio) {
         Optional<UtenteEntity> utenteOpt=customUserDetailsService.findByEmail(principal.getName());
@@ -66,6 +113,12 @@ public class SupportController extends ModuloController {
         else return "redirect:/";
     }
 
+    /**
+     * Inibisce la disinstallazione del modulo Supporto.
+     *
+     * @param azienda Azienda target.
+     * @since 1.2.0
+     */
     //Modulo non disinstallabile
     @Override
     public void disinstallaModulo(AziendaEntity azienda) {
