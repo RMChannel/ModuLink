@@ -1,6 +1,7 @@
 package com.modulink.Model.Eventi;
 
 import com.modulink.Model.Azienda.AziendaEntity;
+import com.modulink.Model.Utente.UtenteEntity;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -14,6 +15,7 @@ public class EventoEntity {
     @Column(name="id_evento", nullable = false)
     private int id_evento;
 
+
     @Id
     @ManyToOne
     @JoinColumn(name="id_azienda", referencedColumnName = "id_azienda", nullable = false, foreignKey = @ForeignKey(name = "FK_Evento_Azienda"))
@@ -22,8 +24,12 @@ public class EventoEntity {
     @Column(name="nome", nullable = false, length = 200)
     private String nome;
 
+
     @Column(name="luogo", length = 300)
     private String luogo;
+
+    @ManyToOne
+    private UtenteEntity creatore;
 
     @Column(name="data_ora_inizio", nullable = false)
     private LocalDateTime data_ora_inizio;
@@ -88,5 +94,13 @@ public class EventoEntity {
 
     public void setData_fine(LocalDateTime data_fine) {
         this.data_fine = data_fine;
+    }
+
+    public UtenteEntity getCreatore() {
+        return creatore;
+    }
+
+    public void setCreatore(UtenteEntity creatore) {
+        this.creatore = creatore;
     }
 }

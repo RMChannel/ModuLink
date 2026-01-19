@@ -1,12 +1,12 @@
 package com.modulink.Controller.GDE;
 
+import com.modulink.Controller.ModuloController;
 import com.modulink.Model.Azienda.AziendaEntity;
-import com.modulink.Model.Eventi.EventoEntity;
-import com.modulink.Model.Eventi.EventoID;
-import com.modulink.Model.Eventi.EventoRepository;
-import com.modulink.Model.Eventi.EventoService;
+import com.modulink.Model.Eventi.*;
+import com.modulink.Model.Modulo.ModuloService;
 import com.modulink.Model.Relazioni.Partecipazione.PartecipazioneService;
 import com.modulink.Model.Utente.CustomUserDetailsService;
+import com.modulink.Model.Utente.UserNotFoundException;
 import com.modulink.Model.Utente.UserRepository;
 import com.modulink.Model.Utente.UtenteEntity;
 import org.springframework.http.ResponseEntity;
@@ -15,12 +15,12 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/dashboard/calendar/api")
-public class EventoController {
+public class EventoController extends ModuloController {
 
     private final EventoService eventoService;
     private final EventoRepository eventoRepository;
@@ -28,13 +28,19 @@ public class EventoController {
     private final CustomUserDetailsService customUserDetailsService;
     private final UserRepository userRepository;
 
-    public EventoController(EventoService eventoService, EventoRepository eventoRepository, PartecipazioneService partecipazioneService, CustomUserDetailsService customUserDetailsService, UserRepository userRepository) {
+    public EventoController(EventoService eventoService, EventoRepository eventoRepository, PartecipazioneService partecipazioneService, CustomUserDetailsService customUserDetailsService, UserRepository userRepository, ModuloService moduloService) {
+        super(moduloService, 4);
         this.eventoService = eventoService;
         this.eventoRepository = eventoRepository;
         this.partecipazioneService = partecipazioneService;
         this.customUserDetailsService = customUserDetailsService;
         this.userRepository = userRepository;
     }
+
+    // Record DTO per inviare utenti senza loop infiniti
+    public record UserDTO(int id_utente, String nome, String cognome) {}
+    // Record DTO per inviare eventi
+    public record EventoDTO(int id_evento, String nome, String luogo, LocalDateTime data_ora_inizio, LocalDateTime data_fine) {}
 
     @PostMapping("/create")
     @ResponseBody
@@ -47,7 +53,6 @@ public class EventoController {
         UtenteEntity currentUser = currentUserOpt.get();
         AziendaEntity azienda = currentUser.getAzienda();
 
-        // Genera ID (manuale per chiave composta)
         int newId = eventoRepository.findMaxIdByAzienda(azienda) + 1;
 
         EventoEntity evento = new EventoEntity(
@@ -58,17 +63,15 @@ public class EventoController {
                 request.inizio(),
                 request.fine()
         );
+        evento.setCreatore(currentUser);
 
         eventoService.create(evento);
-
-        // Aggiungi il creatore come partecipante
         partecipazioneService.Invita(evento, currentUser);
 
-        // Aggiungi partecipanti selezionati (se presenti)
         if (request.partecipanti() != null && !request.partecipanti().isEmpty()) {
             List<UtenteEntity> colleagues = userRepository.getAllByAziendaIs(azienda);
             for (Integer userId : request.partecipanti()) {
-                 colleagues.stream()
+                colleagues.stream()
                         .filter(u -> u.getId_utente() == userId)
                         .findFirst()
                         .ifPresent(u -> partecipazioneService.Invita(evento, u));
@@ -78,17 +81,65 @@ public class EventoController {
         return ResponseEntity.ok().body("{\"status\": \"success\", \"id\": " + newId + "}");
     }
 
+    @PostMapping("/update")
+    @ResponseBody
+    public ResponseEntity<?> updateEvento(@RequestBody UpdateEventoRequest request, Principal principal) {
+        if (principal == null) return ResponseEntity.status(401).build();
+        Optional<UtenteEntity> currentUserOpt = customUserDetailsService.findByEmail(principal.getName());
+        if (currentUserOpt.isEmpty() || !isAccessibleModulo(currentUserOpt)) return ResponseEntity.status(403).build();
+
+        UtenteEntity currentUser = currentUserOpt.get();
+        EventoEntity evento = eventoRepository.getById(new EventoID(request.id, currentUser.getAzienda().getId_azienda()));
+
+        if (evento == null) return ResponseEntity.status(404).body("Evento non trovato");
+
+        evento.setData_fine(request.fine);
+        evento.setData_ora_inizio(request.inizio);
+        evento.setNome(request.nome);
+        evento.setLuogo(request.luogo);
+
+        eventoService.update(evento); // Assicurati di salvare le modifiche all'evento stesso
+
+        List<UtenteEntity> attualiPartecipanti = partecipazioneService.getUtenteEntitiesByEvento(evento);
+        List<UtenteEntity> daRimuovere = new ArrayList<>();
+
+        // Identifica chi rimuovere (CORREZIONE ConcurrentModificationException)
+        for (UtenteEntity utente : attualiPartecipanti) {
+            if (!request.partecipanti.contains(utente.getId_utente())) {
+                daRimuovere.add(utente);
+            }
+        }
+
+        // Esegui rimozioni
+        for (UtenteEntity u : daRimuovere) {
+            partecipazioneService.RimuoviInvito(evento, u);
+        }
+
+        // Identifica chi aggiungere
+        List<Integer> idsAttuali = attualiPartecipanti.stream().map(UtenteEntity::getId_utente).toList();
+
+        for (Integer userId : request.partecipanti()) {
+            // Se non è tra quelli attuali (e non è stato appena rimosso, logica implicita)
+            if (!idsAttuali.contains(userId)) {
+                try {
+                    UtenteEntity utente = customUserDetailsService.getByID(userId, currentUser.getAzienda().getId_azienda());
+                    partecipazioneService.Invita(evento, utente);
+                } catch (UserNotFoundException e) {
+                    // Ignora o logga
+                }
+            }
+        }
+        return ResponseEntity.ok().body("{\"status\": \"updated\"}");
+    }
+
     @PostMapping("/delete")
     @ResponseBody
     public ResponseEntity<?> deleteEvento(@RequestBody DeleteEventoRequest request, Principal principal) {
         if (principal == null) return ResponseEntity.status(401).build();
-
         Optional<UtenteEntity> currentUserOpt = customUserDetailsService.findByEmail(principal.getName());
         if (currentUserOpt.isEmpty()) return ResponseEntity.status(403).build();
 
         AziendaEntity azienda = currentUserOpt.get().getAzienda();
-
-        // Costruisci l'ID composto
         EventoID eventoID = new EventoID(request.id(), azienda.getId_azienda());
 
         if (eventoRepository.existsById(eventoID)) {
@@ -99,6 +150,52 @@ public class EventoController {
         }
     }
 
+    @GetMapping("/users")
+    public ResponseEntity<?> getUsers(@RequestParam(required = false) Integer id, Principal principal) {
+        if (principal == null) return ResponseEntity.status(401).build();
+        Optional<UtenteEntity> currentUserOpt = customUserDetailsService.findByEmail(principal.getName());
+        if (currentUserOpt.isEmpty() || !isAccessibleModulo(currentUserOpt)) return ResponseEntity.status(403).build();
+
+        List<UtenteEntity> resultUsers;
+
+        if (id == null) {
+            // Caso 1: Ricerca utenti per autocomplete (Tutti gli utenti azienda)
+            resultUsers = userRepository.getAllByAziendaIs(currentUserOpt.get().getAzienda());
+        } else {
+            // Caso 2: Partecipanti di un evento specifico
+            try {
+                EventoEntity evento = eventoService.findById(new EventoID(id, currentUserOpt.get().getAzienda().getId_azienda()));
+                resultUsers = partecipazioneService.getUtenteEntitiesByEvento(evento);
+            } catch (EventoNotFound e) {
+                return ResponseEntity.status(404).build();
+            }
+        }
+
+        // Mapping a DTO per evitare loop infiniti JSON
+        List<UserDTO> dtos = resultUsers.stream()
+                .map(u -> new UserDTO(u.getId_utente(), u.getNome(), u.getCognome()))
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(dtos);
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<?> getEventiAzienda(Principal principal) {
+        if (principal == null) return ResponseEntity.status(401).build();
+        Optional<UtenteEntity> currentUserOpt = customUserDetailsService.findByEmail(principal.getName());
+        if (currentUserOpt.isEmpty() || !isAccessibleModulo(currentUserOpt)) return ResponseEntity.status(403).build();
+
+        AziendaEntity azienda = currentUserOpt.get().getAzienda();
+        List<EventoEntity> eventi = eventoRepository.findByAzienda(azienda);
+
+        List<EventoDTO> dtos = eventi.stream()
+                .map(e -> new EventoDTO(e.getId_evento(), e.getNome(), e.getLuogo(), e.getData_ora_inizio(), e.getData_fine()))
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(dtos);
+    }
+
+    public record UpdateEventoRequest(int id, String nome, String luogo, LocalDateTime inizio, LocalDateTime fine, List<Integer> partecipanti){}
     public record CreateEventoRequest(String nome, String luogo, LocalDateTime inizio, LocalDateTime fine, List<Integer> partecipanti) {}
     public record DeleteEventoRequest(int id) {}
 }
