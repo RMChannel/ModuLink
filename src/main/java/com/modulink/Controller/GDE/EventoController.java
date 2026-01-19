@@ -1,20 +1,25 @@
 package com.modulink.Controller.GDE;
-
+import com.modulink.Controller.GDU.UserRestApi.UserDTO;
 import com.modulink.Controller.ModuloController;
 import com.modulink.Model.Azienda.AziendaEntity;
 import com.modulink.Model.Eventi.*;
 import com.modulink.Model.Modulo.ModuloService;
+import com.modulink.Model.Relazioni.Assegnazione.AssegnazioneService;
 import com.modulink.Model.Relazioni.Partecipazione.PartecipazioneService;
+import com.modulink.Model.Task.TaskEntity;
+import com.modulink.Model.Task.TaskService;
 import com.modulink.Model.Utente.CustomUserDetailsService;
 import com.modulink.Model.Utente.UserNotFoundException;
 import com.modulink.Model.Utente.UserRepository;
 import com.modulink.Model.Utente.UtenteEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -27,20 +32,64 @@ public class EventoController extends ModuloController {
     private final PartecipazioneService partecipazioneService;
     private final CustomUserDetailsService customUserDetailsService;
     private final UserRepository userRepository;
+    private final TaskService taskService;
+    private final AssegnazioneService assegnazioneService;
 
-    public EventoController(EventoService eventoService, EventoRepository eventoRepository, PartecipazioneService partecipazioneService, CustomUserDetailsService customUserDetailsService, UserRepository userRepository, ModuloService moduloService) {
+
+    public EventoController(EventoService eventoService, EventoRepository eventoRepository, PartecipazioneService partecipazioneService, CustomUserDetailsService customUserDetailsService, UserRepository userRepository, ModuloService moduloService, TaskService taskService, AssegnazioneService assegnazioneService) {
         super(moduloService, 4);
         this.eventoService = eventoService;
         this.eventoRepository = eventoRepository;
         this.partecipazioneService = partecipazioneService;
         this.customUserDetailsService = customUserDetailsService;
         this.userRepository = userRepository;
+        this.taskService = taskService;
+        this.assegnazioneService = assegnazioneService;
     }
 
-    // Record DTO per inviare utenti senza loop infiniti
-    public record UserDTO(int id_utente, String nome, String cognome) {}
-    // Record DTO per inviare eventi
-    public record EventoDTO(int id_evento, String nome, String luogo, LocalDateTime data_ora_inizio, LocalDateTime data_fine) {}
+    @GetMapping("/get")
+    @ResponseBody
+    public ResponseEntity<?> getEventi(Principal principal){
+        if (principal==null){
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+
+        Optional<UtenteEntity> currentUserOpt = customUserDetailsService.findByEmail(principal.getName());
+        if(!isAccessibleModulo(currentUserOpt)){
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+
+        if (currentUserOpt.isEmpty()) return ResponseEntity.status(403).build();
+        UtenteEntity currentUser = currentUserOpt.get();
+        AziendaEntity azienda = currentUser.getAzienda();
+
+        List<EventoEntity> eventi = eventoService.findAllByUtente(currentUser);
+
+        return  new ResponseEntity<>(parse(eventi), HttpStatus.OK);
+    }
+
+
+    @GetMapping("/getet")
+    public ResponseEntity<?> getEventiAndTask(Principal principal){
+        if (principal==null){
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+
+        Optional<UtenteEntity> currentUserOpt = customUserDetailsService.findByEmail(principal.getName());
+        if(!isAccessibleModulo(currentUserOpt)){
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+
+        if (currentUserOpt.isEmpty()) return ResponseEntity.status(403).build();
+        UtenteEntity currentUser = currentUserOpt.get();
+        AziendaEntity azienda = currentUser.getAzienda();
+
+        List<TaskEntity> tasks = assegnazioneService.getTaskAssegnate(currentUser);
+        List<EventoDTO> tasksP = parseTask(tasks);
+        return new ResponseEntity<>(tasksP, HttpStatus.OK);
+    }
+
+
 
     @PostMapping("/create")
     @ResponseBody
@@ -184,17 +233,26 @@ public class EventoController extends ModuloController {
         if (principal == null) return ResponseEntity.status(401).build();
         Optional<UtenteEntity> currentUserOpt = customUserDetailsService.findByEmail(principal.getName());
         if (currentUserOpt.isEmpty() || !isAccessibleModulo(currentUserOpt)) return ResponseEntity.status(403).build();
-
         AziendaEntity azienda = currentUserOpt.get().getAzienda();
         List<EventoEntity> eventi = eventoRepository.findByAzienda(azienda);
-
-        List<EventoDTO> dtos = eventi.stream()
-                .map(e -> new EventoDTO(e.getId_evento(), e.getNome(), e.getLuogo(), e.getData_ora_inizio(), e.getData_fine()))
-                .collect(Collectors.toList());
-
+        List<EventoDTO> dtos = parse(eventi);
         return ResponseEntity.ok(dtos);
     }
 
+    public static List<EventoDTO> parse(List<EventoEntity> eventi) {
+        return eventi.stream()
+                .map(e -> new EventoDTO(e.getId_evento(), e.getNome(), e.getLuogo(), e.getData_ora_inizio(), e.getData_fine()))
+                .collect(Collectors.toList());
+    }
+
+    public static List<EventoDTO> parseTask(List<TaskEntity> tasks) {
+        return tasks.stream()
+                .map(e->new EventoDTO(e.getId_task(), e.getTitolo(), "Ufficio", e.getDataCreazione().atStartOfDay(), e.getScadenza().atTime(LocalTime.MAX)))
+                .collect(Collectors.toList());
+    }
+
+    // Record DTO per inviare eventi
+    public record EventoDTO(int id_evento, String nome, String luogo, LocalDateTime data_ora_inizio, LocalDateTime data_fine) {}
     public record UpdateEventoRequest(int id, String nome, String luogo, LocalDateTime inizio, LocalDateTime fine, List<Integer> partecipanti){}
     public record CreateEventoRequest(String nome, String luogo, LocalDateTime inizio, LocalDateTime fine, List<Integer> partecipanti) {}
     public record DeleteEventoRequest(int id) {}
