@@ -21,7 +21,37 @@
     <div id="content">
         <!-- Top Navbar mobile toggle could go here if needed -->
         <div class="container-fluid">
+            <div class="row">
+                <div class="col-12 mb-4">
+                    <h2>Dashboard</h2>
+                    <p class="text-muted">Benvenuto, seleziona un modulo per iniziare.</p>
+                </div>
+            </div>
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                <div class="col" th:each="modulo : ${moduli}">
+                    <div class="card h-100 shadow-sm border-0 rounded-4 transition-hover">
+                        <div class="card-body text-center d-flex flex-column align-items-center p-4">
+                            <div class="icon-container mb-3 d-flex align-items-center justify-content-center bg-primary-subtle text-primary rounded-circle" style="width: 80px; height: 80px;">
+                                <i th:if="${modulo.url_icona != null}" th:class="${modulo.url_icona}" style="font-size: 2.5rem;"></i>
+                                <i th:unless="${modulo.url_icona != null}" class="bi bi-box-seam" style="font-size: 2.5rem;"></i>
+                            </div>
 
+                            <h4 class="card-title fw-bold mb-2" th:text="${modulo.nome}">Nome Modulo</h4>
+                            <p class="card-text text-secondary mb-4" th:text="${modulo.descrizione}">Descrizione del modulo.</p>
+                            <div class="mt-auto w-100">
+                                <a th:href="@{${modulo.url_modulo}}" class="btn btn-primary w-100 rounded-pill py-2 fw-semibold">
+                                    Accedi <i class="bi bi-arrow-right ms-1"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12" th:if="${#lists.isEmpty(moduli)}">
+                    <div class="alert alert-info text-center" role="alert">
+                        <i class="bi bi-info-circle me-2"></i> Non hai ancora accesso a nessun modulo. Contatta l'amministratore per maggiori informazioni.
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>

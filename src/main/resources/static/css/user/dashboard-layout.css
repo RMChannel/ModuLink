@@ -542,3 +542,19 @@ h1, h2, h3, h4, h5, h6 {
 ::-webkit-scrollbar-thumb:hover {
     background: var(--text-secondary);
 }
+
+/* =========================================
+   DASHBOARD CARD STYLES
+   ========================================= */
+.transition-hover {
+    transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.3s ease;
+}
+
+.transition-hover:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 24px rgba(0,0,0,0.1) !important;
+}
+
+.bg-primary-subtle {
+    background-color: var(--color-primary-light) !important;
+}
