@@ -28,13 +28,15 @@ import java.util.Set;
  * <p>
  * Il servizio agisce da ponte tra il database (tramite Repository) e il SecurityContext,
  * trasformando le entità di dominio {@link UtenteEntity} in oggetti {@link UserDetails}
- * comprensibili dal framework di sicurezza.
+ * comprensibili dal framework di sicurezza. Utilizza anche meccanismi di caching
+ * per ottimizzare le prestazioni in lettura.
+ * </p>
  *
  * @see UserDetailsService
  * @see CustomUserDetails
  * @see UserRepository
  * @author Modulink Team
- * @version 1.1
+ * @version 1.3.1
  */
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
@@ -58,9 +60,11 @@ public class CustomUserDetailsService implements UserDetailsService {
      * <p>
      * Spring 4.3+ inietta automaticamente le dipendenze nei costruttori unici senza
      * necessità dell'annotazione {@code @Autowired}.
+     * </p>
      *
      * @param userRepository    L'istanza del repository Utente gestita dal container.
      * @param aziendaRepository L'istanza del repository Azienda gestita dal container.
+     * @param ruoloService      Il servizio per la gestione dei ruoli.
      */
     public CustomUserDetailsService(UserRepository userRepository, AziendaRepository aziendaRepository, RuoloService ruoloService) {
         this.userRepository = userRepository;
@@ -73,10 +77,13 @@ public class CustomUserDetailsService implements UserDetailsService {
      * <p>
      * Sebbene il metodo si chiami {@code loadUserByUsername}, nel sistema Modulink
      * l'identificativo univoco per il login è l'indirizzo <strong>email</strong>.
+     * </p>
      * <p>
      * Questo metodo viene invocato dal {@code DaoAuthenticationProvider} durante il processo
      * di autenticazione. Se l'utente viene trovato, la verifica della password verrà effettuata
      * automaticamente dal provider confrontando l'hash memorizzato con quello fornito.
+     * Il risultato viene cachato per migliorare le performance delle richieste successive.
+     * </p>
      *
      * @param email L'email fornita dall'utente nel form di login.
      * @return Un'istanza di {@link CustomUserDetails} contenente le credenziali e i ruoli dell'utente.
@@ -104,7 +111,8 @@ public class CustomUserDetailsService implements UserDetailsService {
      * </ol>
      * <p>
      * L'annotazione {@link Transactional} garantisce che tutte le operazioni (lettura MAX ID e salvataggio)
-     * avvengano atomicamente.
+     * avvengano atomicamente. Invalida le cache pertinenti per garantire coerenza.
+     * </p>
      *
      * @param nuovoUtente L'oggetto {@link UtenteEntity} popolato con i dati anagrafici (Nome, Email, Password Hash).
      * @param idAzienda   L'identificativo dell'azienda a cui associare l'utente.
@@ -133,11 +141,23 @@ public class CustomUserDetailsService implements UserDetailsService {
         userRepository.save(nuovoUtente);
     }
 
+    /**
+     * Cerca un utente per email utilizzando la cache.
+     *
+     * @param email L'email dell'utente da cercare.
+     * @return Un {@link Optional} contenente l'utente se trovato.
+     */
     @Cacheable(value = "users", key = "#email")
     public Optional<UtenteEntity> findByEmail(String email) {
         return userRepository.findByEmail(email);
     }
 
+    /**
+     * Recupera tutti gli utenti associati a una specifica azienda, utilizzando la cache.
+     *
+     * @param aziendaEntity L'entità azienda di riferimento.
+     * @return Una lista di utenti appartenenti all'azienda.
+     */
     @Cacheable(value = "usersByAzienda", key = "#aziendaEntity.id_azienda")
     public List<UtenteEntity> getAllByAzienda(AziendaEntity aziendaEntity) {
         return userRepository.getAllByAziendaIs(aziendaEntity);
@@ -145,16 +165,27 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     /**
      * Recupera la lista di tutti gli utenti di un'azienda, escludendo un utente specifico.
+     * <p>
      * Utile per liste di destinatari o assegnazioni dove non si vuole includere se stessi.
+     * </p>
      *
      * @param azienda L'azienda di appartenenza.
-     * @param idUtente L'ID dell'utente da escludere.
+     * @param idUtente L'ID dell'utente da escludere (solitamente l'utente corrente).
      * @return Lista di utenti filtrata.
      */
     public List<UtenteEntity> getAllByAziendaExcludingUser(AziendaEntity azienda, int idUtente) {
         return userRepository.findAllByAziendaAndIdUtenteNot(azienda, idUtente);
     }
 
+    /**
+     * Rimuove un utente dal sistema e pulisce le cache associate.
+     * <p>
+     * Prima dell'eliminazione, disaccoppia le associazioni ai ruoli per mantenere
+     * la coerenza del grafo degli oggetti e prevenire errori di integrità referenziale.
+     * </p>
+     *
+     * @param utente L'entità utente da rimuovere.
+     */
     @Caching(evict = {
             @CacheEvict(value = {"users", "userDetails"}, key = "#utente.email"),
             @CacheEvict(value = "usersByAzienda", key = "#utente.azienda.id_azienda")
@@ -174,6 +205,11 @@ public class CustomUserDetailsService implements UserDetailsService {
         userRepository.delete(utente);
     }
 
+    /**
+     * Aggiorna i dati di un utente esistente e invalida le cache pertinenti.
+     *
+     * @param utente L'entità utente con i dati aggiornati.
+     */
     @Caching(evict = {
             @CacheEvict(value = {"users", "userDetails"}, key = "#utente.email"),
             @CacheEvict(value = "usersByAzienda", key = "#utente.azienda.id_azienda")
@@ -183,12 +219,30 @@ public class CustomUserDetailsService implements UserDetailsService {
         userRepository.save(utente);
     }
 
+    /**
+     * Verifica se un utente è considerato "nuovo" basandosi sui suoi ruoli.
+     * <p>
+     * In questa implementazione, un utente è considerato nuovo se possiede il ruolo
+     * con ID 1 (convenzionalmente assegnato ai nuovi iscritti o utenti base).
+     * </p>
+     *
+     * @param utente L'utente da verificare.
+     * @return {@code true} se l'utente ha il ruolo ID 1, {@code false} altrimenti.
+     */
     public boolean isThisaNewUtente(UtenteEntity utente) {
         Set<RuoloEntity> ruoli=utente.getRuoli();
         for(RuoloEntity ruolo:ruoli) if(ruolo.getId_ruolo()==1) return true;
         return false;
     }
 
+    /**
+     * Recupera una lista di utenti a partire da una lista di ID, verificando l'appartenenza all'azienda.
+     *
+     * @param ids       Lista degli ID utenti da recuperare.
+     * @param id_azienda L'ID dell'azienda per contestualizzare la ricerca.
+     * @return Una lista di entità Utente corrispondenti.
+     * @throws UserNotFoundException Se uno degli ID non corrisponde a nessun utente nell'azienda specificata.
+     */
     public List<UtenteEntity> getAllUsersFromIDs(List<Integer> ids, int id_azienda) throws UserNotFoundException {
         List<UtenteEntity> utenti=new ArrayList<>();
         for(int id:ids) {
@@ -199,6 +253,14 @@ public class CustomUserDetailsService implements UserDetailsService {
         return utenti;
     }
 
+    /**
+     * Recupera un singolo utente tramite ID e ID azienda.
+     *
+     * @param id        L'ID dell'utente.
+     * @param id_azienda L'ID dell'azienda.
+     * @return L'entità Utente trovata.
+     * @throws UserNotFoundException Se l'utente non viene trovato.
+     */
     public UtenteEntity getByID(int id, int id_azienda) throws UserNotFoundException {
         Optional<UtenteEntity> utenteOpt=userRepository.findById(new UtenteID(id,id_azienda));
         if(utenteOpt.isEmpty()) throw new UserNotFoundException();

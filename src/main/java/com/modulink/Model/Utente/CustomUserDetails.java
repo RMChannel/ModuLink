@@ -17,11 +17,12 @@ import java.util.stream.Collectors;
  * e il sistema di autenticazione di Spring Security. Permette al framework di leggere
  * le credenziali (email/password) e le autorizzazioni (ruoli) dell'utente per gestire
  * il contesto di sicurezza (SecurityContext).
+ * </p>
  *
  * @see UserDetails
  * @see UtenteEntity
  * @author Modulink Team
- * @version 1.0
+ * @version 1.2.5
  */
 public class CustomUserDetails implements UserDetails {
 
@@ -41,10 +42,12 @@ public class CustomUserDetails implements UserDetails {
      * <p>
      * Il metodo itera sul {@code Set<RuoloEntity>} dell'utente e converte ogni ruolo
      * in un oggetto {@link SimpleGrantedAuthority}.
+     * </p>
      * <p>
      * <strong>Nota:</strong> Viene aggiunto il prefisso "ROLE_" al nome del ruolo (convertito in maiuscolo).
      * Questo è lo standard di Spring Security (es. se il ruolo è "admin", diventa "ROLE_ADMIN")
      * necessario per l'utilizzo corretto di espressioni come {@code hasRole('ADMIN')}.
+     * </p>
      *
      * @return Una collezione di autorità (ruoli) derivate dai ruoli dell'entità.
      */
@@ -76,6 +79,7 @@ public class CustomUserDetails implements UserDetails {
      * Restituisce il nome utente utilizzato per l'autenticazione.
      * <p>
      * Nel sistema Modulink, il nome utente univoco corrisponde all'indirizzo email.
+     * </p>
      *
      * @return L'email dell'utente.
      */
@@ -89,6 +93,7 @@ public class CustomUserDetails implements UserDetails {
      * <p>
      * Attualmente restituisce sempre {@code true}, indicando che l'account non scade mai.
      * Implementare logica qui se si desidera gestire scadenze temporali degli account.
+     * </p>
      *
      * @return {@code true} (account sempre valido in questa implementazione).
      */
@@ -102,6 +107,7 @@ public class CustomUserDetails implements UserDetails {
      * <p>
      * Attualmente restituisce sempre {@code true}.
      * Da implementare se si desidera bloccare utenti dopo troppi tentativi di accesso falliti.
+     * </p>
      *
      * @return {@code true} (account non bloccato).
      */
@@ -115,6 +121,7 @@ public class CustomUserDetails implements UserDetails {
      * <p>
      * Attualmente restituisce sempre {@code true}.
      * Da implementare per forzare il cambio password periodico.
+     * </p>
      *
      * @return {@code true} (credenziali sempre valide).
      */
@@ -129,6 +136,7 @@ public class CustomUserDetails implements UserDetails {
      * In futuro, questo metodo potrebbe restituire il valore di un campo "is_attivo"
      * presente nel database (es. per gestione ban o attivazione via email).
      * Attualmente assume che ogni utente presente nel DB sia attivo.
+     * </p>
      *
      * @return {@code true} (utente sempre abilitato per default).
      */
@@ -143,6 +151,7 @@ public class CustomUserDetails implements UserDetails {
      * Utile nei Controller o Service layer quando si accede al {@code Principal}
      * e si ha bisogno di accedere a dati non standard di {@code UserDetails}
      * (es. ID Azienda, Nome, Cognome, Immagine Profilo).
+     * </p>
      *
      * @return L'oggetto {@link UtenteEntity} originale completo.
      */

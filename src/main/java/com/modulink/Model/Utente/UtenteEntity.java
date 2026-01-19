@@ -14,21 +14,23 @@ import java.util.Objects;
 import java.util.Set;
 
 /**
- * Rappresenta l'entità <strong>Utente</strong> nel sistema Modulink.
+ * Rappresenta l'entità <strong>Utente</strong> nel sistema ModuLink.
  * <p>
  * Questa classe mappa la tabella <code>Utente</code> all'interno dello schema <code>modulink</code>.
  * Utilizza una architettura a <strong>Chiave Primaria Composta</strong> definita dalla classe {@link UtenteID},
  * costituita dalla coppia (ID Azienda, ID Utente).
+ * </p>
  * <p>
  * A differenza di un approccio standard con ID autoincrementale globale, qui l'identificativo dell'utente
  * è sequenziale e univoco solo all'interno della specifica azienda di appartenenza.
+ * </p>
  *
  * @see UtenteID
  * @see AziendaEntity
  * @see RuoloEntity
  * @see AssociazioneEntity
  * @author Modulink Team
- * @version 1.3
+ * @version 1.3.3
  */
 @Entity
 @Table(name="Utente", schema="modulink")
@@ -42,6 +44,7 @@ public class UtenteEntity {
      * <strong>Nota Importante:</strong> Non è annotato con <code>@GeneratedValue</code>.
      * Il valore deve essere calcolato e assegnato manualmente dall'applicazione (Service Layer)
      * prima del salvataggio (es. <code>MAX(ID) + 1</code> per l'azienda corrente).
+     * </p>
      */
     @Id
     @Column(name="ID_Utente", nullable = false)
@@ -53,6 +56,7 @@ public class UtenteEntity {
      * Rappresenta una relazione Molti-a-Uno con {@link AziendaEntity}.
      * Oltre a essere una Foreign Key, questo campo costituisce la seconda parte
      * della chiave primaria composta, definendo il contesto di unicità dell'ID Utente.
+     * </p>
      */
     @Id
     @ManyToOne
@@ -66,6 +70,7 @@ public class UtenteEntity {
      * Questa struttura sostituisce la classica annotazione <code>@ManyToMany</code> per risolvere
      * i conflitti generati dalla condivisione della colonna <code>ID_Azienda</code> nelle chiavi composte
      * di Utente e Ruolo.
+     * </p>
      */
     @OneToMany(mappedBy = "utente", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<AssociazioneEntity> associazioni = new HashSet<>();
@@ -81,6 +86,7 @@ public class UtenteEntity {
      * Hash della password dell'utente.
      * <p>
      * La password non viene mai salvata in chiaro, ma hashata tramite BCrypt.
+     * </p>
      */
     @Column(name="Password", nullable = false)
     private String hash_password;
@@ -113,6 +119,7 @@ public class UtenteEntity {
      * Costruttore vuoto predefinito.
      * <p>
      * Richiesto dalle specifiche JPA per la creazione dell'entità tramite reflection.
+     * </p>
      */
     public UtenteEntity() {}
 
@@ -272,6 +279,7 @@ public class UtenteEntity {
      * <p>
      * Di solito non viene usato direttamente dalla logica di business,
      * ma serve a Hibernate per gestire la persistenza.
+     * </p>
      * @return Il Set di {@link AssociazioneEntity}.
      */
     public Set<AssociazioneEntity> getAssociazioni() {
@@ -292,6 +300,7 @@ public class UtenteEntity {
      * Metodo di utilità per recuperare direttamente i Ruoli astrattando la tabella intermedia.
      * <p>
      * Itera sulle associazioni e restituisce un Set pulito di {@link RuoloEntity}.
+     * </p>
      *
      * @return Un Set contenente i ruoli dell'utente.
      */
@@ -310,6 +319,7 @@ public class UtenteEntity {
      * <p>
      * Crea automaticamente una nuova istanza di {@link AssociazioneEntity}
      * che collega questo utente al ruolo specificato e la aggiunge alla collezione.
+     * </p>
      *
      * @param ruolo Il ruolo da assegnare.
      */
@@ -318,6 +328,16 @@ public class UtenteEntity {
         this.associazioni.add(assoc);
     }
 
+    /**
+     * Rimuove un ruolo specifico dall'utente.
+     * <p>
+     * Cerca l'associazione corrispondente al ruolo dato e, se trovata, la rimuove
+     * sia dalla collezione locale che dalle associazioni del ruolo, garantendo
+     * la coerenza bidirezionale.
+     * </p>
+     *
+     * @param ruolo Il ruolo da rimuovere.
+     */
     public void rimuoviRuolo(RuoloEntity ruolo) {
         if(associazioni!=null) {
             for(AssociazioneEntity associazione:associazioni) {
@@ -329,10 +349,30 @@ public class UtenteEntity {
         }
     }
 
+    /**
+     * Resetta i ruoli dell'utente assegnandone uno di default.
+     * <p>
+     * Rimuove tutte le associazioni correnti e ne aggiunge una nuova con il ruolo specificato.
+     * Utile in fase di modifica massiva o ripristino permessi.
+     * </p>
+     *
+     * @param ruolo Il nuovo ruolo unico da assegnare.
+     */
     public void defaultRoles(RuoloEntity ruolo) {
         associazioni.clear();
         addRuolo(ruolo);
     }
+
+    /**
+     * Verifica l'uguaglianza tra due utenti.
+     * <p>
+     * Due utenti sono considerati uguali se hanno lo stesso ID utente e appartengono
+     * alla stessa azienda (ovvero hanno la stessa chiave primaria composta).
+     * </p>
+     *
+     * @param o L'oggetto da confrontare.
+     * @return {@code true} se gli oggetti sono uguali, {@code false} altrimenti.
+     */
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
