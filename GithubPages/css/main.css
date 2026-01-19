@@ -1,0 +1,305 @@
+@import 'colors.css';
+
+/* =========================================
+   1. GLOBAL & RESET
+   ========================================= */
+* {
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--bg-body-alt);
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', sans-serif;
+    color: var(--text-body);
+    overflow-x: hidden;
+}
+
+/* --- 2. TIPOGRAFIA --- */
+h1, h2, h3, h4 {
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+}
+
+.text-primary { color: var(--color-primary); }
+
+/* =========================================
+   3. COMPONENTI UI (BOTTONI)
+   ========================================= */
+.btn {
+    padding: 10px 24px;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    /* Flexbox per centrare testo e icone perfettamente */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    line-height: 1.2;
+}
+
+.btn:hover { transform: translateY(-2px); }
+.btn:active { transform: scale(0.98); }
+
+.btn-outline {
+    border: 1px solid var(--border-color);
+    color: var(--text-heading);
+    background: var(--color-white);
+}
+.btn-outline:hover { background-color: var(--bg-light); border-color: var(--border-color-hover); }
+
+.btn-solid {
+    background: var(--color-primary);
+    color: var(--color-white);
+    /* FIX IMPORTANTE: Aggiunto bordo dello stesso colore dello sfondo
+       per pareggiare l'altezza con il bottone outline (che ha il bordo) */
+    border: 1px solid var(--color-primary);
+    box-shadow: var(--shadow-btn-primary);
+}
+.btn-solid:hover {
+    background: var(--color-primary-dark);
+    border-color: var(--color-primary-dark);
+
+}
+
+/* =========================================
+   4. HEADER & NAVIGAZIONE
+   ========================================= */
+.site-header {
+    padding: 20px 5%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border-color-light);
+    position: sticky;
+    top: 0;
+    background: var(--color-white);
+    z-index: 1000;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.mobile-menu-toggle {
+    display: none; /* Hidden by default, shown via specific page CSS (e.g. login.css) or media queries */
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: var(--text-heading);
+}
+
+/* Regola per il contenitore dei bottoni (l'ultimo div nell'header) */
+.site-header .header-buttons {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Spazio costante tra i bottoni */
+}
+
+/* --- LOGO --- */
+.logo {
+    display: flex;
+    align-items: center;
+    padding: 0;
+    height: 50px; /* Altezza fissa */
+}
+
+/* Gestione Immagine Logo */
+.logo img {
+    height: 100%;
+    width: auto;
+    display: block;
+    object-fit: contain;
+    border: none;
+}
+
+/* --- LINK DI NAVIGAZIONE --- */
+.nav-links { display: flex; gap: 40px; font-weight: bold; font-size: 16px; }
+.nav-links a { text-decoration: none; color: var(--text-secondary); transition: color 0.2s; }
+    .nav-links a:hover { color: var(--color-primary); }
+
+/* Button Content Toggle (Desktop default) */
+.btn-icon { display: none; }
+.btn-text { display: inline; }
+/* =========================================
+   5. SEZIONI HOMEPAGE
+   ========================================= */
+
+/* Hero Section */
+.hero-section {
+    padding: 100px 20px;
+    text-align: center;
+    background: var(--gradient-hero);
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.hero-title {
+    font-size: 64px;
+    line-height: 1.1;
+    margin-bottom: 24px;
+    color: var(--text-heading);
+    letter-spacing: -1.5px;
+}
+
+/* Features Section */
+.features-section {
+    padding: 80px 0;
+    background: var(--bg-white);
+}
+.feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 40px;
+}
+.feature-card {
+    padding: 40px;
+    border-radius: 16px;
+    background: var(--bg-light);
+    border: 1px solid var(--border-color);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.feature-card:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-card-hover);
+    border-color: var(--border-color-hover);
+}
+
+.icon-box {
+    width: 60px; height: 60px; border-radius: 12px;
+    background: var(--color-primary-light); color: var(--color-primary);
+    display: grid; place-items: center; font-size: 28px; margin-bottom: 24px;
+}
+.feature-title { font-size: 22px; font-weight: 600; margin-bottom: 12px; color: var(--text-heading); }
+.feature-text { color: var(--text-secondary); line-height: 1.6; font-size: 16px; }
+
+/* Modules Section */
+.modules-section {
+    padding: 100px 0;
+    background: var(--bg-dark-section);
+    color: var(--color-white);
+}
+.section-header { text-align: center; margin-bottom: 60px; }
+.section-header h2 { font-size: 36px; margin-bottom: 15px; }
+
+.module-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+}
+.module-card {
+    background: var(--bg-module-card);
+    border: 1px solid var(--border-module-card);
+    padding: 40px 30px;
+    border-radius: 16px;
+    text-align: center;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+.module-card:hover {
+    background: var(--bg-module-card-hover);
+    transform: translateY(-5px);
+    border-color: var(--border-module-card-hover);
+}
+.module-icon { font-size: 40px; margin-bottom: 20px; color: var(--color-primary-lighter); }
+.module-card h4 { font-weight: 500; font-size: 18px; letter-spacing: 0.5px; }
+
+/* Footer */
+footer {
+    width: 100%;/*larghezza del footer*/
+    margin: 0;/*controllo dei margini pèr occupare tutto lo spazio*/
+    background: var(--bg-light);
+    padding: 40px 0;
+    text-align: center;
+    border-top: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    font-size: 14px;
+}
+
+/* =========================================
+   6. MEDIA QUERIES (RESPONSIVE)
+   ========================================= */
+
+@media (max-width: 900px) {
+    .mobile-menu-toggle {
+        display: block;
+        order: 3; /* Ensure it's on the right or positioned correctly */
+    }
+
+    .site-header {
+        position: relative; /* Needed for absolute positioning of nav */
+        flex-wrap: wrap;
+    }
+
+    .site-header .header-buttons {
+        margin-left: auto; /* Push buttons to the right */
+        margin-right: 15px;
+    }
+
+    .nav-links {
+        display: none;
+        width: 100%;
+        flex-direction: column;
+        background-color: var(--color-white);
+        position: absolute;
+        top: 100%;
+        left: 0;
+        padding: 20px;
+        box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+        gap: 15px;
+        border-bottom: 1px solid var(--border-color-light);
+        z-index: 999;
+    }
+
+    .nav-links.active {
+        display: flex;
+    }
+
+    .nav-links a {
+        display: block;
+        padding: 10px;
+        border-bottom: 1px solid var(--bg-light);
+        text-align: center;
+    }
+
+    .nav-links a:last-child {
+        border-bottom: none;
+    }
+    
+    /* Toggle buttons to icons on tablet/mobile */
+    .site-header .header-buttons .btn .btn-text { display: none; }
+    .site-header .header-buttons .btn .btn-icon { display: inline-block; font-size: 1.3rem; }
+    .site-header .header-buttons .btn { padding: 8px 12px; }
+}
+
+@media (max-width: 480px) {
+    /* Header più compatto */
+    .site-header {
+        padding: 10px 15px;
+    }
+
+    /* Logo più piccolo per non occupare troppo spazio */
+    .logo { height: 32px; }
+
+    /* STILE SPECIFICO BOTTONI HEADER SU MOBILE */
+    /* Li rende più piccoli per farli stare sulla stessa riga del logo */
+    .site-header .header-buttons .btn {
+        padding: 6px 12px;     /* Meno padding interno */
+        font-size: 13px;       /* Testo leggermente più piccolo */
+        white-space: nowrap;   /* Evita che il testo vada a capo */
+    }
+
+    .site-header .header-buttons {
+        gap: 8px; /* Gap ridotto tra i due bottoni */
+    }
+
+    /* Ridimensiona Hero Title */
+    .hero-title { font-size: 36px; }
+    .hero-section { padding: 60px 20px; }
+}
