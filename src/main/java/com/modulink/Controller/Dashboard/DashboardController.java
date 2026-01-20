@@ -1,18 +1,12 @@
 package com.modulink.Controller.Dashboard;
 
-import com.modulink.Model.Modulo.ModuloEntity;
-import com.modulink.Model.Modulo.ModuloRepository;
-import com.modulink.Model.Modulo.ModuloService;
-import com.modulink.Model.Relazioni.Affiliazione.AffiliazioneRepository;
 import com.modulink.Model.Utente.CustomUserDetailsService;
 import com.modulink.Model.Utente.UtenteEntity;
-import com.modulink.Model.Utente.UserRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import java.security.Principal;
-import java.util.List;
 import java.util.Optional;
 
 @Controller
