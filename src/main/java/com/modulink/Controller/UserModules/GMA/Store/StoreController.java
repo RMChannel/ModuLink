@@ -1,4 +1,4 @@
-package com.modulink.Controller.GMA.Store;
+package com.modulink.Controller.UserModules.GMA.Store;
 
 import com.modulink.Alert;
 import com.modulink.Controller.ModuloController;

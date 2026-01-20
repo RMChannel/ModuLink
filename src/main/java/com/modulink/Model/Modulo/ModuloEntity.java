@@ -26,6 +26,7 @@ public class ModuloEntity {
     @Column(name = "url_icona")
     private String url_icona;
 
+    @Column(name = "visible", nullable = false)
     private boolean Visible;
 
     @OneToMany(mappedBy = "id_modulo", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)

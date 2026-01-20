@@ -1,6 +1,7 @@
 package com.modulink.Controller.HomePage;
 
 
+import com.modulink.Controller.AdminModules.Support.SupportForm;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -56,6 +57,7 @@ public class HomeController {
 
     @GetMapping("/supporto")
     public String supporto(Model model, Principal principal) {
+        model.addAttribute("support", new SupportForm());
         return "homepage/supporto";
     }
 

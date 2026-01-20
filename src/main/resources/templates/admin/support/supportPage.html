@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Supporto Admin - ModuLink</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/user/colors.css}">
+    <link rel="stylesheet" th:href="@{/css/user/dashboard-layout.css}">
+    <link rel="stylesheet" th:href="@{/css/common/alerts.css}">
+    <link rel="stylesheet" th:href="@{/css/admin/support-admin.css}">
+    <script th:src="@{/javascript/theme.js}"></script>
+</head>
+<body>
+<div class="dashboard-wrapper">
+    <!-- Sidebar Fragment -->
+    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+    <div th:replace="~{fragments/messageFromParam :: alertsFromParam}"></div>
+
+    <!-- Main Content -->
+    <div id="content">
+        <div class="container-fluid support-admin-container">
+            <div class="row">
+                <div class="col-12 mb-4">
+                    <h2 class="fw-bold">Richieste di Supporto</h2>
+                    <p class="text-muted">Visualizza e gestisci tutti i messaggi inviati tramite il modulo di contatto.</p>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-12" th:if="${not #lists.isEmpty(messages)}">
+                    <div class="message-card" th:each="msg : ${messages}">
+                        <div class="message-header">
+                            <span class="message-category" th:text="${msg.category}">Categoria</span>
+                        </div>
+                        <div class="message-body">
+                            <a th:href="'mailto:' + ${msg.email}" class="message-email">
+                                <i class="bi bi-envelope-at me-2"></i>
+                                <span th:text="${msg.email}">email@example.com</span>
+                            </a>
+                            <div class="message-content" th:text="${msg.message}">
+                                Contenuto del messaggio...
+                            </div>
+                        </div>
+                        <div class="message-footer">
+                            <form th:action="@{/dashboard/remove-support}" method="post" onsubmit="return confirm('Sei sicuro di voler eliminare questo messaggio?');">
+                                <input type="hidden" name="idMessaggio" th:value="${msg.id}">
+                                <button type="submit" class="btn-delete-message">
+                                    <i class="bi bi-trash3-fill"></i>
+                                    Elimina
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12" th:if="${#lists.isEmpty(messages)}">
+                    <div class="empty-state">
+                        <i class="bi bi-inbox"></i>
+                        <h3>Nessun messaggio</h3>
+                        <p class="text-muted">Non sono stati ancora inviati messaggi di supporto.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap JavaScript Bundle (include Popper) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
