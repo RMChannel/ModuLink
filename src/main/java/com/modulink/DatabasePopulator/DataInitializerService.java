@@ -77,13 +77,14 @@ public class DataInitializerService {
         ModuloEntity GDU = new ModuloEntity(0, "Gestione Utenti", "Permette la gestione di tutti gli utenti della propria azienda", "/dashboard/gdu/", "bi bi-person-lines-fill",true);
         ModuloEntity GRU = new ModuloEntity(1, "Gestione Ruoli", "Permette la gestione e l'assegnazione dei ruoli", "/dashboard/gru/", "bi bi-award-fill",true);
         ModuloEntity GMA = new ModuloEntity(2, "Gestione Moduli", "Permette la gestione di tutti i moduli integrati nella propria azienda","/dashboard/gma/","bi bi-database-gear",true );
+        ModuloEntity GDR = new ModuloEntity(3, "Gestione Responsabile", "permette al responsabile di gestire la propria azienda","/dashboard/gdr/","bi bi-building",true);
         ModuloEntity store = new ModuloEntity(9999,"Store","Store dei moduli","/dashboard/store/","bi bi-cart-dash",true);
         ModuloEntity calendario = new ModuloEntity(4,"Calendario", "Permette di organizzare e creare eventi", "/dashboard/calendar", "bi bi-calendar",true);
         ModuloEntity GTM = new ModuloEntity(5,"Gestione Task", "Permette di gestire le tasche degli utenti", "/dashboard/gtm/", "bi bi-clipboard-data",true);
         ModuloEntity GDM = new ModuloEntity(6,"Gestione Magazzino", "Permette di gestire tutti i prodotti nel magazzino", "/dashboard/gdm/", "bi bi-box-seam",true);
 
 
-
+        GDR = moduloRepository.save(GDR);
         GDU = moduloRepository.save(GDU);
         GRU = moduloRepository.save(GRU);
         GMA = moduloRepository.save(GMA);
