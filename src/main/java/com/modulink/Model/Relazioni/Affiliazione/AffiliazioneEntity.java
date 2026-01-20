@@ -22,6 +22,7 @@ public class AffiliazioneEntity {
 
     @Id
     @Column(name = "ID_Azienda")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     public int id_azienda;
 
     @ManyToOne
@@ -32,10 +33,12 @@ public class AffiliazioneEntity {
     private RuoloEntity ruolo;
 
     @ManyToOne
+
     @JoinColumns({
             @JoinColumn(name = "ID_Modulo", referencedColumnName = "ID_Modulo", insertable = false, updatable = false),
             @JoinColumn(name = "ID_Azienda", referencedColumnName = "ID_Azienda", insertable = false, updatable = false)
     })
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private AttivazioneEntity attivazione;
 
     public AffiliazioneEntity(){}
