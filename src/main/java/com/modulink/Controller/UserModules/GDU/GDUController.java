@@ -3,6 +3,7 @@ package com.modulink.Controller.UserModules.GDU;
 import com.modulink.Alert;
 import com.modulink.Controller.ModuloController;
 import com.modulink.Model.Azienda.AziendaEntity;
+import com.modulink.Model.Email.EmailService;
 import com.modulink.Model.Modulo.ModuloService;
 import com.modulink.Model.Relazioni.Associazione.AssociazioneEntity;
 import com.modulink.Model.Relazioni.Associazione.AssociazioneService;
@@ -15,7 +16,6 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.lang.NonNull;
 import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,6 +30,7 @@ import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
+import java.util.concurrent.CompletableFuture;
 
 
 @Controller
@@ -37,16 +38,16 @@ public class GDUController extends ModuloController {
     private final CustomUserDetailsService customUserDetailsService;
     private final RuoloService ruoloService;
     private final AssociazioneService associazioneService;
-    private final JavaMailSenderImpl mailSender;
     private final String senderEmail;
+    private final EmailService emailService;
 
-    public GDUController(ModuloService moduloService, CustomUserDetailsService customUserDetailsService, RuoloService ruoloService, AssociazioneService associazioneService, JavaMailSenderImpl mailSender, @Value("${spring.mail.username}") String senderEmail) {
+    public GDUController(ModuloService moduloService, CustomUserDetailsService customUserDetailsService, RuoloService ruoloService, AssociazioneService associazioneService, @Value("${spring.mail.username}") String senderEmail, EmailService emailService) {
         super(moduloService, 0);
         this.customUserDetailsService=customUserDetailsService;
         this.ruoloService=ruoloService;
         this.associazioneService=associazioneService;
-        this.mailSender=mailSender;
         this.senderEmail=senderEmail;
+        this.emailService=emailService;
     }
 
     @GetMapping({"dashboard/gdu/","dashboard/gdu"})
@@ -146,7 +147,7 @@ public class GDUController extends ModuloController {
             message.setTo(newUserForm.getEmail());
             message.setSubject("Benvenuto in "+azienda.getNome()+" "+newUserForm.getNome()+" "+newUserForm.getCognome());
             message.setText("Benvenuto "+newUserForm.getNome()+" "+newUserForm.getCognome()+" in "+azienda.getNome()+"!!!\nSei stato appena registrato alla piattaforma Modulink, per entrare utilizza questa password: "+tempPassword+"\n\nUna volta effettuato il 1°login potrai modificare la tua password con una tua personale");
-            mailSender.send(message);
+
             //Aggiungo l'utente alla lista degli utenti salvati prima così da poterli mostrare in grafica post-richiesta (Altrimenti la persistence non ha il tempo di salvare, separando le richieste si risolve il problema)
             utenti.add(newUser);
             model.addAttribute("utenti", utenti);
@@ -246,7 +247,7 @@ public class GDUController extends ModuloController {
             message.setTo(utente.getEmail());
             message.setSubject("Registrazione effettuata con successo!");
             message.setText("Salve "+utente.getNome()+" "+utente.getCognome()+", ti confermiamo che il tuo account è stato registrato con successo alla piattaforma Modulink in collab. con "+utente.getAzienda().getNome()+".\n\n\nOra puoi accedere alla tua dashboard, se non visualizi alcun modulo contatta il tuo responsabile.");
-            mailSender.send(message);
+            emailService.sendEmail(message);
             return "redirect:/dashboard"+ Alert.success("Registrazione effettuata correttamente, benvenuto in Modulink in collab. con "+utente.getAzienda().getNome());
         }
         else {
