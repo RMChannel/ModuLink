@@ -30,6 +30,7 @@ public class AffiliazioneEntity {
             @JoinColumn(name = "ID_Ruolo", referencedColumnName = "ID_Ruolo", insertable = false, updatable = false),
             @JoinColumn(name = "ID_Azienda", referencedColumnName = "ID_Azienda", insertable = false, updatable = false)
     })
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private RuoloEntity ruolo;
 
     @ManyToOne

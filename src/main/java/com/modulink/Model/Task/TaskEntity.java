@@ -21,9 +21,11 @@ public class TaskEntity {
     @Id
     @ManyToOne
     @JoinColumn(name = "ID_Azienda", referencedColumnName = "ID_Azienda", nullable = false, foreignKey = @ForeignKey(name = "fk_task_azienda"))
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private AziendaEntity azienda;
 
     @Column(name = "ID_UtenteCreatore", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private int idUtenteCreatore;
 
     @ManyToOne
@@ -31,6 +33,7 @@ public class TaskEntity {
             @JoinColumn(name = "ID_UtenteCreatore", referencedColumnName = "ID_Utente", insertable = false, updatable = false),
             @JoinColumn(name = "ID_Azienda", referencedColumnName = "ID_Azienda", insertable = false, updatable = false)
     }, foreignKey = @ForeignKey(name = "fk_task_utente"))
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private UtenteEntity utenteCreatore;
 
     @Column(name = "titolo", nullable = false)

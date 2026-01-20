@@ -39,6 +39,7 @@ public class AssociazioneEntity {
      */
     @Id
     @Column(name = "ID_Utente")
+
     private int id_utente;
 
     /**
@@ -47,6 +48,7 @@ public class AssociazioneEntity {
      */
     @Id
     @Column(name = "ID_Ruolo")
+
     private int id_ruolo;
 
     /**
@@ -58,6 +60,7 @@ public class AssociazioneEntity {
      */
     @Id
     @Column(name = "ID_Azienda")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private int id_azienda;
 
     /**
@@ -72,6 +75,7 @@ public class AssociazioneEntity {
             @JoinColumn(name = "ID_Utente", referencedColumnName = "ID_Utente", insertable = false, updatable = false),
             @JoinColumn(name = "ID_Azienda", referencedColumnName = "ID_Azienda", insertable = false, updatable = false)
     })
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private UtenteEntity utente;
 
     /**
@@ -86,6 +90,7 @@ public class AssociazioneEntity {
             @JoinColumn(name = "ID_Ruolo", referencedColumnName = "ID_Ruolo", insertable = false, updatable = false),
             @JoinColumn(name = "ID_Azienda", referencedColumnName = "ID_Azienda", insertable = false, updatable = false)
     })
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private RuoloEntity ruolo;
 
     /**

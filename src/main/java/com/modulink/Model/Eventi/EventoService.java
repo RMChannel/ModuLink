@@ -15,6 +15,7 @@ public class EventoService {
         this.eventoRepository = eventoRepository;
     }
 
+    @Transactional
     public void create(EventoEntity eventoEntity){
         eventoRepository.save(eventoEntity);
     }
@@ -30,6 +31,7 @@ public class EventoService {
     public List<EventoEntity> findByAzienda(AziendaEntity aziendaEntity) {
         return eventoRepository.findByAzienda(aziendaEntity);
     }
+
 
     public EventoEntity findById(EventoID eventoID) throws EventoNotFound {
         Optional<EventoEntity> evento = eventoRepository.findById(eventoID);

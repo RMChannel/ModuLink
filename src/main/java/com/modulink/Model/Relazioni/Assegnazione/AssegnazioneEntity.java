@@ -13,14 +13,17 @@ import org.hibernate.annotations.OnDeleteAction;
 public class AssegnazioneEntity {
     @Id
     @Column(name = "ID_Task")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private int id_task;
 
     @Id
     @Column(name = "ID_Azienda")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private int id_azienda;
 
     @Id
     @Column(name = "ID_Utente")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private int id_utente;
 
     @ManyToOne
@@ -28,6 +31,7 @@ public class AssegnazioneEntity {
             @JoinColumn(name = "ID_Task", referencedColumnName = "ID_Task", insertable = false, updatable = false),
             @JoinColumn(name = "ID_Azienda", referencedColumnName = "ID_Azienda", insertable = false, updatable = false)
     })
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private TaskEntity task;
 
     @ManyToOne
@@ -35,6 +39,7 @@ public class AssegnazioneEntity {
             @JoinColumn(name = "ID_Utente", referencedColumnName = "ID_Utente", insertable = false, updatable = false),
             @JoinColumn(name = "ID_Azienda", referencedColumnName = "ID_Azienda", insertable = false, updatable = false)
     })
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private UtenteEntity utente;
 
     public AssegnazioneEntity() {}
