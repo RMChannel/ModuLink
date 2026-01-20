@@ -235,7 +235,7 @@
 
 .day-column {
     flex: 1;
-    border-right: 1px solid var(--border-color-light);
+    border-right: 1px solid var(--border-color);
     position: relative;
     background-color: var(--bg-white);
     cursor: pointer;
@@ -259,8 +259,8 @@
             to bottom,
             transparent,
             transparent 59px,
-            var(--border-color-light) 59px,
-            var(--border-color-light) 60px
+            var(--border-color) 59px,
+            var(--border-color) 60px
     );
     pointer-events: none;
     z-index: 1;
@@ -496,8 +496,6 @@
 
 .month-event:hover {
     background-color: var(--color-primary-dark);
-    transform: translateX(2px);
-    z-index: 5;
 }
 
 .month-event-more {

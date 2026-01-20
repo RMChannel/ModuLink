@@ -238,7 +238,7 @@ public class EventoController extends ModuloController {
 
         // Mapping a DTO per evitare loop infiniti JSON
         List<UserDTO> dtos = resultUsers.stream()
-                .map(u -> new UserDTO(u.getId_utente(), u.getNome(), u.getCognome()))
+                .map(u -> new UserDTO(u.getId_utente(), u.getNome(), u.getCognome(), u.getEmail()))
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(dtos);
