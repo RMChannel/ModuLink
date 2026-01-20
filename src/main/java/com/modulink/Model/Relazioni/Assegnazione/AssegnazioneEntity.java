@@ -17,7 +17,6 @@ public class AssegnazioneEntity {
 
     @Id
     @Column(name = "ID_Azienda")
-    @OnDelete(action = OnDeleteAction.CASCADE)
     private int id_azienda;
 
     @Id

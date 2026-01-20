@@ -25,7 +25,7 @@ public class SupportController extends ModuloController {
     private final CustomUserDetailsService customUserDetailsService;
 
     public SupportController(ModuloService moduloService, SupportFormService supportFormService, CustomUserDetailsService customUserDetailsService) {
-        super(moduloService, 7);
+        super(moduloService, -2);
         this.supportFormService = supportFormService;
         this.customUserDetailsService = customUserDetailsService;
     }

@@ -58,7 +58,6 @@ public class AssociazioneEntity {
      */
     @Id
     @Column(name = "ID_Azienda")
-    @OnDelete(action = OnDeleteAction.CASCADE)
     private int id_azienda;
 
     /**

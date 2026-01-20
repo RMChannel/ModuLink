@@ -26,7 +26,7 @@ public class StoreController extends ModuloController {
     private final SupportFormService supportFormService;
 
     public StoreController(CustomUserDetailsService customUserDetailsService, AttivazioneService attivazioneService, ModuloService moduloService, SupportFormService supportFormService) {
-        super(moduloService,3);
+        super(moduloService,9999);
         this.customUserDetailsService = customUserDetailsService;
         this.attivazioneService = attivazioneService;
         this.supportFormService = supportFormService;

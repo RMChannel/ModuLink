@@ -1,4 +1,4 @@
-package com.modulink.Controller.Admin;
+package com.modulink.Controller.AdminModules.Manage;
 
 import com.modulink.Controller.ModuloController;
 import com.modulink.Model.Azienda.AziendaEntity;
@@ -98,6 +98,7 @@ public class AdminController extends ModuloController {
             redirectAttributes.addFlashAttribute("error", true);
             redirectAttributes.addFlashAttribute("message", "Errore durante l'eliminazione dell'azienda: " + e.getMessage());
         }
+
         return "redirect:/dashboard/admin/";
     }
 }

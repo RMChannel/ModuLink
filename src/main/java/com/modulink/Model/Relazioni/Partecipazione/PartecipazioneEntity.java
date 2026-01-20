@@ -20,7 +20,6 @@ public class PartecipazioneEntity {
     private int id_evento;
 
     @Id
-    @OnDelete(action = OnDeleteAction.CASCADE)
     @Column(name = "ID_Azienda")
     private int id_azienda;
 
@@ -29,7 +28,6 @@ public class PartecipazioneEntity {
             @JoinColumn(name = "ID_Utente", referencedColumnName = "ID_Utente", insertable = false, updatable = false),
             @JoinColumn(name = "ID_Azienda", referencedColumnName = "ID_Azienda", insertable = false, updatable = false)
     })
-    @OnDelete(action = OnDeleteAction.CASCADE)
     private UtenteEntity utente;
 
     @ManyToOne
@@ -37,7 +35,6 @@ public class PartecipazioneEntity {
             @JoinColumn(name = "id_evento", referencedColumnName = "id_evento", insertable = false, updatable = false),
             @JoinColumn(name = "ID_Azienda", referencedColumnName = "id_azienda", insertable = false, updatable = false)
     })
-    @OnDelete(action = OnDeleteAction.CASCADE)
     private EventoEntity evento;
 
     public PartecipazioneEntity() {
