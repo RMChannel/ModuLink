@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Admin Dashboard - Gestione News</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/user/colors.css}">
+    <link rel="stylesheet" th:href="@{/css/user/dashboard-layout.css}">
+    <link rel="stylesheet" th:href="@{/css/common/alerts.css}">
+    <link rel="stylesheet" th:href="@{/css/admin/admin.css}">
+    <script th:src="@{/javascript/theme.js}"></script>
+</head>
+<body>
+<div class="dashboard-wrapper">
+    <!-- Sidebar Fragment -->
+    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+
+    <!-- Alerts Fragment -->
+    <div th:replace="~{fragments/messages :: alerts}"></div>
+
+    <!-- Main Content -->
+    <div id="content">
+        <div class="container-fluid">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2">Amministrazione - Gestione News</h1>
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addNewsModal">
+                    <i class="bi bi-plus-lg"></i> Nuova News
+                </button>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-striped table-hover align-middle">
+                    <thead class="table-dark">
+                    <tr>
+                        <th scope="col">ID</th>
+                        <th scope="col">Data</th>
+                        <th scope="col">Titolo</th>
+                        <th scope="col">Testo</th>
+                        <th scope="col" class="text-end">Azioni</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="n : ${news}">
+                        <td th:text="${n.id}">1</td>
+                        <td th:text="${#temporals.format(n.data, 'dd/MM/yyyy')}">01/01/2026</td>
+                        <td th:text="${n.titolo}">Titolo</td>
+                        <td th:text="${#strings.abbreviate(n.testo, 50)}">Testo...</td>
+                        <td class="text-end">
+                            <!-- Delete Button -->
+                            <button class="btn btn-sm btn-outline-danger" title="Elimina News"
+                                    th:data-id="${n.id}"
+                                    th:data-titolo="${n.titolo}"
+                                    onclick="openDeleteNewsModal(this)">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(news)}">
+                        <td colspan="5" class="text-center text-muted py-4">
+                            <em>Nessuna news presente.</em>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add News Modal -->
+<div class="modal fade" id="addNewsModal" tabindex="-1" aria-labelledby="addNewsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <form th:action="@{/dashboard/news}" method="post" th:object="${newsForm}">
+                <!-- Hidden input to pass error state to JS -->
+                <input type="hidden" id="hasErrors" th:value="${#fields.hasErrors('*')}">
+                
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addNewsModalLabel">Nuova News</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="titolo" class="form-label">Titolo *</label>
+                        <input type="text" class="form-control" id="titolo" th:field="*{titolo}" 
+                               th:classappend="${#fields.hasErrors('titolo')} ? 'is-invalid' : ''" required>
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('titolo')}" th:errors="*{titolo}"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="data" class="form-label">Data *</label>
+                        <input type="date" class="form-control" id="data" th:field="*{data}"
+                               th:classappend="${#fields.hasErrors('data')} ? 'is-invalid' : ''" required>
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('data')}" th:errors="*{data}"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="testo" class="form-label">Testo *</label>
+                        <textarea class="form-control" id="testo" th:field="*{testo}" rows="5"
+                                  th:classappend="${#fields.hasErrors('testo')} ? 'is-invalid' : ''" required></textarea>
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('testo')}" th:errors="*{testo}"></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
+                    <button type="submit" class="btn btn-primary">Salva</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Delete News Modal -->
+<div class="modal fade" id="deleteNewsModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Elimina News</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Stai per eliminare la news: <strong id="deleteTargetTitle"></strong>.</p>
+                <p>Sei sicuro di voler procedere?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
+                <form th:action="@{/dashboard/remove-news}" method="post">
+                    <input type="hidden" name="idNews" id="deleteIdInput">
+                    <button type="submit" class="btn btn-danger">Elimina</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    function openDeleteNewsModal(button) {
+        const id = button.getAttribute('data-id');
+        const title = button.getAttribute('data-titolo');
+
+        document.getElementById('deleteIdInput').value = id;
+        document.getElementById('deleteTargetTitle').textContent = title;
+
+        const modal = new bootstrap.Modal(document.getElementById('deleteNewsModal'));
+        modal.show();
+    }
+
+    // Auto-open modal if there are errors
+    document.addEventListener('DOMContentLoaded', function() {
+        const errorInput = document.getElementById('hasErrors');
+        if (errorInput && errorInput.value === 'true') {
+            const addModal = new bootstrap.Modal(document.getElementById('addNewsModal'));
+            addModal.show();
+        }
+    });
+</script>
+<script th:src="@{/javascript/admin/admin.js}"></script>
+
+</body>
+</html>

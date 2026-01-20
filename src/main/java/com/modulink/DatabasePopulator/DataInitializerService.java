@@ -158,18 +158,21 @@ public class DataInitializerService {
 
         associazioneRepository.save(new AssociazioneEntity(u3, ruoloResponsabile2));
 
+        ModuloEntity News = new ModuloEntity(-3,"News","Modulo dedicato alla gestione delle news","/dashboard/news/","bi bi-newspaper",false);
         ModuloEntity Support = new ModuloEntity(-2,"Supporto", "Modulo dedicato al supporto tecnico", "/dashboard/support/", "bi bi-life-preserver",false);
         ModuloEntity Admin = new ModuloEntity(-1,"Panello Admin", "Panello di controllo di Admin","/dashboard/admin/","bi bi-code-square", false);
 
         Admin = moduloRepository.save(Admin);
         Support = moduloRepository.save(Support);
-
+        News = moduloRepository.save(News);
 
         attivazioneRepository.save(new AttivazioneEntity(Admin,modulink));
         attivazioneRepository.save(new AttivazioneEntity(Support, modulink));
+        attivazioneRepository.save(new AttivazioneEntity(News, modulink));
 
         affiliazioneRepository.save(new AffiliazioneEntity(ruoloResponsabile2.getId_ruolo(),Support.getId_modulo(),modulink.getId_azienda()));
         affiliazioneRepository.save(new AffiliazioneEntity(ruoloResponsabile2.getId_ruolo(),Admin.getId_modulo(),modulink.getId_azienda()));
+        affiliazioneRepository.save(new AffiliazioneEntity(ruoloResponsabile2.getId_ruolo(),News.getId_modulo(),modulink.getId_azienda()));
     }
 
     @Transactional // Qui la transazione funzionerà correttamente!

@@ -12,68 +12,60 @@
 <div class="news-page-container">
      <h1 class="page-title">Novità & Aggiornamenti</h1>
 
-     <!-- ESEMPIO CARD 1 (Statica per ora, poi diventerà dinamica) -->
-     <div class="news-card">
+    <!-- Messaggio se non ci sono news -->
+    <div th:if="${#lists.isEmpty(news)}" class="no-news-container">
+        <div class="no-news-content">
+            <i class="fa-solid fa-newspaper fa-3x"></i>
+            <p>Al momento non ci sono novità. Torna a trovarci presto!</p>
+        </div>
+    </div>
+
+     <!-- Lista News Dinamica -->
+     <div th:each="n : ${news}" class="news-card">
          <!-- Parte superiore cliccabile -->
          <div class="news-header" onclick="toggleNews(this)">
              <div class="news-info">
-                 <span class="news-date">08 Gen 2026</span>
-                 <h3 class="news-title">Rilasciata la versione 2.0 di ModuLink</h3>
+                 <span class="news-date" th:text="${#temporals.format(n.data, 'dd MMM yyyy')}">Data</span>
+                 <h3 class="news-title" th:text="${n.titolo}">Titolo News</h3>
              </div>
-     <!-- Rettangolo contenitivo -->
-                 <div class="expand-btn">
-                     <i class="fa-solid fa-chevron-down"></i>
-                 </div>
-             </div>
-    <!-- Parte a scomparsa -->
-             <div class="news-content">
-                 <p>
-                     Siamo felici di annunciare il rilascio della nuova versione. Abbiamo introdotto il modulo GDR per la gestione avanzata dei ruoli e migliorato le performance de
-                     database del 30%.
-                 </p>
+             <!-- Rettangolo contenitivo -->
+             <div class="expand-btn">
+                 <i class="fa-solid fa-chevron-down"></i>
              </div>
          </div>
-
-    <!-- ESEMPIO CARD 2 -->
-         <div class="news-card">
-             <div class="news-header" onclick="toggleNews(this)">
-                 <div class="news-info">
-                     <span class="news-date">15 Dic 2025</span>
-                     <h3 class="news-title">Manutenzione programmata server</h3>
-                 </div>
-                 <div class="expand-btn">
-                     <i class="fa-solid fa-chevron-down"></i>
-                 </div>
-             </div>
-             <div class="news-content">
-                 <p>Gentili utenti, i server saranno in manutenzione dalle ore 02:00 alle ore 04:00 per aggiornamenti di sicurezza. Il servizio potrebbe subire interruzioni
-                    momentanee.
-                 </p>
-             </div>
+         <!-- Parte a scomparsa -->
+         <div class="news-content">
+             <p th:text="${n.testo}">
+                 Contenuto della news...
+             </p>
          </div>
-
-    <!-- ESEMPIO CARD 3 -->
-         <div class="news-card">
-             <div class="news-header" onclick="toggleNews(this)">
-                 <div class="news-info">
-                     <span class="news-date">20 Nov 2025</span>
-                     <h3 class="news-title">Nuova funzionalità: Export PDF</h3>
-                 </div>
-                 <div class="expand-btn">
-                     <i class="fa-solid fa-chevron-down"></i>
-                 </div>
-             </div>
-             <div class="news-content">
-                 <p>
-                     Da oggi è possibile esportare i report degli utenti direttamente in formato PDF dalla dashboard GDU. Clicca sull'icona della stampante per provare subito.
-                 </p>
-             </div>
-         </div>
-
+     </div>
 </div>
 
 <!-- Importazione del footer -->
 <footer th:replace="~{fragments/footer :: mainFooter}"></footer>
+
+<style>
+    .no-news-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 50px 20px;
+        background: rgba(255, 255, 255, 0.8);
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        text-align: center;
+        margin-top: 20px;
+    }
+    .no-news-content i {
+        color: #ccc;
+        margin-bottom: 15px;
+    }
+    .no-news-content p {
+        font-size: 1.2rem;
+        color: #666;
+    }
+</style>
 
 <!-- JAVASCRIPT PER L'APERTURA -->
 <script>
