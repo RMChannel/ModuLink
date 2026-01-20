@@ -50,7 +50,7 @@ public class GlobalControllerAdvice {
                         break;
                     }
                 }
-                model.addAttribute("moduli", moduli != null ? moduli : List.of());
+                model.addAttribute("moduli", moduli);
             }
         }
     }

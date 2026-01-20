@@ -99,6 +99,14 @@ public class EventoController extends ModuloController {
         Optional<UtenteEntity> currentUserOpt = customUserDetailsService.findByEmail(principal.getName());
         if (currentUserOpt.isEmpty()) return ResponseEntity.status(403).build();
 
+        // VALIDAZIONE
+        if (request.inizio().isBefore(LocalDateTime.now())) {
+            return ResponseEntity.badRequest().body("{\"error\": \"Non puoi creare eventi nel passato.\"}");
+        }
+        if (request.fine().isBefore(request.inizio())) {
+            return ResponseEntity.badRequest().body("{\"error\": \"La data di fine non può essere precedente all'inizio.\"}");
+        }
+
         UtenteEntity currentUser = currentUserOpt.get();
         AziendaEntity azienda = currentUser.getAzienda();
 
@@ -140,7 +148,15 @@ public class EventoController extends ModuloController {
         UtenteEntity currentUser = currentUserOpt.get();
         EventoEntity evento = eventoRepository.getById(new EventoID(request.id, currentUser.getAzienda().getId_azienda()));
 
-        if (evento == null) return ResponseEntity.status(404).body("Evento non trovato");
+        // VALIDAZIONE
+        if (request.fine().isBefore(request.inizio())) {
+            return ResponseEntity.badRequest().body("{\"error\": \"La data di fine non può essere precedente all'inizio.\"}");
+        }
+        
+        // VALIDAZIONE CREATORE
+        if(request.partecipanti != null && !request.partecipanti.contains(evento.getCreatore().getId_utente())) {
+             return ResponseEntity.badRequest().body("{\"error\": \"Impossibile rimuovere il creatore dall'evento.\"}");
+        }
 
         evento.setData_fine(request.fine);
         evento.setData_ora_inizio(request.inizio);

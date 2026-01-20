@@ -1,6 +1,13 @@
 package com.modulink.Model.Azienda;
 
+import com.modulink.Model.Eventi.EventoEntity;
+import com.modulink.Model.Prodotto.ProdottoEntity;
+import com.modulink.Model.Ruolo.RuoloEntity;
+import com.modulink.Model.Utente.UtenteEntity;
 import jakarta.persistence.*;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Rappresenta l'entità <strong>Azienda</strong> nel sistema Modulink.
@@ -70,7 +77,6 @@ public class AziendaEntity {
      */
     @Column(name="Logo", nullable = false)
     private String logo;
-
     /**
      * Costruttore vuoto predefinito.
      * Richiesto dalle specifiche JPA.
@@ -145,4 +151,5 @@ public class AziendaEntity {
      * @param logo Stringa contenente il nuovo path del logo.
      */
     public void setLogo(String logo) { this.logo = logo; }
+
 }

@@ -20,6 +20,7 @@ public class PartecipazioneEntity {
     private int id_evento;
 
     @Id
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @Column(name = "ID_Azienda")
     private int id_azienda;
 

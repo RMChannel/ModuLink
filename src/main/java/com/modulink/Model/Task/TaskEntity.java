@@ -4,6 +4,8 @@ import com.modulink.Model.Azienda.AziendaEntity;
 import com.modulink.Model.Relazioni.Assegnazione.AssegnazioneEntity;
 import com.modulink.Model.Utente.UtenteEntity;
 import jakarta.persistence.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -18,6 +20,7 @@ public class TaskEntity {
 
     @Id
     @ManyToOne
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "ID_Azienda", referencedColumnName = "ID_Azienda", nullable = false, foreignKey = @ForeignKey(name = "fk_task_azienda"))
     private AziendaEntity azienda;
 

@@ -3,6 +3,8 @@ package com.modulink.Model.Eventi;
 import com.modulink.Model.Azienda.AziendaEntity;
 import com.modulink.Model.Utente.UtenteEntity;
 import jakarta.persistence.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDateTime;
 
@@ -19,6 +21,7 @@ public class EventoEntity {
     @Id
     @ManyToOne
     @JoinColumn(name="id_azienda", referencedColumnName = "id_azienda", nullable = false, foreignKey = @ForeignKey(name = "FK_Evento_Azienda"))
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private AziendaEntity azienda;
 
     @Column(name="nome", nullable = false, length = 200)

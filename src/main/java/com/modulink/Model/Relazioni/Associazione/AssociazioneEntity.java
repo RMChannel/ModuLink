@@ -3,6 +3,8 @@ package com.modulink.Model.Relazioni.Associazione;
 import com.modulink.Model.Ruolo.RuoloEntity;
 import com.modulink.Model.Utente.UtenteEntity;
 import jakarta.persistence.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 /**
  * Entità intermedia che mappa la tabella di unione <strong>Associazione</strong>.
@@ -56,6 +58,7 @@ public class AssociazioneEntity {
      */
     @Id
     @Column(name = "ID_Azienda")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private int id_azienda;
 
     /**

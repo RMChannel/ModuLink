@@ -5,6 +5,7 @@ import com.modulink.Model.Utente.UtenteEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -12,6 +13,6 @@ import java.util.List;
 public interface PartecipazioneRepository extends JpaRepository<PartecipazioneEntity, PartecipazioneID> {
     public List<PartecipazioneEntity> findByUtente(UtenteEntity utente);
     public List<PartecipazioneEntity> getPartecipazioneEntitiesByEvento(EventoEntity evento);
+    @Transactional
     void removeByUtenteAndEvento(UtenteEntity utente, EventoEntity evento);
-    
 }

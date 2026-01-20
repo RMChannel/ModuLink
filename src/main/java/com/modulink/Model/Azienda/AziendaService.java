@@ -70,4 +70,40 @@ public class AziendaService {
     public boolean findByTelefono(String telefono) {
         return aziendaRepository.findByTelefono(telefono).isPresent();
     }
+
+    /**
+     * Recupera la lista completa delle aziende.
+     * @return Lista di tutte le aziende.
+     */
+    public java.util.List<AziendaEntity> getAllAziende() {
+        return aziendaRepository.findAll();
+    }
+
+    /**
+     * Recupera un'azienda tramite ID.
+     * @param id ID dell'azienda.
+     * @return Optional contenente l'azienda se trovata.
+     */
+    public Optional<AziendaEntity> getAziendaById(int id) {
+        return aziendaRepository.findById(id);
+    }
+
+    /**
+     * Aggiorna i dati di un'azienda esistente.
+     * @param azienda Entità con i nuovi dati.
+     * @return L'entità aggiornata.
+     */
+    @Transactional
+    public AziendaEntity updateAzienda(AziendaEntity azienda) {
+        return aziendaRepository.save(azienda);
+    }
+
+    /**
+     * Elimina un'azienda tramite ID.
+     * @param id ID dell'azienda da eliminare.
+     */
+    @Transactional
+    public void deleteAzienda(int id) {
+        aziendaRepository.deleteById(id);
+    }
 }
