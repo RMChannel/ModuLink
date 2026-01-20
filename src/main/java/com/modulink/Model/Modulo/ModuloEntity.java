@@ -1,7 +1,6 @@
 package com.modulink.Model.Modulo;
 
-import com.modulink.Model.Relazioni.Affiliazione.AffiliazioneEntity;
-import com.modulink.Model.Utente.UtenteEntity;
+import com.modulink.Model.Relazioni.Pertinenza.PertinenzaEntity;
 import jakarta.persistence.*;
 
 import java.util.HashSet;
@@ -30,7 +29,7 @@ public class ModuloEntity {
     private boolean Visible;
 
     @OneToMany(mappedBy = "id_modulo", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<AffiliazioneEntity> affiliazioni = new HashSet<>();
+    private Set<PertinenzaEntity> affiliazioni = new HashSet<>();
 
 
     public ModuloEntity(){}
@@ -84,11 +83,11 @@ public class ModuloEntity {
         this.url_icona = url_icona;
     }
 
-    public Set<AffiliazioneEntity> getAffiliazioni() {
+    public Set<PertinenzaEntity> getAffiliazioni() {
         return affiliazioni;
     }
 
-    public void setAffiliazioni(Set<AffiliazioneEntity> affiliazioni) {
+    public void setAffiliazioni(Set<PertinenzaEntity> affiliazioni) {
         this.affiliazioni = affiliazioni;
     }
 

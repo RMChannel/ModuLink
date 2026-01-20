@@ -2,13 +2,11 @@ package com.modulink.Controller.Register;
 
 import com.modulink.Model.Azienda.AziendaEntity;
 import com.modulink.Model.Azienda.AziendaService;
-import com.modulink.Model.Relazioni.Affiliazione.AffiliazioneService;
+import com.modulink.Model.Relazioni.Pertinenza.PertinenzaService;
 import com.modulink.Model.Relazioni.Associazione.AssociazioneService;
 import com.modulink.Model.Relazioni.Attivazione.AttivazioneService;
 import com.modulink.Model.Ruolo.RuoloEntity;
-import com.modulink.Model.Ruolo.RuoloRepository;
 import com.modulink.Model.Relazioni.Associazione.AssociazioneEntity;
-import com.modulink.Model.Relazioni.Associazione.AssociazioneRepository;
 import com.modulink.Model.Ruolo.RuoloService;
 import com.modulink.Model.Utente.CustomUserDetailsService;
 import com.modulink.Model.Utente.PasswordUtility;
@@ -55,7 +53,7 @@ public class RegisterController {
     private final RuoloService ruoloService;
     private final AssociazioneService associazioneService;
     private final AttivazioneService attivazioneService;
-    private final AffiliazioneService affiliazioneService;
+    private final PertinenzaService pertinenzaService;
 
     /**
      * Costruttore per l'iniezione delle dipendenze.
@@ -65,13 +63,13 @@ public class RegisterController {
      * @param ruoloService        Repository per la persistenza dei ruoli.
      * @param associazioneService Repository per collegare utenti e ruoli.
      */
-    public RegisterController(CustomUserDetailsService userDetailsService, AziendaService aziendaService, RuoloService ruoloService, AssociazioneService associazioneService, AttivazioneService attivazioneService, AffiliazioneService affiliazioneService) {
+    public RegisterController(CustomUserDetailsService userDetailsService, AziendaService aziendaService, RuoloService ruoloService, AssociazioneService associazioneService, AttivazioneService attivazioneService, PertinenzaService pertinenzaService) {
         this.userDetailsService = userDetailsService;
         this.aziendaService = aziendaService;
         this.ruoloService = ruoloService;
         this.associazioneService = associazioneService;
         this.attivazioneService = attivazioneService;
-        this.affiliazioneService = affiliazioneService;
+        this.pertinenzaService = pertinenzaService;
     }
 
     /**
@@ -248,7 +246,7 @@ public class RegisterController {
                 attivazioneService.attivazioneDefault(aziendaEntity);
 
                 //Affilio tutti i moduli di default per il Responsabile
-                affiliazioneService.attivazioneDefault(aziendaEntity);
+                pertinenzaService.attivazioneDefault(aziendaEntity);
 
                 //La sessione viene svuotata visto che l'azienda è stata registrata correttamente e anche il responsabile
                 sessionStatus.setComplete();
