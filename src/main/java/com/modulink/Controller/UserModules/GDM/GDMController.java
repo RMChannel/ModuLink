@@ -1,4 +1,4 @@
-package com.modulink.Controller.GDM;
+package com.modulink.Controller.UserModules.GDM;
 
 import com.modulink.Alert;
 import com.modulink.Controller.ModuloController;

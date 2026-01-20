@@ -1,13 +1,12 @@
 <!DOCTYPE html>
 <html lang="it" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/head :: mainHead(pageTitle='Login', additionalCss=${ {'/css/login.css'} })}">
-    <link rel="stylesheet" th:href="@{/css/common/alerts.css}">
-</head>
+<head th:replace="~{fragments/head :: mainHead(pageTitle='Login', additionalCss=${ {'/css/login.css', '/css/common/alerts.css'} })}"></head>
 
 <body>
 
 
 <header th:replace="~{fragments/header :: mainHeader}"></header>
+<div th:replace="~{fragments/messageFromParam :: alertsFromParam}"></div>
 
 <div class="login-container">
     <div class="login-box">

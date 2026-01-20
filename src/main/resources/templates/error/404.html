@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="it" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: mainHead(pageTitle='Pagina Non Trovata - 404', additionalCss='/css/404.css')}">
+</head>
+<body>
+
+<main class="error-container">
+    
+    <div class="ghost-container">
+        <div class="ghost">
+            <div class="ghost-eyes"></div>
+            <div class="ghost-mouth"></div>
+            <div class="ghost-feet">
+                <div class="ghost-foot"></div>
+                <div class="ghost-foot"></div>
+                <div class="ghost-foot"></div>
+                <div class="ghost-foot"></div>
+            </div>
+        </div>
+    </div>
+    <div class="ghost-shadow"></div>
+
+    <div class="error-code">404</div>
+
+    <h1 class="error-title">Oops! Pagina non trovata</h1>
+    <p class="error-message">
+        Non riusciamo a trovare la pagina che stai cercando. Potrebbe essere stata rimossa, rinominata o forse non è mai esistita.
+    </p>
+
+    <div class="btn-group">
+        <!-- Back Button -->
+        <button onclick="history.back()" class="btn btn-outline">
+            <i class="fa-solid fa-arrow-left" style="margin-right: 8px;"></i> Torna Indietro
+        </button>
+        
+        <!-- Home Button -->
+        <a th:href="@{/}" class="btn btn-solid">
+            <i class="fa-solid fa-house" style="margin-right: 8px;"></i> Torna alla Home
+        </a>
+    </div>
+
+</main>
+
+</body>
+</html>

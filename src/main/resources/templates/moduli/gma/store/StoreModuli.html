@@ -28,6 +28,11 @@
                     <h1 class="h2">Store Moduli</h1>
                     <p class="text-muted">Esplora e attiva nuovi moduli per potenziare la tua azienda.</p>
                 </div>
+                <div class="btn-toolbar mb-2 mb-md-0">
+                    <a th:href="@{/dashboard/store/request}" class="btn btn-outline-primary">
+                        <i class="bi bi-patch-question me-1"></i> Richiedi Modulo
+                    </a>
+                </div>
             </div>
 
             <!-- Grid -->
@@ -53,10 +58,13 @@
             </div>
 
             <!-- Empty State -->
-            <div class="empty-store" th:if="${#lists.isEmpty(moduli)}">
+            <div class="empty-store" th:if="${#lists.isEmpty(moduliNon)}">
                 <i class="bi bi-shop-window"></i>
-                <h3>Nessun modulo disponibile</h3>
-                <p>Al momento non ci sono nuovi moduli disponibili per l'acquisto.</p>
+                <h3>Tutti i moduli sono già attivi!</h3>
+                <p>La tua azienda ha già acquistato tutti i moduli disponibili. Hai bisogno di qualcosa di specifico?</p>
+                <a th:href="@{/dashboard/store/request}" class="btn btn-primary mt-3">
+                    <i class="bi bi-send me-1"></i> Inviaci una proposta
+                </a>
             </div>
 
         </div>

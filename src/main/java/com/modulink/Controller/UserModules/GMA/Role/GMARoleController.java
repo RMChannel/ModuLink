@@ -1,4 +1,4 @@
-package com.modulink.Controller.GMA.Role;
+package com.modulink.Controller.UserModules.GMA.Role;
 
 import com.modulink.Controller.ModuloController;
 import com.modulink.Model.Modulo.ModuloService;

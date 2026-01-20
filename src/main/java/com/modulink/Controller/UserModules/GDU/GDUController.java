@@ -1,9 +1,8 @@
-package com.modulink.Controller.GDU;
+package com.modulink.Controller.UserModules.GDU;
 
 import com.modulink.Alert;
 import com.modulink.Controller.ModuloController;
 import com.modulink.Model.Azienda.AziendaEntity;
-import com.modulink.Model.Modulo.ModuloEntity;
 import com.modulink.Model.Modulo.ModuloService;
 import com.modulink.Model.Relazioni.Associazione.AssociazioneEntity;
 import com.modulink.Model.Relazioni.Associazione.AssociazioneService;
@@ -35,7 +34,6 @@ import java.util.Random;
 
 @Controller
 public class GDUController extends ModuloController {
-    private final ModuloService moduloService;
     private final CustomUserDetailsService customUserDetailsService;
     private final RuoloService ruoloService;
     private final AssociazioneService associazioneService;
@@ -44,7 +42,6 @@ public class GDUController extends ModuloController {
 
     public GDUController(ModuloService moduloService, CustomUserDetailsService customUserDetailsService, RuoloService ruoloService, AssociazioneService associazioneService, JavaMailSenderImpl mailSender, @Value("${spring.mail.username}") String senderEmail) {
         super(moduloService, 0);
-        this.moduloService=moduloService;
         this.customUserDetailsService=customUserDetailsService;
         this.ruoloService=ruoloService;
         this.associazioneService=associazioneService;
