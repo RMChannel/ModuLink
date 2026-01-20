@@ -63,4 +63,12 @@ public class SupportFormEntity {
     public void setMessage(String message) {
         this.message = message;
     }
+
+    public LocalDateTime getDatetime() {
+        return datetime;
+    }
+
+    public void setDatetime(LocalDateTime datetime) {
+        this.datetime = datetime;
+    }
 }
