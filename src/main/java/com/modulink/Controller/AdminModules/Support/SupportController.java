@@ -60,7 +60,7 @@ public class SupportController extends ModuloController {
         Optional<UtenteEntity> utenteOpt=customUserDetailsService.findByEmail(principal.getName());
         if(isAccessibleModulo(utenteOpt)) {
             supportFormService.delete(idMessaggio);
-            return "redirect:/dashboard/admin/support"+ Alert.success("Messaggio cancellato con successo");
+            return "redirect:/dashboard/support"+ Alert.success("Messaggio cancellato con successo");
         }
         else return "redirect:/";
     }
