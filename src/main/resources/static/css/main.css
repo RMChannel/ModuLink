@@ -82,6 +82,15 @@ h1, h2, h3, h4 {
     width: 100%;
 }
 
+.mobile-menu-toggle {
+    display: none; /* Hidden by default, shown via specific page CSS (e.g. login.css) or media queries */
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: var(--text-heading);
+}
+
 /* Regola per il contenitore dei bottoni (l'ultimo div nell'header) */
 .site-header > div:last-child {
     display: flex;
