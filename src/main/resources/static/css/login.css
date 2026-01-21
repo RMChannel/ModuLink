@@ -86,7 +86,7 @@ body {
     width: 100%;
 }
 
-.site-header > div:last-child {
+.site-header .header-buttons {
     display: flex;
     align-items: center;
     gap: 10px;
@@ -107,9 +107,7 @@ body {
     border: none;
 }
 
-.nav-links { display: flex; gap: 40px; font-weight: bold; font-size: 16px; }
-.nav-links a { text-decoration: none; color: var(--text-secondary); transition: color 0.2s; }
-.nav-links a:hover { color: var(--color-primary); }
+/* Nav links styles removed to rely on main.css and avoid overriding responsive hiding */
 
 /* ============================
    4. LOGIN BOX
@@ -212,64 +210,6 @@ body {
    5. RESPONSIVE / MOBILE
    ============================ */
 
-.mobile-menu-toggle {
-    display: none;
-    background: none;
-    border: none;
-    font-size: 24px;
-    cursor: pointer;
-    color: var(--text-heading);
-    padding: 5px;
-}
-
-/* Uniformato breakpoint Nav a 900px come nel Main */
-@media (max-width: 900px) {
-    .mobile-menu-toggle {
-        display: block;
-        order: 3; /* Ensure it's on the right or positioned correctly */
-    }
-
-    .site-header {
-        position: relative; /* Needed for absolute positioning of nav */
-        flex-wrap: wrap;
-    }
-
-    .site-header > div:last-child {
-        margin-left: auto; /* Push buttons to the right */
-        margin-right: 15px;
-    }
-
-    .nav-links {
-        display: none;
-        width: 100%;
-        flex-direction: column;
-        background-color: var(--color-white);
-        position: absolute;
-        top: 100%;
-        left: 0;
-        padding: 20px;
-        box-shadow: 0 10px 15px rgba(0,0,0,0.1);
-        gap: 15px;
-        border-bottom: 1px solid var(--border-color-light);
-        z-index: 999;
-    }
-
-    .nav-links.active {
-        display: flex;
-    }
-
-    .nav-links a {
-        display: block;
-        padding: 10px;
-        border-bottom: 1px solid var(--bg-light);
-        text-align: center;
-    }
-    
-    .nav-links a:last-child {
-        border-bottom: none;
-    }
-}
-
 @media (max-width: 480px) {
     /* MANTENUTA LOGICA ORIGINALE LOGIN: Header ORA VISIBILE su mobile */
     .site-header {
@@ -278,7 +218,7 @@ body {
         align-items: center;
     }
 
-    .site-header > div:last-child {
+    .site-header .header-buttons {
         display: none; /* Hide login/register buttons on very small screens inside header if space is tight? 
                           Or maybe keep them? The prompt implies "header doesn't disappear". 
                           Let's keep them but maybe simplify. */
@@ -287,7 +227,7 @@ body {
         margin-right: 10px;
     }
 
-    .site-header > div:last-child .btn {
+    .site-header .header-buttons .btn {
         padding: 6px 12px;
         font-size: 13px;
     }
@@ -324,7 +264,7 @@ body {
 }
 
 @media (max-width: 350px) {
-    .site-header > div:last-child {
+    .site-header .header-buttons {
         display: none; /* Hide action buttons on extremely small screens to make room for logo and burger */
     }
     
