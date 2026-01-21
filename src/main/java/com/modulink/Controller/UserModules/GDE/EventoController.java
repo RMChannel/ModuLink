@@ -100,11 +100,27 @@ public class EventoController extends ModuloController {
         if (currentUserOpt.isEmpty()) return ResponseEntity.status(403).build();
 
         // VALIDAZIONE
+
+        if(request.nome().isEmpty()) {
+            return ResponseEntity.badRequest().body("{\"error\": \"Il nome dell'evento non può essere vuoto.\"}");
+        }
+        if(request.nome().length()>200 || request.nome().length()<2) {
+            return ResponseEntity.badRequest().body("{\"error\": \"Il nome dev'essere compreso tra i 2 e i 200 caratteri.\"}");
+        }
+        if(request.luogo() != null && request.luogo().length()>200) {
+            return ResponseEntity.badRequest().body("{\"error\": \"Lunghezza Luogo supera 200 caratteri\"}");
+        }
+        if (request.inizio() == null) {
+            return ResponseEntity.badRequest().body("{\"error\": \"Campo data vuoto\"}");
+        }
+        if (request.inizio().isBefore(LocalDateTime.of(1970, 1, 1, 0, 0))) {
+            return ResponseEntity.badRequest().body("{\"error\": \"Data inizio antecedente alla data limite\"}");
+        }
         if (request.inizio().isBefore(LocalDateTime.now())) {
             return ResponseEntity.badRequest().body("{\"error\": \"Non puoi creare eventi nel passato.\"}");
         }
-        if (request.fine().isBefore(request.inizio())) {
-            return ResponseEntity.badRequest().body("{\"error\": \"La data di fine non può essere precedente all'inizio.\"}");
+        if (request.fine() != null && request.fine().isBefore(request.inizio())) {
+            return ResponseEntity.badRequest().body("{\"error\": \"Data fine antecedente alla data inizio\"}");
         }
 
         UtenteEntity currentUser = currentUserOpt.get();
@@ -149,8 +165,23 @@ public class EventoController extends ModuloController {
         EventoEntity evento = eventoRepository.getById(new EventoID(request.id, currentUser.getAzienda().getId_azienda()));
 
         // VALIDAZIONE
-        if (request.fine().isBefore(request.inizio())) {
-            return ResponseEntity.badRequest().body("{\"error\": \"La data di fine non può essere precedente all'inizio.\"}");
+        if(request.nome().isEmpty()) {
+            return ResponseEntity.badRequest().body("{\"error\": \"Il nome dell'evento non può essere vuoto.\"}");
+        }
+        if(request.nome().length()>200 || request.nome().length()<2) {
+            return ResponseEntity.badRequest().body("{\"error\": \"Il nome dev'essere compreso tra i 2 e i 200 caratteri.\"}");
+        }
+        if(request.luogo() != null && request.luogo().length()>200) {
+            return ResponseEntity.badRequest().body("{\"error\": \"Lunghezza Luogo supera 200 caratteri\"}");
+        }
+        if (request.inizio() == null) {
+            return ResponseEntity.badRequest().body("{\"error\": \"Campo data vuoto\"}");
+        }
+        if (request.inizio().isBefore(LocalDateTime.of(1970, 1, 1, 0, 0))) {
+            return ResponseEntity.badRequest().body("{\"error\": \"Data inizio antecedente alla data limite\"}");
+        }
+        if (request.fine() != null && request.fine().isBefore(request.inizio())) {
+            return ResponseEntity.badRequest().body("{\"error\": \"Data fine antecedente alla data inizio\"}");
         }
         
         // VALIDAZIONE CREATORE

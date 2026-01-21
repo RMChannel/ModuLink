@@ -283,10 +283,6 @@ footer {
         height: 32px; /* Logo leggermente più piccolo */
     }
 
-    .header-buttons .btn-solid {
-        display: none; /* Nasconde "Registra Azienda" perché troppo ingombrante */
-    }
-
     /* Contenitore Pagina */
     .main-container {
         padding: 0 10px; /* Riduce i margini laterali */
