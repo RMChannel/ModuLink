@@ -84,6 +84,9 @@ public class GTMController extends ModuloController {
         if(isAccessibleModulo(utenteOpt)) {
             UtenteEntity utente = utenteOpt.get();
             if(form.getScadenza() != null && form.getScadenza().isBefore(LocalDate.now().minusDays(1))) bindingResult.rejectValue("scadenza","datanelpassato.error","La data di scadenza non può essere nel passato");
+            if(form.getScadenza() != null) {
+                if(form.getScadenza().isBefore(LocalDate.now())) bindingResult.rejectValue("scadenza","scadenzanelpassato.error","La scadenza non può essere prima di oggi");
+            }
             if(form.getPriorita()<0 || form.getPriorita()>5) bindingResult.rejectValue("priorita","prioritanonvalida.error","La priorità deve essere compresa tra 0 e 5");
             if(bindingResult.hasErrors()) {
                 model.addAttribute("taskCreate",taskService.findByCreatore(utente));
