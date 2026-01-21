@@ -17,6 +17,20 @@ RUN mvn clean package -Dmaven.test.skip=true
 FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
 
+# Argomenti di build (da passare con --build-arg)
+ARG DB_URL
+ARG DB_USER
+ARG DB_PASS
+ARG MAIL
+ARG PASSWORD_MAIL
+
+# Impostiamo le variabili d'ambiente in modo che l'applicazione le veda
+ENV DB_URL=${DB_URL}
+ENV DB_USER=${DB_USER}
+ENV DB_PASS=${DB_PASS}
+ENV MAIL=${MAIL}
+ENV PASSWORD_MAIL=${PASSWORD_MAIL}
+
 # Copiamo il file .jar generato nello stage precedente
 COPY --from=build /app/target/*.jar app.jar
 
