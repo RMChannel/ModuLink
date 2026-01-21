@@ -143,6 +143,18 @@ public class CustomUserDetailsService implements UserDetailsService {
         return userRepository.getAllByAziendaIs(aziendaEntity);
     }
 
+    /**
+     * Recupera la lista di tutti gli utenti di un'azienda, escludendo un utente specifico.
+     * Utile per liste di destinatari o assegnazioni dove non si vuole includere se stessi.
+     *
+     * @param azienda L'azienda di appartenenza.
+     * @param idUtente L'ID dell'utente da escludere.
+     * @return Lista di utenti filtrata.
+     */
+    public List<UtenteEntity> getAllByAziendaExcludingUser(AziendaEntity azienda, int idUtente) {
+        return userRepository.findAllByAziendaAndIdUtenteNot(azienda, idUtente);
+    }
+
     @Caching(evict = {
             @CacheEvict(value = {"users", "userDetails"}, key = "#utente.email"),
             @CacheEvict(value = "usersByAzienda", key = "#utente.azienda.id_azienda")

@@ -58,5 +58,15 @@ public interface UserRepository extends JpaRepository<UtenteEntity, UtenteID> {
 
     List<UtenteEntity> getAllByAziendaIs(AziendaEntity azienda);
 
+    /**
+     * Recupera la lista di tutti gli utenti appartenenti a una specifica azienda,
+     * escludendo un utente specifico (solitamente l'utente corrente).
+     *
+     * @param azienda L'azienda di cui recuperare gli utenti.
+     * @param idUtente L'ID dell'utente da escludere dalla lista.
+     * @return Una lista di {@link UtenteEntity} appartenenti all'azienda, escluso l'utente con l'ID fornito.
+     */
+    @Query("SELECT u FROM UtenteEntity u WHERE u.azienda = :azienda AND u.id_utente <> :idUtente")
+    List<UtenteEntity> findAllByAziendaAndIdUtenteNot(@Param("azienda") AziendaEntity azienda, @Param("idUtente") int idUtente);
 
 }
