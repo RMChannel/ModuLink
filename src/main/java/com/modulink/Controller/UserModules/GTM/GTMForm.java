@@ -8,7 +8,7 @@ import java.util.List;
 
 public class GTMForm {
     @NotBlank(message = "IL titolo non può essere vuoto")
-    @Size(min = 2, max = 50, message = "Il titolo deve essere compreso tra 2 e 50 caratteri")
+    @Size(min = 2, max = 150, message = "Il titolo deve essere compreso tra 2 e 50 caratteri")
     private String titolo;
 
     private int priorita;
