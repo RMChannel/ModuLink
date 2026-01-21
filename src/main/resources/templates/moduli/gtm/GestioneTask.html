@@ -231,7 +231,7 @@
 <div class="modal fade gtm-modal" id="editTaskModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-            <form th:action="@{/dashboard/gtm/edit-task}" method="post" th:object="${editForm}">
+            <form th:action="@{/dashboard/gtm/edit-task}" id ="modify_task" method="post" th:object="${editForm}">
                 <input type="hidden" id="edit_idTask" name="idTask" th:value="*{idTask}">
                 <div class="modal-header">
                     <h5 class="modal-title">Modifica Task</h5>
@@ -295,7 +295,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
-                    <button type="submit" class="btn btn-primary">Salva Modifiche</button>
+                    <button type="submit" class="btn btn-primary" >Salva Modifiche</button>
                 </div>
             </form>
         </div>
@@ -518,6 +518,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 });
+
 </script>
 </body>
 </html>
