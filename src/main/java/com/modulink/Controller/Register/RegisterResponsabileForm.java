@@ -27,8 +27,7 @@ public class RegisterResponsabileForm {
      * <li>La lunghezza deve essere compresa tra 5 e 50 caratteri.</li>
      * </ul>
      */
-    @NotBlank(message = "il campo email non può essere vuoto")
-    @Size(min = 5, max = 50, message = "l''email deve essere compresa tra 5 e 50 caratteri")
+    @Size(max = 50, message = "l''email deve essere compresa tra 5 e 50 caratteri")
     @Pattern(regexp = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$", message = "Inserire un'email valida.")
     private String email;
 
@@ -42,7 +41,6 @@ public class RegisterResponsabileForm {
      * <li>La lunghezza massima è di 50 caratteri.</li>
      * </ul>
      */
-    @NotBlank(message = "Il campo password non può essere vuoto")
     @Size(min = 8, max = 50, message = "La password deve essere compresa tra 8 e 50 caratteri")
     private String password;
 
@@ -52,21 +50,18 @@ public class RegisterResponsabileForm {
      * Serve per verificare che l'utente non abbia commesso errori di digitazione.
      * Deve coincidere con il campo <code>password</code> (la logica di confronto avviene solitamente tramite un validatore custom o nel servizio).
      */
-    @NotBlank(message = "Il campo conferma password non può essere vuoto")
     @Size(min = 8, max = 50, message = "La conferma password deve essere compresa tra 8 e 50 caratteri")
     private String confermaPassword;
 
     /**
      * Nome di battesimo del responsabile.
      */
-    @NotBlank(message = "Il campo nome non può essere vuoto")
     @Size(min = 2, max = 50, message = "Il nome deve essere compreso tra 2 e 50 caratteri")
     private String nome;
 
     /**
      * Cognome del responsabile.
      */
-    @NotBlank(message = "Il campo cognome non può essere vuoto")
     @Size(min = 2, max = 50, message = "Il cognome deve essere compreso tra 2 e 50 caratteri")
     private String cognome;
 

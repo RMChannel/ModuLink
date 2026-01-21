@@ -1,0 +1,56 @@
+name: GDU Tests
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      checks: write
+
+    steps:
+      # 1. Scarica il codice
+      - uses: actions/checkout@v4
+
+      # 2. Configura Java 17
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+
+      # 3. Test RunningTest
+      - name: Test RunningTest
+        env:
+          DB_URL: ${{ secrets.DB_URL }}
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_PASS: ${{ secrets.DB_PASS }}
+          MAIL: ${{ secrets.MAIL }}
+          PASSWORD_MAIL: ${{ secrets.PASSWORD_MAIL }}
+        run: mvn -B test -Dtest=com.modulink.RunningTest
+
+      # 4. Test GDU (RegisterControllerTest)
+      - name: Test GDU (RegisterControllerTest)
+        env:
+          DB_URL: ${{ secrets.DB_URL }}
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_PASS: ${{ secrets.DB_PASS }}
+          MAIL: ${{ secrets.MAIL }}
+          PASSWORD_MAIL: ${{ secrets.PASSWORD_MAIL }}
+        run: mvn -B test -Dtest=com.modulink.Controller.Register.RegisterControllerTest
+
+      # 5. Pubblica Report dei Test (Grafico)
+      - name: Publish Test Report
+        uses: dorny/test-reporter@v1
+        if: always()
+        with:
+          name: Test Results
+          path: target/surefire-reports/*.xml
+          reporter: java-junit
+          fail-on-error: false
