@@ -56,8 +56,12 @@ public class GDMController extends ModuloController {
     public String addProduct(Principal principal, Model model, @Valid @ModelAttribute("newProdottoForm") NewProdottoForm newProdottoForm, BindingResult bindingResult) {
         Optional<UtenteEntity> utenteOpt=customUserDetailsService.findByEmail(principal.getName());
         if(isAccessibleModulo(utenteOpt)) {
-            if(newProdottoForm.getQuantita()<0) bindingResult.rejectValue("quantità","quantità.negative","La quantità deve essere positiva");
-            else if(newProdottoForm.getPrezzo()<0) bindingResult.rejectValue("prezzo","prezzo.negative","Il prezzo deve essere positivo");
+            if(bindingResult.hasErrors()) {
+                model.addAttribute("newProdottoForm",newProdottoForm);
+                return "moduli/gdm/GestioneProdotti";
+            }
+            if(newProdottoForm.getQuantita()!=null && newProdottoForm.getQuantita()<0) bindingResult.rejectValue("quantita","quantità.negative","La quantità deve essere positiva");
+            else if(newProdottoForm.getPrezzo()!=null && newProdottoForm.getPrezzo()<0) bindingResult.rejectValue("prezzo","prezzo.negative","Il prezzo deve essere positivo");
             if(bindingResult.hasErrors()) {
                 model.addAttribute("newProdottoForm",newProdottoForm);
                 return "moduli/gdm/GestioneProdotti";
@@ -88,8 +92,12 @@ public class GDMController extends ModuloController {
     public String updateProduct(Principal principal, Model model, @Valid @ModelAttribute("updateProdottoForm") UpdateProdottoForm updateProdottoForm, BindingResult bindingResult) {
         Optional<UtenteEntity> utenteOpt=customUserDetailsService.findByEmail(principal.getName());
         if(isAccessibleModulo(utenteOpt)) {
-            if(updateProdottoForm.getQuantita()<0) bindingResult.rejectValue("quantità","quantità.negative","La quantità deve essere positiva");
-            else if(updateProdottoForm.getPrezzo()<0) bindingResult.rejectValue("prezzo","prezzo.negative","Il prezzo deve essere positivo");
+            if(bindingResult.hasErrors()) {
+                model.addAttribute("updateProdottoForm",updateProdottoForm);
+                return "moduli/gdm/GestioneProdotti";
+            }
+            if(updateProdottoForm.getQuantita() == null || updateProdottoForm.getQuantita() < 0) bindingResult.rejectValue("quantita","quantità.negative","La quantità deve essere positiva");
+            if(updateProdottoForm.getPrezzo()==null || updateProdottoForm.getPrezzo()<0) bindingResult.rejectValue("prezzo","prezzo.negative","Il prezzo deve essere positivo");
             if(bindingResult.hasErrors()) {
                 model.addAttribute("updateProdottoForm",updateProdottoForm);
                 return "moduli/gdm/GestioneProdotti";
@@ -97,8 +105,8 @@ public class GDMController extends ModuloController {
             try {
                 ProdottoEntity prodotto=prodottoService.findById(new ProdottoID(updateProdottoForm.getIdProdotto(),utenteOpt.get().getAzienda().getId_azienda()));
                 prodotto.setNome(updateProdottoForm.getNome());
-                prodotto.setQuantita(updateProdottoForm.getQuantita());
-                prodotto.setPrezzo(updateProdottoForm.getPrezzo());
+                prodotto.setQuantita((int) updateProdottoForm.getQuantita());
+                prodotto.setPrezzo((double) updateProdottoForm.getPrezzo());
                 prodotto.setDescrizione(updateProdottoForm.getDescrizione());
                 prodotto.setCategoria(updateProdottoForm.getCategoria());
                 prodottoService.updateProdotto(prodotto);
