@@ -598,7 +598,7 @@ h1, h2, h3, h4, h5, h6 {
         justify-content: center;
         position: fixed;
         top: 15px;
-        left: 15px;
+        right: 15px;
         z-index: 1101; /* Above sidebar */
         width: 45px;
         height: 45px;
