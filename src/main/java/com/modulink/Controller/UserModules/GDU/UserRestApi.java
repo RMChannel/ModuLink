@@ -48,7 +48,7 @@ public class UserRestApi {
 
         // Recupera tutti gli utenti della stessa azienda del richiedente
         List<UtenteEntity> colleagues = userRepository.getAllByAziendaIs(currentUser.getAzienda());
-        colleagues.remove(currentUser);//rimuovo l'utente attuale
+        
 
 
         // Mappa le entità in DTO leggeri
