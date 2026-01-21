@@ -120,6 +120,66 @@
                     });
                 }
             } catch (e) { console.error('Sidebar state restore error', e); }
+
+            // Mobile Sidebar Logic
+            document.addEventListener("DOMContentLoaded", function() {
+                var sidebar = document.getElementById('sidebar');
+                
+                // Function to handle mobile state
+                function handleMobileState() {
+                    if (window.innerWidth <= 768 && sidebar) {
+                        sidebar.classList.remove('collapsed');
+                    }
+                }
+                
+                // Initial check
+                handleMobileState();
+                
+                // Resize listener
+                window.addEventListener('resize', handleMobileState);
+
+                // Check if mobile button already exists to avoid duplicates
+                if (!document.getElementById('mobileSidebarToggle')) {
+                    var btn = document.createElement('button');
+                    btn.id = 'mobileSidebarToggle';
+                    btn.className = 'mobile-toggle-btn';
+                    btn.innerHTML = '<i class="bi bi-list"></i>';
+                    btn.setAttribute('aria-label', 'Menu');
+                    
+                    // Append to body to ensure it's not affected by sidebar transform/overflow
+                    document.body.appendChild(btn);
+
+                    // Toggle Event
+                    btn.addEventListener('click', function() {
+                        if (sidebar) {
+                            sidebar.classList.toggle('show-mobile');
+                            
+                            // Change icon based on state
+                            var icon = btn.querySelector('i');
+                            if (sidebar.classList.contains('show-mobile')) {
+                                icon.classList.remove('bi-list');
+                                icon.classList.add('bi-x-lg');
+                            } else {
+                                icon.classList.remove('bi-x-lg');
+                                icon.classList.add('bi-list');
+                            }
+                        }
+                    });
+
+                    // Close sidebar when clicking a link (optional, good for navigation)
+                    var links = document.querySelectorAll('#sidebar a');
+                    links.forEach(function(link) {
+                        link.addEventListener('click', function() {
+                            if (window.innerWidth <= 768 && sidebar) {
+                                sidebar.classList.remove('show-mobile');
+                                var icon = btn.querySelector('i');
+                                icon.classList.remove('bi-x-lg');
+                                icon.classList.add('bi-list');
+                            }
+                        });
+                    });
+                }
+            });
         })();
     </script>
 </nav>
