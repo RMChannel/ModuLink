@@ -11,6 +11,162 @@
     <link rel="stylesheet" th:href="@{/css/common/alerts.css}">
     <link rel="stylesheet" th:href="@{/css/moduli/GDM/gdm.css}">
     <script th:src="@{/javascript/theme.js}"></script>
+    
+    <style>
+        /* =========================================
+           STRICT THEME ADHERENCE & LIST VIEW
+           ========================================= */
+        body { background-color: var(--bg-body); color: var(--text-body); }
+        h1, h2, h3, h4, h5, h6 { color: var(--text-heading); }
+        
+        /* LIST ITEM THEME */
+        .product-list-item {
+            background-color: var(--bg-light);
+            border: 1px solid var(--border-color);
+            border-radius: 0.75rem;
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .product-list-item:hover {
+            border-color: var(--border-color-hover);
+            box-shadow: var(--shadow-card);
+            transform: translateX(4px);
+        }
+
+        /* QUANTITY INDICATOR STRIP */
+        .quantity-strip {
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 6px;
+        }
+        /* Dynamic strip colors */
+        .strip-success { background-color: #10b981; } /* Green */
+        .strip-warning { background-color: #f59e0b; } /* Yellow/Orange */
+        .strip-danger { background-color: var(--text-danger); } /* Red */
+
+        /* TEXT UTILITIES */
+        .text-theme-heading { color: var(--text-heading) !important; }
+        .text-theme-body { color: var(--text-body) !important; }
+        .text-theme-muted { color: var(--text-muted) !important; }
+        .text-theme-secondary { color: var(--text-secondary) !important; }
+        .text-theme-primary { color: var(--color-primary) !important; }
+
+        /* BADGES */
+        .badge-theme {
+            font-weight: 600;
+            padding: 0.35em 0.8em;
+            border-radius: 50rem;
+            font-size: 0.7rem;
+            letter-spacing: 0.02em;
+        }
+        .badge-category {
+            background-color: var(--bg-body-alt);
+            color: var(--text-secondary);
+            border: 1px solid var(--border-color);
+        }
+        
+        /* QUANTITY BADGE */
+        .badge-quantity {
+            font-size: 0.8rem;
+            font-weight: 700;
+            min-width: 2rem;
+            text-align: center;
+        }
+        .bg-qty-low { background-color: rgba(220, 38, 38, 0.1); color: var(--text-danger); border: 1px solid var(--border-alert-danger); }
+        .bg-qty-high { background-color: rgba(16, 185, 129, 0.1); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.2); }
+
+        /* BUTTONS */
+        .btn-theme-primary {
+            background-color: var(--color-primary);
+            color: var(--color-white);
+            border: none;
+            box-shadow: var(--shadow-btn-primary);
+            padding: 0.5rem 1.25rem;
+            font-weight: 500;
+            border-radius: 0.5rem;
+            transition: background-color 0.2s;
+        }
+        .btn-theme-primary:hover {
+            background-color: var(--color-primary-dark);
+            color: var(--color-white);
+        }
+
+        .btn-icon-theme {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            border: 1px solid var(--border-color);
+            background-color: transparent;
+            color: var(--text-secondary);
+            transition: all 0.2s;
+        }
+        .btn-icon-theme:hover {
+            background-color: var(--bg-body-alt);
+            color: var(--text-heading);
+            border-color: var(--border-color-hover);
+        }
+        
+        /* Action Specific Hover Colors */
+        .btn-icon-theme.action-buy:hover { color: #10b981; border-color: #10b981; background-color: rgba(16, 185, 129, 0.1); }
+        .btn-icon-theme.action-sell:hover { color: #f59e0b; border-color: #f59e0b; background-color: rgba(245, 158, 11, 0.1); }
+        .btn-icon-theme.action-edit:hover { color: var(--color-primary); border-color: var(--color-primary); background-color: var(--color-primary-light); }
+        .btn-icon-theme.action-delete:hover { color: var(--text-danger); border-color: var(--text-danger); background-color: var(--bg-alert-danger); }
+
+        /* INPUTS */
+        .form-control-theme, .form-select-theme {
+            background-color: var(--bg-input);
+            color: var(--text-body);
+            border: 1px solid var(--border-color);
+        }
+        .form-control-theme:focus, .form-select-theme:focus {
+            background-color: var(--bg-input-focus);
+            border-color: var(--border-focus);
+            box-shadow: var(--shadow-input-focus);
+            color: var(--text-body);
+        }
+        .form-control-theme::placeholder { color: var(--text-placeholder); }
+
+        /* MODALS */
+        .modal-content-theme { background-color: var(--bg-light); border: 1px solid var(--border-color); }
+        .modal-header-theme { border-bottom: 1px solid var(--border-color); padding: 1.5rem; }
+        .modal-body-theme { padding: 1.5rem; }
+        .modal-footer-theme { border-top: 1px solid var(--border-color); padding: 1rem 1.5rem; }
+
+        /* EMPTY STATE */
+        .empty-state-box {
+            background-color: var(--bg-module-card);
+            border: 2px dashed var(--border-color);
+            border-radius: 1rem;
+            padding: 3rem 1rem;
+            text-align: center;
+        }
+        
+        /* List Headers (Desktop Only) */
+        .list-header {
+            padding: 0 1rem 0.5rem 1.5rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+        }
+        
+        /* Filter Box */
+        .filter-box {
+            background-color: var(--bg-light);
+            border: 1px solid var(--border-color);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+    </style>
 </head>
 <body>
 <div class="dashboard-wrapper">
@@ -22,54 +178,139 @@
 
     <!-- Main Content -->
     <div id="content">
-        <div class="container-fluid">
-            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-5 pt-md-3 pb-2 mb-3 border-bottom">
-                <h1 class="h2">Gestione Magazzino</h1>
-                <div class="btn-toolbar mb-2 mb-md-0">
-                    <button type="button" class="btn btn-sm btn-primary shadow-sm" data-bs-toggle="modal" data-bs-target="#addProductModal">
-                        <i class="bi bi-plus-lg"></i> Nuovo Prodotto
+        <div class="container-fluid px-3 px-md-4">
+            
+            <!-- Page Header -->
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-5 pt-md-4 pb-4 mb-4 border-bottom" style="border-color: var(--border-color) !important;">
+                <div class="mb-3 mb-md-0 me-auto">
+                    <h1 class="h2 fw-bold text-theme-heading mb-0">Gestione Magazzino</h1>
+                    <p class="text-theme-muted mb-0 small mt-1">Monitora scorte, prezzi e categorie prodotti</p>
+                </div>
+                
+                <div class="d-flex flex-column flex-md-row gap-3 w-100 w-md-auto align-items-stretch align-items-md-center">
+                    <!-- Search Group -->
+                    <div class="input-group" style="min-width: 250px;">
+                        <span class="input-group-text border-0 ps-3" style="background-color: var(--bg-input); border: 1px solid var(--border-color) !important; border-right: none !important; border-radius: 0.5rem 0 0 0.5rem;">
+                            <i class="bi bi-search text-theme-muted"></i>
+                        </span>
+                        <input type="text" class="form-control form-control-theme border-start-0 ps-0" id="productSearchInput" placeholder="Cerca prodotto..." autocomplete="off">
+                    </div>
+                    
+                    <!-- Filters Toggle -->
+                    <button class="btn btn-outline-secondary d-flex align-items-center justify-content-center" type="button" data-bs-toggle="collapse" data-bs-target="#advancedFilters" aria-expanded="false" aria-controls="advancedFilters">
+                        <i class="bi bi-funnel-fill me-2"></i> Filtri
+                    </button>
+                    
+                    <!-- Add Button -->
+                    <button type="button" class="btn btn-theme-primary d-flex align-items-center justify-content-center" data-bs-toggle="modal" data-bs-target="#addProductModal">
+                        <i class="bi bi-plus-lg me-2"></i> Nuovo Prodotto
                     </button>
                 </div>
             </div>
 
-            <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
-                <div class="table-responsive">
-                    <table class="table table-hover table-borderless align-middle mb-0">
-                        <thead class="table-light border-bottom">
-                        <tr>
-                            <th scope="col" class="ps-4">Nome</th>
-                            <th scope="col">Categoria</th>
-                            <th scope="col">Prezzo</th>
-                            <th scope="col">Quantità</th>
-                            <th scope="col">Descrizione</th>
-                            <th scope="col" class="text-end pe-4">Azioni</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr th:each="prodotto : ${prodotti}">
-                            <td class="ps-4 fw-bold text-primary" th:text="${prodotto.nome}">Nome Prodotto</td>
-                            <td><span class="badge rounded-pill bg-light text-dark border" th:text="${prodotto.categoria}">Categoria</span></td>
-                            <td class="price-tag fw-semibold" th:text="${#numbers.formatCurrency(prodotto.prezzo)}">€ 0.00</td>
-                            <td>
-                                <span th:text="${prodotto.quantita}" th:class="${prodotto.quantita < 10} ? 'badge bg-danger bg-opacity-10 text-danger' : 'badge bg-success bg-opacity-10 text-success'">0</span>
-                            </td>
-                            <td th:text="${#strings.abbreviate(prodotto.descrizione, 50)}" title="${prodotto.descrizione}" class="text-muted small">Descrizione...</td>
-                            <td class="text-end pe-4">
-                                <div class="d-flex justify-content-end gap-1">
-                                    <button class="btn btn-sm btn-light text-success border-0" title="Acquista (Rifornisci)"
+            <!-- Advanced Filters Section -->
+            <div class="collapse" id="advancedFilters">
+                <div class="filter-box shadow-sm">
+                    <div class="row g-3">
+                        <!-- Quantity Filter -->
+                        <div class="col-md-4">
+                            <label class="form-label small text-theme-secondary fw-bold text-uppercase">Quantità</label>
+                            <div class="input-group">
+                                <select class="form-select form-select-theme" id="filterQtyOp" style="max-width: 130px;">
+                                    <option value="gt">Maggiore (>)</option>
+                                    <option value="lt">Minore (<)</option>
+                                    <option value="eq">Uguale (=)</option>
+                                </select>
+                                <input type="number" class="form-control form-control-theme" id="filterQtyVal" placeholder="Valore">
+                            </div>
+                        </div>
+                        
+                        <!-- Price Filter -->
+                        <div class="col-md-5">
+                            <label class="form-label small text-theme-secondary fw-bold text-uppercase">Range Prezzo (€)</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-transparent border-0 text-theme-muted" style="border: 1px solid var(--border-color) !important; border-right: 0 !important; border-top-left-radius: 0.5rem; border-bottom-left-radius: 0.5rem;">Min</span>
+                                <input type="number" step="0.01" class="form-control form-control-theme" id="filterPriceMin" placeholder="0.00">
+                                <span class="input-group-text bg-transparent border-0 text-theme-muted" style="border-top: 1px solid var(--border-color) !important; border-bottom: 1px solid var(--border-color) !important;">-</span>
+                                <input type="number" step="0.01" class="form-control form-control-theme" id="filterPriceMax" placeholder="Max">
+                            </div>
+                        </div>
+                        
+                        <!-- Reset Action -->
+                        <div class="col-md-3 d-flex align-items-end">
+                            <button class="btn btn-outline-secondary w-100 rounded-pill" onclick="resetFilters()">
+                                <i class="bi bi-arrow-counterclockwise me-2"></i>Reset Filtri
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- List View Container -->
+            <div id="productListContainer" th:unless="${#lists.isEmpty(prodotti)}">
+                <!-- Headers (Visible only on Desktop) -->
+                <div class="row list-header d-none d-lg-flex">
+                    <div class="col-lg-4">Prodotto / Categoria</div>
+                    <div class="col-lg-2 text-center">Prezzo</div>
+                    <div class="col-lg-2 text-center">Quantità</div>
+                    <div class="col-lg-4 text-end">Azioni</div>
+                </div>
+
+                <!-- List Items Loop -->
+                <div class="d-flex flex-column gap-3 mb-5">
+                    <div th:each="prodotto : ${prodotti}" class="product-list-item p-3 ps-4" 
+                         th:data-price="${prodotto.prezzo}" 
+                         th:data-quantity="${prodotto.quantita}">
+                        <!-- Quantity Color Strip (Green if > 10, Red if <= 10) -->
+                        <div class="quantity-strip" th:classappend="${prodotto.quantita < 10} ? 'strip-danger' : 'strip-success'"></div>
+                        
+                        <div class="row align-items-center gy-3">
+                            
+                            <!-- Identity Column -->
+                            <div class="col-12 col-lg-4">
+                                <div class="d-flex flex-column">
+                                    <div class="d-flex align-items-center gap-2 mb-1">
+                                        <h5 class="fw-bold text-theme-heading mb-0 text-truncate product-name" th:text="${prodotto.nome}">Nome Prodotto</h5>
+                                        <span class="badge badge-category product-category" th:text="${prodotto.categoria}">Categoria</span>
+                                    </div>
+                                    <p class="text-theme-muted small mb-0 text-truncate product-description" style="max-width: 90%;" th:text="${prodotto.descrizione}">Descrizione...</p>
+                                </div>
+                            </div>
+
+                            <!-- Price Column -->
+                            <div class="col-6 col-lg-2 d-flex align-items-center justify-content-lg-center">
+                                <div class="d-lg-none text-theme-muted small me-2">Prezzo:</div>
+                                <span class="fw-bold text-theme-heading fs-5" th:text="${#numbers.formatCurrency(prodotto.prezzo)}">€ 0.00</span>
+                            </div>
+
+                            <!-- Quantity Column -->
+                            <div class="col-6 col-lg-2 d-flex align-items-center justify-content-lg-center">
+                                <div class="d-lg-none text-theme-muted small me-2">Scorta:</div>
+                                <span class="badge badge-quantity rounded-pill" 
+                                      th:text="${prodotto.quantita}"
+                                      th:classappend="${prodotto.quantita < 10} ? 'bg-qty-low' : 'bg-qty-high'">0</span>
+                            </div>
+
+                            <!-- Actions Column -->
+                            <div class="col-12 col-lg-4">
+                                <div class="d-flex justify-content-lg-end justify-content-start gap-2 pt-2 pt-lg-0 border-top border-lg-0 mt-2 mt-lg-0" style="border-color: var(--border-color) !important;">
+                                    <!-- Buy -->
+                                    <button class="btn-icon-theme action-buy" title="Rifornisci"
                                             th:data-id="${prodotto.id_prodotto}"
                                             th:data-nome="${prodotto.nome}"
                                             onclick="openBuyModal(this)">
                                         <i class="bi bi-box-arrow-in-down"></i>
                                     </button>
-                                    <button class="btn btn-sm btn-light text-warning border-0" title="Vendi (Scarica)"
+                                    <!-- Sell -->
+                                    <button class="btn-icon-theme action-sell" title="Scarica"
                                             th:data-id="${prodotto.id_prodotto}"
                                             th:data-nome="${prodotto.nome}"
                                             th:data-quantita="${prodotto.quantita}"
                                             onclick="openSellModal(this)">
                                         <i class="bi bi-box-arrow-up"></i>
                                     </button>
-                                    <button class="btn btn-sm btn-light text-primary border-0" title="Modifica"
+                                    <!-- Edit -->
+                                    <button class="btn-icon-theme action-edit" title="Modifica"
                                             th:data-id="${prodotto.id_prodotto}"
                                             th:data-nome="${prodotto.nome}"
                                             th:data-quantita="${prodotto.quantita}"
@@ -77,27 +318,36 @@
                                             th:data-descrizione="${prodotto.descrizione}"
                                             th:data-categoria="${prodotto.categoria}"
                                             onclick="openEditModal(this)">
-                                        <i class="bi bi-pencil"></i>
+                                        <i class="bi bi-pencil-fill"></i>
                                     </button>
-                                    <button class="btn btn-sm btn-light text-danger border-0" title="Elimina"
+                                    <!-- Delete -->
+                                    <button class="btn-icon-theme action-delete" title="Elimina"
                                             th:data-id="${prodotto.id_prodotto}"
                                             th:data-nome="${prodotto.nome}"
                                             onclick="openDeleteModal(this)">
-                                        <i class="bi bi-trash"></i>
+                                        <i class="bi bi-trash-fill"></i>
                                     </button>
                                 </div>
-                            </td>
-                        </tr>
-                        <tr th:if="${prodotti == null or #lists.isEmpty(prodotti)}">
-                            <td colspan="6" class="text-center text-muted py-5">
-                                <i class="bi bi-box-seam display-6 d-block mb-3 opacity-50"></i>
-                                <em>Nessun prodotto presente in magazzino.</em>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
+
+            <!-- Empty State (Default) -->
+            <div id="defaultEmptyState" th:if="${prodotti == null or #lists.isEmpty(prodotti)}" class="empty-state-box mb-5">
+                <i class="bi bi-box-seam display-4 text-theme-muted opacity-50 mb-3 d-block"></i>
+                <h5 class="text-theme-heading">Magazzino Vuoto</h5>
+                <p class="text-theme-muted">Non ci sono prodotti registrati nel sistema.</p>
+            </div>
+            
+            <!-- Search Empty State -->
+            <div id="searchEmptyState" class="empty-state-box mb-5" style="display: none;">
+                <i class="bi bi-search display-4 text-theme-muted opacity-50 mb-3 d-block"></i>
+                <h5 class="text-theme-heading">Nessun prodotto trovato</h5>
+                <p class="text-theme-muted">Prova a modificare i filtri di ricerca.</p>
+            </div>
+
         </div>
     </div>
 </div>
@@ -105,54 +355,54 @@
     <!-- Add Product Modal -->
     <div class="modal fade" id="addProductModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
+            <div class="modal-content modal-content-theme shadow-lg rounded-4">
                 <form th:action="@{/dashboard/gdm/add-product}" method="post">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Nuovo Prodotto</h5>
+                    <div class="modal-header modal-header-theme">
+                        <h5 class="modal-title fw-bold text-theme-heading">Nuovo Prodotto</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <div class="modal-body">
+                    <div class="modal-body modal-body-theme">
                         <div class="mb-3">
-                            <label for="nome" class="form-label">Nome</label>
-                            <input type="text" class="form-control" id="nome" name="nome" 
+                            <label for="nome" class="form-label fw-medium text-theme-secondary">Nome</label>
+                            <input type="text" class="form-control form-control-theme" id="nome" name="nome" 
                                    th:value="${newProdottoForm != null} ? ${newProdottoForm.nome} : ''"
                                    th:classappend="${newProdottoForm != null and #fields.hasErrors('newProdottoForm.nome')} ? 'is-invalid'" required>
                             <div class="invalid-feedback" th:if="${newProdottoForm != null and #fields.hasErrors('newProdottoForm.nome')}" th:errors="${newProdottoForm.nome}"></div>
                         </div>
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="quantita" class="form-label">Quantità</label>
-                                <input type="number" class="form-control" id="quantita" name="quantita" 
+                        <div class="row g-3 mb-3">
+                            <div class="col-6">
+                                <label for="quantita" class="form-label fw-medium text-theme-secondary">Quantità</label>
+                                <input type="number" class="form-control form-control-theme" id="quantita" name="quantita" 
                                        th:value="${newProdottoForm != null} ? ${newProdottoForm.quantita} : 0"
                                        th:classappend="${newProdottoForm != null and #fields.hasErrors('newProdottoForm.quantita')} ? 'is-invalid'" required min="0">
                                 <div class="invalid-feedback" th:if="${newProdottoForm != null and #fields.hasErrors('newProdottoForm.quantita')}" th:errors="${newProdottoForm.quantita}"></div>
                             </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="prezzo" class="form-label">Prezzo (€)</label>
-                                <input type="number" step="0.01" class="form-control" id="prezzo" name="prezzo" 
+                            <div class="col-6">
+                                <label for="prezzo" class="form-label fw-medium text-theme-secondary">Prezzo (€)</label>
+                                <input type="number" step="0.01" class="form-control form-control-theme" id="prezzo" name="prezzo" 
                                        th:value="${newProdottoForm != null} ? ${newProdottoForm.prezzo} : 0.00"
                                        th:classappend="${newProdottoForm != null and #fields.hasErrors('newProdottoForm.prezzo')} ? 'is-invalid'" required min="0">
                                 <div class="invalid-feedback" th:if="${newProdottoForm != null and #fields.hasErrors('newProdottoForm.prezzo')}" th:errors="${newProdottoForm.prezzo}"></div>
                             </div>
                         </div>
                         <div class="mb-3">
-                            <label for="categoria" class="form-label">Categoria</label>
-                            <input type="text" class="form-control" id="categoria" name="categoria" 
+                            <label for="categoria" class="form-label fw-medium text-theme-secondary">Categoria</label>
+                            <input type="text" class="form-control form-control-theme" id="categoria" name="categoria" 
                                    th:value="${newProdottoForm != null} ? ${newProdottoForm.categoria} : ''"
                                    th:classappend="${newProdottoForm != null and #fields.hasErrors('newProdottoForm.categoria')} ? 'is-invalid'">
                             <div class="invalid-feedback" th:if="${newProdottoForm != null and #fields.hasErrors('newProdottoForm.categoria')}" th:errors="${newProdottoForm.categoria}"></div>
                         </div>
                         <div class="mb-3">
-                            <label for="descrizione" class="form-label">Descrizione</label>
-                            <textarea class="form-control" id="descrizione" name="descrizione" rows="3"
+                            <label for="descrizione" class="form-label fw-medium text-theme-secondary">Descrizione</label>
+                            <textarea class="form-control form-control-theme" id="descrizione" name="descrizione" rows="3"
                                       th:text="${newProdottoForm != null} ? ${newProdottoForm.descrizione} : ''"
                                       th:classappend="${newProdottoForm != null and #fields.hasErrors('newProdottoForm.descrizione')} ? 'is-invalid'"></textarea>
                             <div class="invalid-feedback" th:if="${newProdottoForm != null and #fields.hasErrors('newProdottoForm.descrizione')}" th:errors="${newProdottoForm.descrizione}"></div>
                         </div>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
-                        <button type="submit" class="btn btn-primary">Aggiungi</button>
+                    <div class="modal-footer modal-footer-theme">
+                        <button type="button" class="btn btn-outline-secondary rounded-pill" data-bs-dismiss="modal">Annulla</button>
+                        <button type="submit" class="btn btn-theme-primary rounded-pill px-4">Aggiungi</button>
                     </div>
                 </form>
             </div>
@@ -162,56 +412,56 @@
     <!-- Edit Product Modal -->
     <div class="modal fade" id="editProductModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
+            <div class="modal-content modal-content-theme shadow-lg rounded-4">
                 <form th:action="@{/dashboard/gdm/update-product}" method="post">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Modifica Prodotto</h5>
+                    <div class="modal-header modal-header-theme">
+                        <h5 class="modal-title fw-bold text-theme-heading">Modifica Prodotto</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <div class="modal-body">
+                    <div class="modal-body modal-body-theme">
                         <input type="hidden" name="idProdotto" id="editIdProdotto" th:value="${updateProdottoForm != null} ? ${updateProdottoForm.idProdotto} : ''">
                         
                         <div class="mb-3">
-                            <label for="editNome" class="form-label">Nome</label>
-                            <input type="text" class="form-control" id="editNome" name="nome" 
+                            <label for="editNome" class="form-label fw-medium text-theme-secondary">Nome</label>
+                            <input type="text" class="form-control form-control-theme" id="editNome" name="nome" 
                                    th:value="${updateProdottoForm != null} ? ${updateProdottoForm.nome} : ''"
                                    th:classappend="${updateProdottoForm != null and #fields.hasErrors('updateProdottoForm.nome')} ? 'is-invalid'" required>
                              <div class="invalid-feedback" th:if="${updateProdottoForm != null and #fields.hasErrors('updateProdottoForm.nome')}" th:errors="${updateProdottoForm.nome}"></div>
                         </div>
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="editQuantita" class="form-label">Quantità</label>
-                                <input type="number" class="form-control" id="editQuantita" name="quantita" 
+                        <div class="row g-3 mb-3">
+                            <div class="col-6">
+                                <label for="editQuantita" class="form-label fw-medium text-theme-secondary">Quantità</label>
+                                <input type="number" class="form-control form-control-theme" id="editQuantita" name="quantita" 
                                        th:value="${updateProdottoForm != null} ? ${updateProdottoForm.quantita} : ''"
                                        th:classappend="${updateProdottoForm != null and #fields.hasErrors('updateProdottoForm.quantita')} ? 'is-invalid'" required min="0">
                                 <div class="invalid-feedback" th:if="${updateProdottoForm != null and #fields.hasErrors('updateProdottoForm.quantita')}" th:errors="${updateProdottoForm.quantita}"></div>
                             </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="editPrezzo" class="form-label">Prezzo (€)</label>
-                                <input type="number" step="0.01" class="form-control" id="editPrezzo" name="prezzo" 
+                            <div class="col-6">
+                                <label for="editPrezzo" class="form-label fw-medium text-theme-secondary">Prezzo (€)</label>
+                                <input type="number" step="0.01" class="form-control form-control-theme" id="editPrezzo" name="prezzo" 
                                        th:value="${updateProdottoForm != null} ? ${updateProdottoForm.prezzo} : ''"
                                        th:classappend="${updateProdottoForm != null and #fields.hasErrors('updateProdottoForm.prezzo')} ? 'is-invalid'" required min="0">
                                 <div class="invalid-feedback" th:if="${updateProdottoForm != null and #fields.hasErrors('updateProdottoForm.prezzo')}" th:errors="${updateProdottoForm.prezzo}"></div>
                             </div>
                         </div>
                         <div class="mb-3">
-                            <label for="editCategoria" class="form-label">Categoria</label>
-                            <input type="text" class="form-control" id="editCategoria" name="categoria" 
+                            <label for="editCategoria" class="form-label fw-medium text-theme-secondary">Categoria</label>
+                            <input type="text" class="form-control form-control-theme" id="editCategoria" name="categoria" 
                                    th:value="${updateProdottoForm != null} ? ${updateProdottoForm.categoria} : ''"
                                    th:classappend="${updateProdottoForm != null and #fields.hasErrors('updateProdottoForm.categoria')} ? 'is-invalid'">
                             <div class="invalid-feedback" th:if="${updateProdottoForm != null and #fields.hasErrors('updateProdottoForm.categoria')}" th:errors="${updateProdottoForm.categoria}"></div>
                         </div>
                         <div class="mb-3">
-                            <label for="editDescrizione" class="form-label">Descrizione</label>
-                            <textarea class="form-control" id="editDescrizione" name="descrizione" rows="3"
+                            <label for="editDescrizione" class="form-label fw-medium text-theme-secondary">Descrizione</label>
+                            <textarea class="form-control form-control-theme" id="editDescrizione" name="descrizione" rows="3"
                                       th:text="${updateProdottoForm != null} ? ${updateProdottoForm.descrizione} : ''"
                                       th:classappend="${updateProdottoForm != null and #fields.hasErrors('updateProdottoForm.descrizione')} ? 'is-invalid'"></textarea>
                             <div class="invalid-feedback" th:if="${updateProdottoForm != null and #fields.hasErrors('updateProdottoForm.descrizione')}" th:errors="${updateProdottoForm.descrizione}"></div>
                         </div>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
-                        <button type="submit" class="btn btn-primary">Salva Modifiche</button>
+                    <div class="modal-footer modal-footer-theme">
+                        <button type="button" class="btn btn-outline-secondary rounded-pill" data-bs-dismiss="modal">Annulla</button>
+                        <button type="submit" class="btn btn-theme-primary rounded-pill px-4">Salva Modifiche</button>
                     </div>
                 </form>
             </div>
@@ -221,23 +471,23 @@
     <!-- Buy Product Modal -->
     <div class="modal fade" id="buyProductModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-sm">
-            <div class="modal-content">
+            <div class="modal-content modal-content-theme shadow-lg rounded-4">
                 <form th:action="@{/dashboard/gdm/buy}" method="post">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Rifornisci Prodotto</h5>
+                    <div class="modal-header modal-header-theme">
+                        <h5 class="modal-title fw-bold text-theme-heading">Rifornisci Prodotto</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <div class="modal-body">
-                        <p>Aggiungi quantità per <strong id="buyProductName"></strong>:</p>
+                    <div class="modal-body modal-body-theme">
+                        <p class="text-theme-body">Aggiungi quantità per <strong id="buyProductName" class="text-theme-heading"></strong>:</p>
                         <input type="hidden" name="idProdotto" id="buyIdProdotto">
                         <div class="mb-3">
-                            <label for="buyQuantita" class="form-label">Quantità da acquistare</label>
-                            <input type="number" class="form-control" id="buyQuantita" name="quantita" min="1" required>
+                            <label for="buyQuantita" class="form-label fw-medium text-theme-secondary">Quantità da acquistare</label>
+                            <input type="number" class="form-control form-control-theme" id="buyQuantita" name="quantita" min="1" required>
                         </div>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
-                        <button type="submit" class="btn btn-success">Acquista</button>
+                    <div class="modal-footer modal-footer-theme">
+                        <button type="button" class="btn btn-outline-secondary rounded-pill" data-bs-dismiss="modal">Annulla</button>
+                        <button type="submit" class="btn btn-success rounded-pill px-4 text-white">Acquista</button>
                     </div>
                 </form>
             </div>
@@ -247,23 +497,23 @@
     <!-- Sell Product Modal -->
     <div class="modal fade" id="sellProductModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-sm">
-            <div class="modal-content">
+            <div class="modal-content modal-content-theme shadow-lg rounded-4">
                 <form th:action="@{/dashboard/gdm/sell}" method="post">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Vendi Prodotto</h5>
+                    <div class="modal-header modal-header-theme">
+                        <h5 class="modal-title fw-bold text-theme-heading">Vendi Prodotto</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <div class="modal-body">
-                        <p>Rimuovi quantità per <strong id="sellProductName"></strong>:</p>
+                    <div class="modal-body modal-body-theme">
+                        <p class="text-theme-body">Rimuovi quantità per <strong id="sellProductName" class="text-theme-heading"></strong>:</p>
                         <input type="hidden" name="idProdotto" id="sellIdProdotto">
                         <div class="mb-3">
-                            <label for="sellQuantita" class="form-label">Quantità da vendere</label>
-                            <input type="number" class="form-control" id="sellQuantita" name="quantita" min="1" required>
+                            <label for="sellQuantita" class="form-label fw-medium text-theme-secondary">Quantità da vendere</label>
+                            <input type="number" class="form-control form-control-theme" id="sellQuantita" name="quantita" min="1" required>
                         </div>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
-                        <button type="submit" class="btn btn-warning">Vendi</button>
+                    <div class="modal-footer modal-footer-theme">
+                        <button type="button" class="btn btn-outline-secondary rounded-pill" data-bs-dismiss="modal">Annulla</button>
+                        <button type="submit" class="btn btn-warning rounded-pill px-4 text-dark">Vendi</button>
                     </div>
                 </form>
             </div>
@@ -273,20 +523,23 @@
     <!-- Delete Product Modal -->
     <div class="modal fade" id="deleteProductModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Elimina Prodotto</h5>
+            <div class="modal-content modal-content-theme shadow-lg rounded-4">
+                <div class="modal-header modal-header-theme">
+                    <h5 class="modal-title fw-bold text-theme-heading">Elimina Prodotto</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
-                    <p>Sei sicuro di voler eliminare il prodotto <strong id="deleteProductName"></strong>?</p>
-                    <p class="text-danger">Questa azione è irreversibile.</p>
+                <div class="modal-body modal-body-theme">
+                    <p class="text-theme-body">Sei sicuro di voler eliminare il prodotto <strong id="deleteProductName" class="text-theme-heading"></strong>?</p>
+                    <div class="alert alert-danger d-flex align-items-center mb-0" role="alert" style="background-color: var(--bg-alert-danger); border-color: var(--border-alert-danger); color: var(--text-danger);">
+                        <i class="bi bi-exclamation-triangle-fill me-2 fs-5"></i>
+                        <div>Questa azione è irreversibile.</div>
+                    </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
+                <div class="modal-footer modal-footer-theme">
+                    <button type="button" class="btn btn-outline-secondary rounded-pill" data-bs-dismiss="modal">Annulla</button>
                     <form th:action="@{/dashboard/gdm/remove-product}" method="post">
                         <input type="hidden" name="id_prodotto" id="deleteIdProdotto">
-                        <button type="submit" class="btn btn-danger">Elimina</button>
+                        <button type="submit" class="btn btn-danger rounded-pill px-4 shadow-sm">Elimina</button>
                     </form>
                 </div>
             </div>
@@ -294,6 +547,95 @@
     </div>
 
     <script th:src="@{/javascript/gdm.js}"></script>
+    
+    <!-- Filter and Search Script -->
+    <script>
+    function resetFilters() {
+        document.getElementById('productSearchInput').value = '';
+        document.getElementById('filterQtyVal').value = '';
+        document.getElementById('filterPriceMin').value = '';
+        document.getElementById('filterPriceMax').value = '';
+        document.getElementById('filterQtyOp').value = 'gt';
+        applyFilters();
+    }
+
+    function applyFilters() {
+        const searchText = document.getElementById('productSearchInput').value.toLowerCase();
+        
+        // Quantity Filters
+        const qtyOp = document.getElementById('filterQtyOp').value;
+        const qtyVal = parseFloat(document.getElementById('filterQtyVal').value);
+        
+        // Price Filters
+        const priceMin = parseFloat(document.getElementById('filterPriceMin').value);
+        const priceMax = parseFloat(document.getElementById('filterPriceMax').value);
+
+        const items = document.querySelectorAll('.product-list-item');
+        let visibleCount = 0;
+
+        items.forEach(function(item) {
+            // Text Match
+            const name = item.querySelector('.product-name').textContent.toLowerCase();
+            const category = item.querySelector('.product-category').textContent.toLowerCase();
+            const description = item.querySelector('.product-description').textContent.toLowerCase();
+            const matchesText = name.includes(searchText) || category.includes(searchText) || description.includes(searchText);
+
+            // Data Attributes for Logic
+            const itemPrice = parseFloat(item.getAttribute('data-price'));
+            const itemQty = parseFloat(item.getAttribute('data-quantity'));
+
+            // Quantity Logic
+            let matchesQty = true;
+            if (!isNaN(qtyVal)) {
+                if (qtyOp === 'gt') matchesQty = itemQty > qtyVal;
+                else if (qtyOp === 'lt') matchesQty = itemQty < qtyVal;
+                else if (qtyOp === 'eq') matchesQty = itemQty === qtyVal;
+            }
+
+            // Price Logic
+            let matchesPrice = true;
+            if (!isNaN(priceMin)) matchesPrice = matchesPrice && (itemPrice >= priceMin);
+            if (!isNaN(priceMax)) matchesPrice = matchesPrice && (itemPrice <= priceMax);
+
+            // Final Decision
+            if (matchesText && matchesQty && matchesPrice) {
+                item.style.display = '';
+                visibleCount++;
+            } else {
+                item.style.display = 'none';
+            }
+        });
+
+        // Empty State Toggle
+        const searchEmptyState = document.getElementById('searchEmptyState');
+        const defaultEmptyState = document.getElementById('defaultEmptyState');
+        
+        // If default empty state is NOT visible (meaning we have products), show search empty state if needed
+        if (!defaultEmptyState) {
+             if (visibleCount === 0) {
+                if (searchEmptyState) searchEmptyState.style.display = 'block';
+            } else {
+                if (searchEmptyState) searchEmptyState.style.display = 'none';
+            }
+        } else {
+            // logic for when DB is empty logic is handled by thymeleaf mostly
+            if(defaultEmptyState.style.display === 'none' && visibleCount === 0) {
+                 if (searchEmptyState) searchEmptyState.style.display = 'block';
+            }
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // Event Listeners
+        const inputs = ['productSearchInput', 'filterQtyVal', 'filterQtyOp', 'filterPriceMin', 'filterPriceMax'];
+        inputs.forEach(id => {
+            const el = document.getElementById(id);
+            if(el) el.addEventListener('input', applyFilters); // Use input for realtime, change for select
+            if(el && el.tagName === 'SELECT') el.addEventListener('change', applyFilters);
+        });
+    });
+    </script>
+
     <!-- Bootstrap JavaScript Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     
