@@ -1,281 +1,254 @@
 <!DOCTYPE html>
 <html lang="it" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/head :: mainHead(pageTitle='Piani e Pacchetti', additionalCss=${ {'/css/pricing.css'} })}">
+<head th:replace="~{fragments/head :: mainHead(pageTitle='Affiliati', additionalCss=${ {'/css/affiliazioni.css'} })}">
 </head>
 <body>
 
 <header th:replace="~{fragments/header :: mainHeader}"></header>
 
-<div class="pricing-container">
+<div class="affiliazioni-container">
     <div class="page-header">
-        <h1 class="page-title">Scegli il piano perfetto per la tua azienda</h1>
-        <p class="page-subtitle">Semplice, trasparente e scalabile. Nessun costo nascosto.</p>
+        <h1 class="page-title">I Nostri Affiliati</h1>
+        <p class="page-subtitle">Scopri le Aziende che hanno scelto di usare ModuLink. Selezionale per scoprirle e confrontarle.</p>
     </div>
 
-    <!-- SWITCH TRIMESTRALE / ANNUALE -->
-    <div class="pricing-toggle">
-        <span>Trimestrale</span>
-        <label class="switch">
-            <input type="checkbox" id="pricingSwitch" onchange="updatePrices()">
-            <span class="slider"></span>
-        </label>
-        <span>Annuale <span class="save-badge">Risparmia 20%</span></span>
+    <!-- Zona Filtri -->
+    <div class="filters-wrapper">
+        <!-- Select Settore -->
+        <select id="sectorSelect" class="sector-select" onchange="applyFilters()">
+            <option value="">Tutti i Settori</option>
+            <option value="Informatica">Informatica & Servizi</option>
+            <option value="Logistica">Logistica & Trasporti</option>
+            <option value="Moda">Retail & Moda</option>
+            <option value="Energia">Energia Rinnovabile</option>
+            <option value="Agricoltura">Agricoltura & Bio</option>
+            <option value="Ristorazione">Ristorazione & Food</option>
+        </select>
+
+        <!-- Barra di Ricerca -->
+        <div class="search-container">
+            <i class="bi bi-search search-icon"></i>
+            <input type="text" id="searchInput" class="search-input" placeholder="Cerca per nome o settore..." onkeyup="applyFilters()">
+        </div>
     </div>
 
-    <div class="pricing-grid">
+    <div class="affiliazioni-grid" id="aziendeGrid">
         
-        <!-- CARD BASE -->
-        <div class="price-card">
-            <div class="plan-name">Base</div>
-            <!-- Data attributes per salvare i prezzi (prezzi totali per il periodo) -->
-            <div class="plan-price" id="price-base" data-qtr="87" data-yr="290">€87</div>
-            <span class="plan-period" id="period-base">/ trimestrale</span>
-            <div class="savings-text" id="save-base"></div> <!-- Vuoto se trimestrale -->
-
-            <ul class="features-list">
-                <li><i class="fa-solid fa-check"></i> Fino a 5 Utenti</li>
-                <li><i class="fa-solid fa-check"></i> Modulo GDU Base</li>
-                <li><i class="fa-solid fa-check"></i> Supporto Email</li>
-                <li class="disabled"><i class="fa-solid fa-xmark"></i> Gestione Ruoli Avanzata</li>
-                <li class="disabled"><i class="fa-solid fa-xmark"></i> Moduli Personalizzati</li>
-            </ul>
-
-            <button class="btn btn-outline" style="width: 100%;" onclick="openPaymentModal('Base')">Scegli Base</button>
-        </div>
-
-        <!-- CARD PLUS (Popolare) -->
-        <div class="price-card popular">
-            <div class="popular-badge">PIÙ VENDUTO</div>
-            <div class="plan-name">Plus</div>
-            <div class="plan-price" id="price-plus" data-qtr="177" data-yr="590">€177</div>
-            <span class="plan-period" id="period-plus">/ trimestrale</span>
-            <div class="savings-text" id="save-plus"></div>
-
-            <ul class="features-list">
-                <li><i class="fa-solid fa-check"></i> Fino a 20 Utenti</li>
-                <li><i class="fa-solid fa-check"></i> Modulo GDU + GDR</li>
-                <li><i class="fa-solid fa-check"></i> Dashboard Analytics</li>
-                <li><i class="fa-solid fa-check"></i> Supporto Prioritario</li>
-                <li class="disabled"><i class="fa-solid fa-xmark"></i> Accesso API</li>
-            </ul>
-
-            <button class="btn btn-solid" style="width: 100%;" onclick="openPaymentModal('Plus')">Scegli Plus</button>
-        </div>
-
-        <!-- CARD PRO -->
-        <div class="price-card">
-            <div class="plan-name">Pro</div>
-            <div class="plan-price" id="price-pro" data-qtr="297" data-yr="990">€297</div>
-            <span class="plan-period" id="period-pro">/ trimestrale</span>
-            <div class="savings-text" id="save-pro"></div>
-
-            <ul class="features-list">
-                <li><i class="fa-solid fa-check"></i> Utenti Illimitati</li>
-                <li><i class="fa-solid fa-check"></i> Suite Completa (All Modules)</li>
-                <li><i class="fa-solid fa-check"></i> Accesso API & Integrazioni</li>
-                <li><i class="fa-solid fa-check"></i> Account Manager Dedicato</li>
-                <li><i class="fa-solid fa-check"></i> Backup Orari</li>
-            </ul>
-
-            <button class="btn btn-outline" style="width: 100%;" onclick="openPaymentModal('Pro')">Scegli Pro</button>
-        </div>
-
-    </div>
-</div>
-
-<!-- ================= MODALE DI PAGAMENTO ================= -->
-<div id="paymentModal" class="payment-modal-overlay">
-    <div class="payment-card">
-        <div class="loader-overlay" id="paymentLoader">
-            <div class="spinner"></div>
-            <h4>Elaborazione Pagamento...</h4>
-            <p class="text-muted">Non chiudere la pagina.</p>
-        </div>
-
-        <div class="modal-header">
-            <h3>Completa l'acquisto: <span id="modalPlanName" class="text-primary">Piano</span></h3>
-            <button class="btn-close-modal" onclick="closePaymentModal()">&times;</button>
-        </div>
-
-        <div class="modal-body">
-            <div class="summary-row">
-                <span>Totale da pagare:</span>
-                <span class="total-amount" id="modalTotalAmount">€0,00</span>
+        <!-- Azienda 1 -->
+        <div class="azienda-card" onclick="toggleCard(this)" data-name="TechCorp Solutions" data-sector="Informatica">
+            <div class="azienda-logo-container">
+                <i class="bi bi-buildings-fill azienda-logo-icon"></i>
             </div>
-
-            <form onsubmit="processPayment(event)">
-                
-                <!-- Dati Carta -->
-                <h5 class="mb-3"><i class="fa-regular fa-credit-card"></i> Metodo di Pagamento</h5>
-                <div class="form-grid">
-                    <div class="full-width">
-                        <div class="form-group">
-                            <label>Intestatario Carta</label>
-                            <input type="text" class="form-control" placeholder="Mario Rossi" required>
-                        </div>
-                    </div>
-                    <div class="full-width">
-                        <div class="form-group">
-                            <label>Numero Carta</label>
-                            <input type="text" class="form-control" placeholder="0000 0000 0000 0000" maxlength="19" required>
-                        </div>
-                    </div>
-                    <div>
-                        <div class="form-group">
-                            <label>Scadenza</label>
-                            <input type="text" class="form-control" placeholder="MM/AA" maxlength="5" required>
-                        </div>
-                    </div>
-                    <div>
-                        <div class="form-group">
-                            <label>CVC</label>
-                            <input type="text" class="form-control" placeholder="123" maxlength="3" required>
-                        </div>
-                    </div>
+            <div class="azienda-name">TechCorp Solutions</div>
+            <div class="click-hint"><i class="bi bi-hand-index-thumb"></i> Confronta</div>
+            
+            <div class="azienda-description-wrapper">
+                <div class="azienda-description">
+                    <span class="badge" style="background:#e0f2fe; color:#0369a1; padding:4px 8px; border-radius:6px; font-size:0.8rem; font-weight:600; margin-bottom:10px; display:inline-block;">Informatica & Servizi</span>
+                    <br>
+                    Leader nel settore IT, TechCorp utilizza ModuLink per gestire i team di sviluppo distribuiti e ottimizzare i flussi di lavoro agili.
                 </div>
-
-                <!-- Checkbox Fatturazione -->
-                <div class="form-check mb-3 mt-4">
-                    <input class="form-check-input" type="checkbox" id="billingCheck" onchange="toggleBilling()">
-                    <label class="form-check-label" for="billingCheck">
-                        Desidero ricevere fattura elettronica
-                    </label>
-                </div>
-
-                <!-- Dati Fatturazione (Nascosti) -->
-                <div id="billingFields" class="billing-section">
-                    <h5 class="mb-3"><i class="fa-solid fa-file-invoice"></i> Dati di Fatturazione</h5>
-                    <div class="form-grid">
-                        <div class="full-width">
-                            <div class="form-group">
-                                <label>Ragione Sociale / Nome Azienda</label>
-                                <input type="text" class="form-control billing-input">
-                            </div>
-                        </div>
-                        <div>
-                            <div class="form-group">
-                                <label>P.IVA</label>
-                                <input type="text" class="form-control billing-input" maxlength="11">
-                            </div>
-                        </div>
-                        <div>
-                            <div class="form-group">
-                                <label>Codice SDI / PEC</label>
-                                <input type="text" class="form-control billing-input">
-                            </div>
-                        </div>
-                        <div class="full-width">
-                            <div class="form-group">
-                                <label>Indirizzo Completo</label>
-                                <input type="text" class="form-control billing-input">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="d-grid mt-4">
-                    <button type="submit" class="btn btn-solid" style="padding: 15px; font-size: 1.1rem;">
-                        Paga Ora <i class="fa-solid fa-lock ms-2"></i>
-                    </button>
-                </div>
-                <div class="text-center mt-3">
-                    <small class="text-muted"><i class="fa-solid fa-shield-halved"></i> Pagamento sicuro crittografato SSL</small>
-                </div>
-            </form>
+            </div>
         </div>
+
+        <!-- Azienda 2 -->
+        <div class="azienda-card" onclick="toggleCard(this)" data-name="Logistica Veloce S.r.l." data-sector="Logistica">
+            <div class="azienda-logo-container">
+                <i class="bi bi-box-seam-fill azienda-logo-icon"></i>
+            </div>
+            <div class="azienda-name">Logistica Veloce S.r.l.</div>
+            <div class="click-hint"><i class="bi bi-hand-index-thumb"></i> Confronta</div>
+
+            <div class="azienda-description-wrapper">
+                <div class="azienda-description">
+                    <span class="badge" style="background:#fef3c7; color:#b45309; padding:4px 8px; border-radius:6px; font-size:0.8rem; font-weight:600; margin-bottom:10px; display:inline-block;">Logistica & Trasporti</span>
+                    <br>
+                    Azienda di trasporti internazionali che sfrutta il modulo GDM per il tracciamento in tempo reale delle merci.
+                </div>
+            </div>
+        </div>
+
+        <!-- Azienda 3 -->
+        <div class="azienda-card" onclick="toggleCard(this)" data-name="Fashion & Style" data-sector="Moda">
+            <div class="azienda-logo-container">
+                <i class="bi bi-shop-window azienda-logo-icon"></i>
+            </div>
+            <div class="azienda-name">Fashion & Style</div>
+            <div class="click-hint"><i class="bi bi-hand-index-thumb"></i> Confronta</div>
+
+            <div class="azienda-description-wrapper">
+                <div class="azienda-description">
+                    <span class="badge" style="background:#fce7f3; color:#be185d; padding:4px 8px; border-radius:6px; font-size:0.8rem; font-weight:600; margin-bottom:10px; display:inline-block;">Retail & Moda</span>
+                    <br>
+                    Catena di retail moda che coordina 50 punti vendita grazie alla gestione centralizzata dei ruoli del personale.
+                </div>
+            </div>
+        </div>
+
+        <!-- Azienda 4 -->
+        <div class="azienda-card" onclick="toggleCard(this)" data-name="EcoEnergy S.p.A." data-sector="Energia">
+            <div class="azienda-logo-container">
+                <i class="bi bi-lightning-charge-fill azienda-logo-icon"></i>
+            </div>
+            <div class="azienda-name">EcoEnergy S.p.A.</div>
+            <div class="click-hint"><i class="bi bi-hand-index-thumb"></i> Confronta</div>
+
+            <div class="azienda-description-wrapper">
+                <div class="azienda-description">
+                    <span class="badge" style="background:#dcfce7; color:#15803d; padding:4px 8px; border-radius:6px; font-size:0.8rem; font-weight:600; margin-bottom:10px; display:inline-block;">Energia Rinnovabile</span>
+                    <br>
+                    Fornitore di energia verde che utilizza i moduli amministrativi per gestire la fatturazione e il supporto clienti.
+                </div>
+            </div>
+        </div>
+
+        <!-- Azienda 5 -->
+        <div class="azienda-card" onclick="toggleCard(this)" data-name="AgriBio World" data-sector="Agricoltura">
+            <div class="azienda-logo-container">
+                <i class="bi bi-flower1 azienda-logo-icon"></i>
+            </div>
+            <div class="azienda-name">AgriBio World</div>
+            <div class="click-hint"><i class="bi bi-hand-index-thumb"></i> Confronta</div>
+
+            <div class="azienda-description-wrapper">
+                <div class="azienda-description">
+                    <span class="badge" style="background:#d9f99d; color:#365314; padding:4px 8px; border-radius:6px; font-size:0.8rem; font-weight:600; margin-bottom:10px; display:inline-block;">Agricoltura & Bio</span>
+                    <br>
+                    Consorzio agricolo che utilizza i sensori IoT integrati con ModuLink per monitorare le coltivazioni certificata BIO.
+                </div>
+            </div>
+        </div>
+
+        <!-- Azienda 6 -->
+        <div class="azienda-card" onclick="toggleCard(this)" data-name="QuickEat Chain" data-sector="Ristorazione">
+            <div class="azienda-logo-container">
+                <i class="bi bi-cup-hot-fill azienda-logo-icon"></i>
+            </div>
+            <div class="azienda-name">QuickEat Chain</div>
+            <div class="click-hint"><i class="bi bi-hand-index-thumb"></i> Confronta</div>
+
+            <div class="azienda-description-wrapper">
+                <div class="azienda-description">
+                    <span class="badge" style="background:#fee2e2; color:#991b1b; padding:4px 8px; border-radius:6px; font-size:0.8rem; font-weight:600; margin-bottom:10px; display:inline-block;">Ristorazione</span>
+                    <br>
+                    Franchising di ristorazione veloce che ottimizza i turni settimanali tramite il modulo Calendario centralizzato.
+                </div>
+            </div>
+        </div>
+
+        <!-- Azienda 7 -->
+        <div class="azienda-card" onclick="toggleCard(this)" data-name="CodeWave Labs" data-sector="Informatica">
+            <div class="azienda-logo-container">
+                <i class="bi bi-code-slash azienda-logo-icon"></i>
+            </div>
+            <div class="azienda-name">CodeWave Labs</div>
+            <div class="click-hint"><i class="bi bi-hand-index-thumb"></i> Confronta</div>
+
+            <div class="azienda-description-wrapper">
+                <div class="azienda-description">
+                    <span class="badge" style="background:#e0f2fe; color:#0369a1; padding:4px 8px; border-radius:6px; font-size:0.8rem; font-weight:600; margin-bottom:10px; display:inline-block;">Informatica & Servizi</span>
+                    <br>
+                    Software house specializzata in intelligenza artificiale. Utilizza ModuLink per gestire la documentazione tecnica e la collaborazione tra i reparti R&D.
+                </div>
+            </div>
+        </div>
+
+        <!-- Azienda 8 -->
+        <div class="azienda-card" onclick="toggleCard(this)" data-name="Global Freight" data-sector="Logistica">
+            <div class="azienda-logo-container">
+                <i class="bi bi-truck azienda-logo-icon"></i>
+            </div>
+            <div class="azienda-name">Global Freight</div>
+            <div class="click-hint"><i class="bi bi-hand-index-thumb"></i> Confronta</div>
+
+            <div class="azienda-description-wrapper">
+                <div class="azienda-description">
+                    <span class="badge" style="background:#fef3c7; color:#b45309; padding:4px 8px; border-radius:6px; font-size:0.8rem; font-weight:600; margin-bottom:10px; display:inline-block;">Logistica & Trasporti</span>
+                    <br>
+                    Leader nelle spedizioni via mare. Integra i dati dei container con il modulo GDM per una visibilità totale della supply chain globale.
+                </div>
+            </div>
+        </div>
+
+        <!-- Azienda 9 -->
+        <div class="azienda-card" onclick="toggleCard(this)" data-name="Urban Trend" data-sector="Moda">
+            <div class="azienda-logo-container">
+                <i class="bi bi-handbag azienda-logo-icon"></i>
+            </div>
+            <div class="azienda-name">Urban Trend</div>
+            <div class="click-hint"><i class="bi bi-hand-index-thumb"></i> Confronta</div>
+
+            <div class="azienda-description-wrapper">
+                <div class="azienda-description">
+                    <span class="badge" style="background:#fce7f3; color:#be185d; padding:4px 8px; border-radius:6px; font-size:0.8rem; font-weight:600; margin-bottom:10px; display:inline-block;">Retail & Moda</span>
+                    <br>
+                    Brand di streetwear sostenibile. Gestisce la rete di fornitori e i lanci "drop" tramite i moduli di gestione attività e calendario di ModuLink.
+                </div>
+            </div>
+        </div>
+
+        <!-- Messaggio Nessun Risultato -->
+        <div class="no-results" id="noResultsMsg">
+            <i class="bi bi-search"></i> Nessuna azienda corrisponde ai criteri di ricerca.
+        </div>
+
     </div>
 </div>
 
 <footer th:replace="~{fragments/footer :: mainFooter}"></footer>
 
-<!-- JAVASCRIPT -->
 <script>
-    // 1. GESTIONE PREZZI (Trimestrale / Annuale)
-    function updatePrices() {
-        const isAnnual = document.getElementById('pricingSwitch').checked;
-        const plans = ['base', 'plus', 'pro'];
-
-        plans.forEach(plan => {
-            const priceEl = document.getElementById('price-' + plan);
-            const periodEl = document.getElementById('period-' + plan);
-            const saveEl = document.getElementById('save-' + plan);
-
-            const qtrPrice = parseInt(priceEl.getAttribute('data-qtr'));
-            const yrPrice = parseInt(priceEl.getAttribute('data-yr'));
-
-            if (isAnnual) {
-                // Calcola risparmio (Prezzo trimestrale * 4 - Prezzo annuale)
-                const saving = (qtrPrice * 4) - yrPrice;
-                
-                priceEl.innerText = '€' + yrPrice;
-                periodEl.innerText = '/ anno';
-                saveEl.innerText = 'Risparmi €' + saving;
-            } else {
-                priceEl.innerText = '€' + qtrPrice;
-                periodEl.innerText = '/ trimestrale';
-                saveEl.innerText = ''; // Cancella testo risparmio
-            }
-        });
-    }
-
-    // 2. GESTIONE MODALE
-    function openPaymentModal(planName) {
-        const modal = document.getElementById('paymentModal');
-        const isAnnual = document.getElementById('pricingSwitch').checked;
+    function toggleCard(element) {
+        // Toggle classe active
+        const isActive = element.classList.toggle('active');
         
-        // Recupera il prezzo corrente visualizzato nella card corretta
-        const planId = planName.toLowerCase(); // Base -> base
-        const currentPrice = document.getElementById('price-' + planId).innerText;
-
-        document.getElementById('modalPlanName').innerText = planName + (isAnnual ? ' (Annuale)' : ' (Trimestrale)');
-        document.getElementById('modalTotalAmount').innerText = currentPrice;
-
-        modal.classList.add('open');
-        document.body.style.overflow = 'hidden'; // Blocca scroll pagina sotto
-    }
-
-    function closePaymentModal() {
-        const modal = document.getElementById('paymentModal');
-        modal.classList.remove('open');
-        document.body.style.overflow = ''; // Riabilita scroll
-    }
-
-    // Chiudi se clicchi fuori dalla card
-    document.getElementById('paymentModal').addEventListener('click', function(e) {
-        if (e.target === this) {
-            closePaymentModal();
-        }
-    });
-
-    // 3. GESTIONE FATTURAZIONE
-    function toggleBilling() {
-        const isChecked = document.getElementById('billingCheck').checked;
-        const section = document.getElementById('billingFields');
-        const inputs = section.querySelectorAll('.billing-input');
-
-        if (isChecked) {
-            section.classList.add('visible');
-            inputs.forEach(input => input.setAttribute('required', 'true'));
-        } else {
-            section.classList.remove('visible');
-            inputs.forEach(input => input.removeAttribute('required'));
+        if (isActive) {
+            // Se la card viene aperta, scorri automaticamente verso di essa
+            // Un piccolo timeout permette al browser di ricalcolare il layout (order change)
+            setTimeout(() => {
+                element.scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'start' // Si allinea in alto (rispettando scroll-margin-top)
+                });
+            }, 50);
         }
     }
 
-    // 4. SIMULAZIONE PAGAMENTO
-    function processPayment(event) {
-        event.preventDefault();
-        const loader = document.getElementById('paymentLoader');
-        loader.style.display = 'flex';
+    function applyFilters() {
+        const searchInput = document.getElementById('searchInput').value.toUpperCase();
+        const sectorSelect = document.getElementById('sectorSelect').value;
+        const grid = document.getElementById('aziendeGrid');
+        const cards = grid.getElementsByClassName('azienda-card');
+        const noResults = document.getElementById('noResultsMsg');
+        let visibleCount = 0;
 
-        setTimeout(() => {
-            loader.style.display = 'none';
-            closePaymentModal();
-            // Redirect o messaggio di successo globale
-            // Qui usiamo un alert nativo per semplicità, ma potresti usare un toast custom
-            alert("Pagamento effettuato con successo! Il tuo piano è ora attivo.");
-            window.location.href = "/dashboard"; // Porta l'utente alla dashboard
-        }, 2500);
+        if (searchInput.length === 0) {
+            for (let i = 0; i < cards.length; i++) {
+                cards[i].classList.remove('active');
+            }
+        }
+
+        for (let i = 0; i < cards.length; i++) {
+            const card = cards[i];
+            const name = card.getAttribute('data-name').toUpperCase();
+            const sector = card.getAttribute('data-sector');
+            const sectorText = card.innerText.toUpperCase(); 
+
+            const matchesSelect = (sectorSelect === "") || (sector === sectorSelect);
+            const matchesSearch = (name.indexOf(searchInput) > -1) || (sectorText.indexOf(searchInput) > -1);
+
+            if (matchesSelect && matchesSearch) {
+                card.style.display = ""; 
+                visibleCount++;
+                if (searchInput.length > 0) {
+                    if (!card.classList.contains('active')) card.classList.add('active');
+                }
+            } else {
+                card.style.display = "none"; 
+            }
+        }
+
+        noResults.style.display = (visibleCount === 0) ? "block" : "none";
     }
 </script>
 
