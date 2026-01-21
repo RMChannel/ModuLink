@@ -28,7 +28,7 @@ public class EventoEntity {
     private String nome;
 
 
-    @Column(name="luogo", length = 300)
+    @Column(name="luogo", length = 200)
     private String luogo;
 
     @ManyToOne
