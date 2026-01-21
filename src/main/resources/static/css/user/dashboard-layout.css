@@ -558,3 +558,73 @@ h1, h2, h3, h4, h5, h6 {
 .bg-primary-subtle {
     background-color: var(--color-primary-light) !important;
 }
+
+/* =========================================
+   MOBILE RESPONSIVENESS
+   ========================================= */
+.mobile-toggle-btn {
+    display: none; /* Hidden on desktop */
+}
+
+@media (max-width: 768px) {
+    /* Hide sidebar by default on mobile */
+    #sidebar {
+        position: fixed;
+        left: -100%; /* Move off-screen */
+        top: 0;
+        width: 100%; /* Full width */
+        max-width: 100%;
+        height: 100vh;
+        z-index: 1100;
+        transition: left 0.3s ease-in-out;
+        box-shadow: none;
+    }
+
+    /* Show sidebar when active */
+    #sidebar.show-mobile {
+        left: 0;
+    }
+
+    /* Adjust content padding if necessary, though overlay is preferred for full screen menu */
+    #content {
+        width: 100%;
+        padding: 20px; /* Reduce padding on mobile */
+    }
+
+    /* Mobile Toggle Button */
+    .mobile-toggle-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: fixed;
+        top: 15px;
+        left: 15px;
+        z-index: 1101; /* Above sidebar */
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        background-color: var(--bg-white);
+        color: var(--text-heading);
+        border: 1px solid var(--border-color);
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        cursor: pointer;
+        font-size: 1.5rem;
+        transition: all 0.3s ease;
+    }
+
+    .mobile-toggle-btn:hover {
+        background-color: var(--color-primary);
+        color: #fff;
+    }
+    
+    /* Adjust sidebar internal layout for mobile if needed */
+    .sidebar-header {
+        justify-content: flex-end; /* Move close button/logo to right or adjust */
+        padding-right: 20px;
+    }
+    
+    /* Hide the desktop collapse pin on mobile */
+    #sidebarCollapse {
+        display: none;
+    }
+}
