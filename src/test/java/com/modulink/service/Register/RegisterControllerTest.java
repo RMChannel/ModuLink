@@ -1,5 +1,6 @@
-package com.modulink.Controller.Register;
+package com.modulink.service.Register;
 
+import com.modulink.Controller.Register.RegisterAziendaForm;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
