@@ -96,6 +96,28 @@
     margin-right: 8px;
 }
 
+.btn-uninstall {
+    width: 100%;
+    padding: 0.75rem;
+    border-radius: 10px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    background-color: var(--bg-body);
+    color: #dc3545; /* Bootstrap danger color */
+    border: 1px solid #dc3545;
+}
+
+.btn-uninstall:hover {
+    background-color: #dc3545;
+    color: var(--color-white);
+    border-color: #dc3545;
+    box-shadow: 0 4px 12px rgba(220, 53, 69, 0.25);
+}
+
+.btn-uninstall i {
+    margin-right: 8px;
+}
+
 /* Empty State */
 .empty-store {
     text-align: center;

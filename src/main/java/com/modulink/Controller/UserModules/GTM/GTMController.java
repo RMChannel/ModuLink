@@ -2,6 +2,7 @@ package com.modulink.Controller.UserModules.GTM;
 
 import com.modulink.Alert;
 import com.modulink.Controller.ModuloController;
+import com.modulink.Model.Azienda.AziendaEntity;
 import com.modulink.Model.Modulo.ModuloService;
 import com.modulink.Model.Relazioni.Assegnazione.AssegnazioneEntity;
 import com.modulink.Model.Relazioni.Assegnazione.AssegnazioneService;
@@ -200,5 +201,10 @@ public class GTMController extends ModuloController {
             return "redirect:/dashboard/gtm"+Alert.success("Task modificata con successo");
         }
         else return "redirect:/";
+    }
+
+    @Override
+    public void disinstallaModulo(AziendaEntity azienda) {
+        taskService.deleteAllByAzienda(azienda);
     }
 }

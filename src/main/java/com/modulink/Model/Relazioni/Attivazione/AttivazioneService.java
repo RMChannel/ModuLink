@@ -23,13 +23,15 @@ public class AttivazioneService {
     private final PertinenzaRepository pertinenzaRepository;
     private final RuoloService ruoloService;
     private final AziendaRepository aziendaRepository;
+    private final jakarta.persistence.EntityManager entityManager;
 
-    public AttivazioneService(AttivazioneRepository attivazioneRepository, ModuloRepository moduloRepository, PertinenzaRepository pertinenzaRepository, RuoloService ruoloService, AziendaRepository aziendaRepository) {
+    public AttivazioneService(AttivazioneRepository attivazioneRepository, ModuloRepository moduloRepository, PertinenzaRepository pertinenzaRepository, RuoloService ruoloService, AziendaRepository aziendaRepository, jakarta.persistence.EntityManager entityManager) {
         this.attivazioneRepository=attivazioneRepository;
         this.moduloRepository=moduloRepository;
         this.pertinenzaRepository = pertinenzaRepository;
         this.ruoloService=ruoloService;
         this.aziendaRepository=aziendaRepository;
+        this.entityManager = entityManager;
     }
 
     public AttivazioneEntity getAttivazioneById(AttivazioneID attivazioneID) {
@@ -54,6 +56,15 @@ public class AttivazioneService {
             return new ArrayList<>();
         }
         return attivazioneRepository.getAllNotPurchased(aziendaEntity);
+    }
+
+    public List<ModuloEntity> getAllPurchased(AziendaEntity aziendaEntity) {
+        if (aziendaEntity == null) {
+            return new ArrayList<>();
+        }
+        List<ModuloEntity> moduli = attivazioneRepository.getAllPurchased(aziendaEntity);
+        moduli.removeIf(m -> m.getId_modulo() == 0 || m.getId_modulo() == 1 || m.getId_modulo() == 2 || m.getId_modulo() == 3 || m.getId_modulo() == 9999);
+        return moduli;
     }
 
     @Transactional
@@ -98,6 +109,67 @@ public class AttivazioneService {
             );
             pertinenzaRepository.save(pertinenzaEntity);
         }
+
+        return true;
+    }
+
+    @Transactional
+    @CacheEvict(value = {"moduliByUtente", "moduloAccess", "modulo"}, allEntries = true)
+    public boolean sellModulo(AziendaEntity azienda, int moduloId) {
+        if (azienda == null) {
+            return false;
+        }
+
+        Optional<AziendaEntity> managedAziendaOpt = aziendaRepository.findById(azienda.getId_azienda());
+        if (managedAziendaOpt.isEmpty()) {
+            return false;
+        }
+        AziendaEntity managedAzienda = managedAziendaOpt.get();
+
+        ModuloEntity modulo = moduloRepository.findById(moduloId).orElse(null);
+        if (modulo == null) {
+            return false;
+        }
+
+        //Controllo se il modulo è disponibile per tutti, in caso contrario ritorna false
+        if (!modulo.isVisible()) return false;
+            // Check if already purchased
+        else if (!attivazioneRepository.existsByAziendaAndModulo(managedAzienda, modulo)) {
+            return false;
+        }
+
+        //Cancello l'attivazione presente
+        Optional<AttivazioneEntity> attivazioneOpt = attivazioneRepository.findById(new AttivazioneID(modulo, managedAzienda));
+
+        if(attivazioneOpt.isEmpty()) return false;
+
+        AttivazioneEntity attivazioneEntity = attivazioneOpt.get();
+
+        // Rimuovo tutte le pertinenze (permessi) associate a questa attivazione
+        // Importante: aggiornare anche le collezioni in memoria degli oggetti correlati (Modulo, Ruolo)
+        // per evitare che riferiscano a entità cancellate (TransientObjectException)
+        List<PertinenzaEntity> pertinenze = pertinenzaRepository.findAllByAttivazione(attivazioneEntity);
+        
+        for (PertinenzaEntity p : pertinenze) {
+            // Rimuovi da Modulo
+            if (modulo.getAffiliazioni() != null) {
+                modulo.getAffiliazioni().remove(p);
+            }
+            // Rimuovi da Ruolo (se caricato)
+            // Nota: Ruolo è EAGER in Pertinenza, quindi è caricato.
+            if (p.getRuolo() != null && p.getRuolo().getAffiliazioni() != null) {
+                 p.getRuolo().getAffiliazioni().remove(p);
+            }
+        }
+        
+        pertinenzaRepository.deleteAll(pertinenze);
+        pertinenzaRepository.flush();
+
+        // Detach del modulo dalla sessione come sicurezza aggiuntiva
+        entityManager.detach(modulo);
+
+        attivazioneRepository.delete(attivazioneEntity);
+        attivazioneRepository.flush();
 
         return true;
     }

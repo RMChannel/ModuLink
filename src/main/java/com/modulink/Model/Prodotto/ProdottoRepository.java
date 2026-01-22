@@ -15,4 +15,6 @@ public interface ProdottoRepository extends JpaRepository<ProdottoEntity, Prodot
 
     @Query("SELECT DISTINCT p.categoria FROM ProdottoEntity p WHERE p.azienda = :azienda")
     List<String> findAllCategoriesByAzienda(AziendaEntity azienda);
+
+    void deleteAllByAzienda(AziendaEntity azienda);
 }

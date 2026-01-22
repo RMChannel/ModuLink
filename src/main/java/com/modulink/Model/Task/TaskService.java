@@ -1,5 +1,6 @@
 package com.modulink.Model.Task;
 
+import com.modulink.Model.Azienda.AziendaEntity;
 import com.modulink.Model.Relazioni.Assegnazione.AssegnazioneService;
 import com.modulink.Model.Utente.UtenteEntity;
 import org.springframework.stereotype.Service;
@@ -90,5 +91,11 @@ public class TaskService {
     @Transactional
     public void classicUpdate(TaskEntity taskEntity) {
         taskRepository.save(taskEntity);
+    }
+
+    @Transactional
+    public void deleteAllByAzienda(AziendaEntity azienda) {
+        taskRepository.deleteAllByAzienda(azienda);
+        taskRepository.flush();
     }
 }

@@ -48,4 +48,10 @@ public class ProdottoService {
         if(prodotto.isEmpty()) throw new ProdottoNotFoundException();
         return prodotto.get();
     }
+
+    @Transactional
+    public void deleteAllByAzienda(AziendaEntity azienda) {
+        prodottoRepository.deleteAllByAzienda(azienda);
+        prodottoRepository.flush();
+    }
 }
