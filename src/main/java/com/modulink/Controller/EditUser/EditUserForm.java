@@ -20,6 +20,10 @@ public class EditUserForm {
     @Pattern(regexp = "^(\\+\\d{1,3}( )?)?((\\(\\d{3}\\))|\\d{3})[- .]?\\d{3}[- .]?\\d{4}$", message = "Inserire un numero di telefono valido (es. +39 333 1234567)")
     private String telefono;
 
+    private String password;
+
+    private String confirmPassword;
+
     private boolean removeImageFlag;
 
     private MultipartFile immagineProfilo;
@@ -70,5 +74,21 @@ public class EditUserForm {
 
     public void setImmagineProfilo(MultipartFile immagineProfilo) {
         this.immagineProfilo = immagineProfilo;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getConfirmPassword() {
+        return confirmPassword;
+    }
+
+    public void setConfirmPassword(String confirmPassword) {
+        this.confirmPassword = confirmPassword;
     }
 }

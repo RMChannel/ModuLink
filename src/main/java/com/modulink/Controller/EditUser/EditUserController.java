@@ -1,6 +1,7 @@
 package com.modulink.Controller.EditUser;
 
 import com.modulink.Model.Utente.CustomUserDetailsService;
+import com.modulink.Model.Utente.PasswordUtility;
 import com.modulink.Model.Utente.UtenteEntity;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
@@ -41,6 +42,11 @@ public class EditUserController {
     @PostMapping("/dashboard/update-user")
     public String updateUser(Principal principal, Model model, @Valid @ModelAttribute EditUserForm editUserForm, BindingResult bindingResult) throws IOException {
         if(principal == null) return "redirect:/";
+        if(!editUserForm.getPassword().isEmpty()) {
+            if(editUserForm.getPassword().length()<8 || editUserForm.getPassword().length()>50) bindingResult.rejectValue("password","password.length","La password deve essere compresa tra 8 e 50 caratteri.");
+            if(editUserForm.getConfirmPassword().length()<8 || editUserForm.getPassword().length()>50) bindingResult.rejectValue("confirmPassword","confirmPassword.length","La password deve essere compresa tra 8 e 50 caratteri.");
+            if(!editUserForm.getPassword().equals(editUserForm.getConfirmPassword())) bindingResult.rejectValue("confirmPassword","confirmPassword.notequal","Le password non corrispondono.");
+        }
         else if(bindingResult.hasErrors()) return "user/edit-profile";
         UtenteEntity utente = (UtenteEntity) model.getAttribute("utente");
         if(!editUserForm.getEmail().equals(utente.getEmail())) {
@@ -67,6 +73,7 @@ public class EditUserController {
         utente.setNome(editUserForm.getNome());
         utente.setCognome(editUserForm.getCognome());
         utente.setTelefono(editUserForm.getTelefono().replaceAll(" ",""));
+        if(!editUserForm.getPassword().isEmpty()) utente.setHash_password(PasswordUtility.hashPassword(editUserForm.getPassword()));
         customUserDetailsService.aggiornaUtente(utente);
         model.addAttribute("utente",utente);
         model.addAttribute("success",true);

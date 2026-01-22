@@ -25,7 +25,7 @@ public class LoginController {
     private final String senderEmail;
     private final EmailService emailService;
 
-    public LoginController(CustomUserDetailsService customUserDetailsService, @Value("${spring.mail.username}") String senderEmail, EmailService emailService) {
+    public LoginController(CustomUserDetailsService customUserDetailsService, @Value("${spring.mail.properties.mail.smtp.from}") String senderEmail, EmailService emailService) {
         this.customUserDetailsService=customUserDetailsService;
         this.otpManager=new OTPManager();
         this.senderEmail=senderEmail;
