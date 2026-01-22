@@ -185,6 +185,7 @@
 .filter-controls .form-check-input:checked {
     background-color: var(--color-primary);
     border-color: var(--color-primary);
+    margin-right: 3px;
 }
 
 .filter-controls .form-check-input#filterTasks:checked {
