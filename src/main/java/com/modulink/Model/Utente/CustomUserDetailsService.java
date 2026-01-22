@@ -185,7 +185,8 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     public boolean isThisaNewUtente(UtenteEntity utente) {
         Set<RuoloEntity> ruoli=utente.getRuoli();
-        return  ruoli.contains(ruoloService.getNewUser(utente.getAzienda()));
+        for(RuoloEntity ruolo:ruoli) if(ruolo.getId_ruolo()==1) return true;
+        return false;
     }
 
     public List<UtenteEntity> getAllUsersFromIDs(List<Integer> ids, int id_azienda) throws UserNotFoundException {

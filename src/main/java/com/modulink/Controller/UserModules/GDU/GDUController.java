@@ -240,8 +240,7 @@ public class GDUController extends ModuloController {
             }
             utente.setHash_password(PasswordUtility.hashPassword(password));
 
-            utente.rimuoviRuolo(ruoloService.getNewUser(utente.getAzienda()));
-            utente.addRuolo(ruoloService.getStandardUser(utente.getAzienda()));
+            utente.defaultRoles(ruoloService.getStandardUser(utente.getAzienda()));
             customUserDetailsService.aggiornaUtente(utente);
             SimpleMailMessage message = new SimpleMailMessage();
             message.setFrom(senderEmail);
