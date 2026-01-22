@@ -11,11 +11,14 @@ let storedEvents = [];
 let storedTasks = [];
 let eventsData = []; // Array finale renderizzato
 
-document.addEventListener('DOMContentLoaded', function() {
+// Scroll sync per mobile
+let isScrollingProgrammatically = false;
+
+document.addEventListener('DOMContentLoaded', function () {
     initializeCalendar();
 
     // Chiudi menu contestuale se clicco altrove
-    document.addEventListener('click', function(e) {
+    document.addEventListener('click', function (e) {
         if (!e.target.closest('#contextMenu')) {
             closeContextMenu();
         }
@@ -26,19 +29,23 @@ function initializeCalendar() {
     fetchEvents();
     setupEventListeners();
 
-    if(currentView === 'week') {
+    if (currentView === 'week') {
         updateCurrentTimeLine();
         currentTimeInterval = setInterval(updateCurrentTimeLine, 60000);
+        setupWeekViewScrollSync();
     }
 }
 
 function setupEventListeners() {
     const refreshBtn = document.getElementById('refreshEventsBtn');
-    if(refreshBtn) refreshBtn.addEventListener('click', (e) => { e.preventDefault(); fetchEvents(); });
+    if (refreshBtn) refreshBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        fetchEvents();
+    });
 
     // Modali User Load
     const createModal = document.getElementById('createEventModal');
-    if(createModal) {
+    if (createModal) {
         createModal.addEventListener('show.bs.modal', function () {
             loadUsers();
             selectedUsers = [];
@@ -49,14 +56,14 @@ function setupEventListeners() {
             const startInput = document.querySelector('input[name="inizio"]');
             const endInput = document.querySelector('input[name="fine"]');
 
-            if(startInput) startInput.min = formatDateTimeLocal(now);
+            if (startInput) startInput.min = formatDateTimeLocal(now);
 
-            if(startInput && !startInput.value) {
-                now.setMinutes(0,0,0);
+            if (startInput && !startInput.value) {
+                now.setMinutes(0, 0, 0);
                 now.setHours(now.getHours() + 1);
                 startInput.value = formatDateTimeLocal(now);
             }
-            if(endInput && !endInput.value) {
+            if (endInput && !endInput.value) {
                 const endTime = new Date(now);
                 endTime.setHours(endTime.getHours() + 1);
                 endInput.value = formatDateTimeLocal(endTime);
@@ -72,11 +79,11 @@ function setupEventListeners() {
     }
 
     const editModal = document.getElementById('editEventModal');
-    if(editModal) {
+    if (editModal) {
         editModal.addEventListener('show.bs.modal', () => {
             loadUsers();
             const alertBox = document.getElementById('editDateErrorAlert');
-            if(alertBox) alertBox.classList.add('d-none');
+            if (alertBox) alertBox.classList.add('d-none');
         });
         editModal.addEventListener('hidden.bs.modal', () => {
             document.getElementById('editEventForm').reset();
@@ -89,8 +96,14 @@ function setupEventListeners() {
     // Filtri Eventi/Task
     const filterEventsBtn = document.getElementById('filterEvents');
     const filterTasksBtn = document.getElementById('filterTasks');
-    if(filterEventsBtn) filterEventsBtn.addEventListener('change', () => { mergeEventsAndTasks(); renderView(); });
-    if(filterTasksBtn) filterTasksBtn.addEventListener('change', () => { mergeEventsAndTasks(); renderView(); });
+    if (filterEventsBtn) filterEventsBtn.addEventListener('change', () => {
+        mergeEventsAndTasks();
+        renderView();
+    });
+    if (filterTasksBtn) filterTasksBtn.addEventListener('change', () => {
+        mergeEventsAndTasks();
+        renderView();
+    });
 
     // Ricerca Utenti
     document.getElementById('userSearchInput')?.addEventListener('input', (e) => filterUsers(e.target.value, 'userSearchResults', selectedUsers));
@@ -98,7 +111,7 @@ function setupEventListeners() {
 
     // View Switcher
     document.querySelectorAll('[data-view]').forEach(btn => {
-        btn.addEventListener('click', function(e) {
+        btn.addEventListener('click', function (e) {
             e.preventDefault();
             switchView(this.getAttribute('data-view'));
         });
@@ -107,14 +120,20 @@ function setupEventListeners() {
     // Navigazione
     document.getElementById('prevPeriod')?.addEventListener('click', () => changePeriod(-1));
     document.getElementById('nextPeriod')?.addEventListener('click', () => changePeriod(1));
-    document.getElementById('todayBtn')?.addEventListener('click', () => { currentDate = new Date(); renderView(); });
+    document.getElementById('todayBtn')?.addEventListener('click', () => {
+        currentDate = new Date();
+        renderView();
+    });
 }
 
 function switchView(view) {
-    if(currentView === view) return;
+    if (currentView === view) return;
 
     currentView = view;
-    if(currentTimeInterval) { clearInterval(currentTimeInterval); currentTimeInterval = null; }
+    if (currentTimeInterval) {
+        clearInterval(currentTimeInterval);
+        currentTimeInterval = null;
+    }
 
     document.querySelectorAll('[data-view]').forEach(btn => {
         btn.classList.toggle('active', btn.getAttribute('data-view') === view);
@@ -127,9 +146,10 @@ function switchView(view) {
     target.style.display = 'flex';
     setTimeout(() => {
         renderView();
-        if(view === 'week') {
+        if (view === 'week') {
             updateCurrentTimeLine();
             currentTimeInterval = setInterval(updateCurrentTimeLine, 60000);
+            setupWeekViewScrollSync();
         }
     }, 10);
 }
@@ -137,15 +157,27 @@ function switchView(view) {
 // DATA FETCHING & MERGING
 function fetchEvents() {
     const icon = document.querySelector('#refreshEventsBtn i');
-    if(icon) { icon.style.transition = 'transform 0.5s'; icon.style.transform = 'rotate(180deg)'; }
+    if (icon) {
+        icon.style.transition = 'transform 0.5s';
+        icon.style.transform = 'rotate(180deg)';
+    }
 
-    const p1 = fetch('/dashboard/calendar/api/get').then(r => r.ok ? r.json() : []).then(d => storedEvents = d.map(e => ({...e, type: 'event'})));
-    const p2 = fetch('/dashboard/calendar/api/getet').then(r => r.ok ? r.json() : []).then(d => storedTasks = d.map(t => ({...t, type: 'task'})));
+    const p1 = fetch('/dashboard/calendar/api/get')
+        .then(r => r.ok ? r.json() : [])
+        .then(d => storedEvents = d.map(e => ({ ...e, type: 'event' })));
+    const p2 = fetch('/dashboard/calendar/api/getet')
+        .then(r => r.ok ? r.json() : [])
+        .then(d => storedTasks = d.map(t => ({ ...t, type: 'task' })));
 
     Promise.all([p1, p2])
-        .then(() => { mergeEventsAndTasks(); renderView(); })
-        .catch(e => console.error("Err fetch", e))
-        .finally(() => { if(icon) setTimeout(() => icon.style.transform = 'none', 500); });
+        .then(() => {
+            mergeEventsAndTasks();
+            renderView();
+        })
+        .catch(e => console.error("Errore nel caricamento dati:", e))
+        .finally(() => {
+            if (icon) setTimeout(() => icon.style.transform = 'none', 500);
+        });
 }
 
 function mergeEventsAndTasks() {
@@ -153,35 +185,30 @@ function mergeEventsAndTasks() {
     const showEvents = document.getElementById('filterEvents')?.checked ?? true;
     const showTasks = document.getElementById('filterTasks')?.checked ?? true;
 
-    if(showEvents) eventsData = eventsData.concat(storedEvents);
-    if(showTasks) eventsData = eventsData.concat(storedTasks);
+    if (showEvents) eventsData = eventsData.concat(storedEvents);
+    if (showTasks) eventsData = eventsData.concat(storedTasks);
 }
 
 function loadUsers() {
-    if(cachedUsers) return;
-    fetch('/dashboard/calendar/api/users').then(r => r.json()).then(u => cachedUsers = u).catch(() => cachedUsers = []);
+    if (cachedUsers) return;
+    fetch('/dashboard/calendar/api/users')
+        .then(r => r.json())
+        .then(u => cachedUsers = u)
+        .catch(() => cachedUsers = []);
 }
 
 // HELPER LOGICA VISUALIZZAZIONE
-/**
- * Determina se un evento o task deve essere mostrato in un determinato giorno.
- * - Task: Solo nel giorno di scadenza (data_fine).
- * - Eventi: In qualsiasi giorno compreso nel range inizio-fine.
- */
 function isEventActiveInDay(ev, dateObj) {
     const dayStart = new Date(dateObj);
-    dayStart.setHours(0,0,0,0);
+    dayStart.setHours(0, 0, 0, 0);
 
     const dayEnd = new Date(dateObj);
-    dayEnd.setHours(23,59,59,999);
+    dayEnd.setHours(23, 59, 59, 999);
 
     if (ev.type === 'task') {
-        // TASK: Si visualizza SOLO nel giorno di scadenza (data_fine)
-        // Se non ha data_fine, usiamo data_ora_inizio come fallback
         const targetDate = ev.data_fine ? new Date(ev.data_fine) : new Date(ev.data_ora_inizio);
         return targetDate >= dayStart && targetDate <= dayEnd;
     } else {
-        // EVENTO: Si visualizza se il range dell'evento interseca il giorno corrente
         const evStart = new Date(ev.data_ora_inizio);
         const evEnd = ev.data_fine ? new Date(ev.data_fine) : evStart;
         return evStart <= dayEnd && evEnd >= dayStart;
@@ -191,7 +218,7 @@ function isEventActiveInDay(ev, dateObj) {
 // RENDERING
 function renderView() {
     updateHeaderLabel();
-    if(currentView === 'week') renderWeekView();
+    if (currentView === 'week') renderWeekView();
     else renderMonthView();
 }
 
@@ -199,7 +226,7 @@ function renderView() {
 function renderWeekView() {
     const weekBody = document.querySelector('.week-body');
     const headerContainer = document.querySelector('.week-header');
-    if(!weekBody) return;
+    if (!weekBody) return;
 
     headerContainer.innerHTML = '<div class="time-column-header"></div>';
     weekBody.innerHTML = '';
@@ -209,25 +236,25 @@ function renderWeekView() {
 
     const timeGrid = document.createElement('div');
     timeGrid.className = 'time-grid';
-    for(let i=0; i<24; i++) {
-        timeGrid.innerHTML += `<div class="time-slot"><div class="time-label">${i.toString().padStart(2,'0')}:00</div></div>`;
+    for (let i = 0; i < 24; i++) {
+        timeGrid.innerHTML += `<div class="time-slot"><div class="time-label">${i.toString().padStart(2, '0')}:00</div></div>`;
     }
 
     const eventsGrid = document.createElement('div');
     eventsGrid.className = 'events-grid';
 
     const startOfWeek = getStartOfWeek(currentDate);
-    const today = new Date(); today.setHours(0,0,0,0);
+    const today = new Date(); today.setHours(0, 0, 0, 0);
 
-    for(let i=0; i<7; i++) {
+    for (let i = 0; i < 7; i++) {
         const d = new Date(startOfWeek);
         d.setDate(d.getDate() + i);
         const isToday = d.getTime() === today.getTime();
 
         // Header
         headerContainer.innerHTML += `
-            <div class="day-header ${isToday?'today':''}">
-                <div class="day-header-day">${d.toLocaleDateString('it-IT',{weekday:'short'})}</div>
+            <div class="day-header ${isToday ? 'today' : ''}">
+                <div class="day-header-day">${d.toLocaleDateString('it-IT', { weekday: 'short' })}</div>
                 <div class="day-header-date">${d.getDate()}</div>
             </div>`;
 
@@ -238,21 +265,21 @@ function renderWeekView() {
 
         // Click sinistro: crea evento
         col.addEventListener('click', (e) => {
-            if(e.target.closest('.week-event')) return;
+            if (e.target.closest('.week-event')) return;
             const rect = col.getBoundingClientRect();
             const clickY = e.clientY - rect.top;
-            const mins = Math.floor((clickY/60)*60);
-            const rounded = Math.round(mins/30)*30;
-            openCreateEventModal(d, Math.floor(rounded/60), rounded%60);
+            const mins = Math.floor((clickY / 60) * 60);
+            const rounded = Math.round(mins / 30) * 30;
+            openCreateEventModal(d, Math.floor(rounded / 60), rounded % 60);
         });
 
         // Click destro: Context Menu
         col.addEventListener('contextmenu', (e) => handleContextMenu(e, d));
+        addLongPressListener(col, (e) => handleContextMenu(e, d));
 
-        // Filtra eventi per la colonna corrente usando la nuova logica centralizzata
         const dayEvents = eventsData.filter(e => isEventActiveInDay(e, d));
 
-        if(dayEvents.length > 0) {
+        if (dayEvents.length > 0) {
             layoutDayEvents(dayEvents, col, d);
         }
 
@@ -261,36 +288,31 @@ function renderWeekView() {
 
     content.append(timeGrid, eventsGrid);
     weekBody.appendChild(content);
+
+    // Setup scroll sync per mobile
+    setupWeekViewScrollSync();
 }
 
 function layoutDayEvents(events, container, currentDay) {
-    events.sort((a,b) => new Date(a.data_ora_inizio) - new Date(b.data_ora_inizio));
+    events.sort((a, b) => new Date(a.data_ora_inizio) - new Date(b.data_ora_inizio));
 
     const items = events.map(e => {
         const start = new Date(e.data_ora_inizio);
-        const end = e.data_fine ? new Date(e.data_fine) : new Date(start.getTime()+3600000);
+        const end = e.data_fine ? new Date(e.data_fine) : new Date(start.getTime() + 3600000);
 
         let startH, endH;
 
-        // Definiamo i limiti del giorno corrente
-        const dayStart = new Date(currentDay); dayStart.setHours(0,0,0,0);
-        const dayEnd = new Date(currentDay); dayEnd.setHours(23,59,59,999);
+        const dayStart = new Date(currentDay); dayStart.setHours(0, 0, 0, 0);
+        const dayEnd = new Date(currentDay); dayEnd.setHours(23, 59, 59, 999);
 
         if (e.type === 'event') {
-            // Logica Multi-giorno per Eventi
-            // Se inizia prima di oggi, startH = 0 (mezzanotte)
-            startH = start < dayStart ? 0 : (start.getHours() + start.getMinutes()/60);
-
-            // Se finisce dopo oggi, endH = 24 (fine giornata)
-            endH = end > dayEnd ? 24 : (end.getHours() + end.getMinutes()/60);
-
-            // Fix visivo minimo
-            if(endH <= startH) endH = startH + 0.5;
+            startH = start < dayStart ? 0 : (start.getHours() + start.getMinutes() / 60);
+            endH = end > dayEnd ? 24 : (end.getHours() + end.getMinutes() / 60);
+            if (endH <= startH) endH = startH + 0.5;
         } else {
-            // Task: visualizzati nel loro orario reale, ma confinati al giorno (logica isEventActiveInDay garantisce che siamo nel giorno giusto)
-            startH = start.getHours() + start.getMinutes()/60;
-            endH = end.getHours() + end.getMinutes()/60;
-            if(endH <= startH) endH = startH + 1; // Durata default 1h se errore
+            startH = start.getHours() + start.getMinutes() / 60;
+            endH = end.getHours() + end.getMinutes() / 60;
+            if (endH <= startH) endH = startH + 1;
         }
 
         return { event: e, start: startH, end: endH, col: 0, maxCols: 1 };
@@ -300,16 +322,16 @@ function layoutDayEvents(events, container, currentDay) {
     const columns = [];
     items.forEach(item => {
         let placed = false;
-        for(let i=0; i<columns.length; i++) {
-            const lastInCol = columns[i][columns[i].length-1];
-            if(item.start >= lastInCol.end) {
+        for (let i = 0; i < columns.length; i++) {
+            const lastInCol = columns[i][columns[i].length - 1];
+            if (item.start >= lastInCol.end) {
                 columns[i].push(item);
                 item.col = i;
                 placed = true;
                 break;
             }
         }
-        if(!placed) {
+        if (!placed) {
             columns.push([item]);
             item.col = columns.length - 1;
         }
@@ -324,16 +346,14 @@ function layoutDayEvents(events, container, currentDay) {
 
         el.className = `week-event ${item.event.type === 'task' ? 'task-event' : ''} ${isMultiDay ? 'multi-day-event' : ''}`;
 
-        if(item.event.type === 'task') {
+        if (item.event.type === 'task') {
             el.style.backgroundColor = '#fff3cd';
             el.style.borderLeft = '4px solid #ffc107';
             el.style.color = '#856404';
         } else if (isMultiDay) {
-            // Stile differenziato per eventi lunghi se desiderato, o standard
             el.style.borderLeft = '4px solid #0d6efd';
         }
 
-        // Label
         el.textContent = (isMultiDay || item.event.type === 'task') ?
             `${item.event.nome}` : item.event.nome;
         el.style.top = `${item.start * 60}px`;
@@ -343,8 +363,13 @@ function layoutDayEvents(events, container, currentDay) {
         el.style.width = `calc(${width}% - 4px)`;
         el.style.left = `${item.col * width}%`;
 
-        el.addEventListener('click', (ev) => { ev.stopPropagation(); showEventDetails(item.event); });
-        el.addEventListener('contextmenu', (ev) => { ev.stopPropagation(); });
+        el.addEventListener('click', (ev) => {
+            ev.stopPropagation();
+            showEventDetails(item.event);
+        });
+        el.addEventListener('contextmenu', (ev) => {
+            ev.stopPropagation();
+        });
 
         container.appendChild(el);
     });
@@ -353,7 +378,7 @@ function layoutDayEvents(events, container, currentDay) {
 // MONTH VIEW
 function renderMonthView() {
     const container = document.querySelector('.month-grid');
-    if(!container) return;
+    if (!container) return;
     container.innerHTML = '';
 
     const year = currentDate.getFullYear();
@@ -364,7 +389,7 @@ function renderMonthView() {
     const daysBack = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
     startDay.setDate(startDay.getDate() - daysBack);
 
-    for(let i=0; i<42; i++) {
+    for (let i = 0; i < 42; i++) {
         const d = new Date(startDay);
         d.setDate(d.getDate() + i);
 
@@ -372,17 +397,15 @@ function renderMonthView() {
         const isOther = d.getMonth() !== month;
         const isToday = isSameDay(d, new Date());
 
-        cell.className = `month-day ${isOther?'other-month':''} ${isToday?'today':''}`;
+        cell.className = `month-day ${isOther ? 'other-month' : ''} ${isToday ? 'today' : ''}`;
         cell.setAttribute('data-date', d.toISOString());
         cell.innerHTML = `<span class="month-day-number">${d.getDate()}</span>`;
 
-        // Filtra eventi usando la logica centralizzata (Multi-giorno ok)
         const dayEvents = eventsData.filter(e => isEventActiveInDay(e, d));
 
         const evCont = document.createElement('div');
         evCont.className = 'month-events-container';
 
-        // MODIFICA: Visualizza massimo 2 eventi, poi +X
         const MAX_VISIBLE = 2;
         dayEvents.slice(0, MAX_VISIBLE).forEach(ev => {
             const el = document.createElement('div');
@@ -390,48 +413,148 @@ function renderMonthView() {
                 (new Date(ev.data_fine) - new Date(ev.data_ora_inizio)) > 86400000;
 
             el.className = `month-event ${isMultiDay ? 'multi-day-task' : ''}`;
-            if(ev.type === 'task') {
+            if (ev.type === 'task') {
                 el.style.backgroundColor = '#ffc107';
                 el.style.color = '#000';
             }
-            // Indicatore visivo se è un evento che continua
             let label = ev.nome;
-            if(isMultiDay) label = '↔ ' + label;
+            if (isMultiDay) label = '↕ ' + label;
 
             el.textContent = label;
-            el.onclick = (e) => { e.stopPropagation(); showEventDetails(ev); };
+            el.onclick = (e) => {
+                e.stopPropagation();
+                showEventDetails(ev);
+            };
             evCont.appendChild(el);
         });
 
-        if(dayEvents.length > MAX_VISIBLE) {
+        if (dayEvents.length > MAX_VISIBLE) {
             evCont.innerHTML += `<div class="month-event-more">+${dayEvents.length - MAX_VISIBLE} altri</div>`;
         }
 
+        // MOBILE INDICATORS
+        const mobileInd = document.createElement('div');
+        mobileInd.className = 'mobile-indicators';
+
+        const dotsToShow = dayEvents.slice(0, 4);
+        dotsToShow.forEach(ev => {
+            const dot = document.createElement('span');
+            dot.className = ev.type === 'task' ? 'mobile-dot dot-task' : 'mobile-dot dot-event';
+            mobileInd.appendChild(dot);
+        });
+
+        if (dayEvents.length > 4) {
+            const plus = document.createElement('span');
+            plus.className = 'mobile-dot-plus';
+            plus.textContent = '+';
+            mobileInd.appendChild(plus);
+        }
+
         cell.appendChild(evCont);
+        cell.appendChild(mobileInd);
+
         cell.addEventListener('click', (e) => {
-            openCreateEventModal(d, 9, 0);
+            if (window.innerWidth <= 768) {
+                showMobileDayModal(d, dayEvents);
+            } else {
+                openCreateEventModal(d, 9, 0);
+            }
         });
 
         cell.addEventListener('contextmenu', (e) => handleContextMenu(e, d));
+        addLongPressListener(cell, (e) => handleContextMenu(e, d));
         container.appendChild(cell);
     }
 }
 
+function showMobileDayModal(date, events) {
+    const modalEl = document.getElementById('mobileDayModal');
+    const modal = new bootstrap.Modal(modalEl);
+
+    const title = document.getElementById('mobileDayTitle');
+    const subtitle = document.getElementById('mobileDaySubtitle');
+    const content = document.getElementById('mobileDayContent');
+    const addBtn = document.getElementById('mobileAddEventBtn');
+
+    const dayName = date.toLocaleDateString('it-IT', { weekday: 'long' });
+    const dayDate = date.toLocaleDateString('it-IT', { day: 'numeric', month: 'long', year: 'numeric' });
+
+    title.textContent = dayName.charAt(0).toUpperCase() + dayName.slice(1);
+    subtitle.textContent = dayDate;
+
+    content.innerHTML = '';
+
+    if (events.length === 0) {
+        content.innerHTML = `
+            <div class="text-center py-5 opacity-50">
+                <i class="bi bi-calendar-x display-1"></i>
+                <p class="mt-3 fw-medium">Nessun impegno per oggi</p>
+            </div>
+        `;
+    } else {
+        events.sort((a, b) => new Date(a.data_ora_inizio) - new Date(b.data_ora_inizio));
+
+        events.forEach(ev => {
+            const isTask = ev.type === 'task';
+            const card = document.createElement('div');
+            card.className = `mobile-day-card ${isTask ? 'task' : 'event'}`;
+            card.style.cursor = 'pointer';
+
+            const timeStart = formatTime(new Date(ev.data_ora_inizio));
+            const timeEnd = ev.data_fine ? formatTime(new Date(ev.data_fine)) : '';
+
+            card.innerHTML = `
+                <div class="mobile-day-time-box">
+                    <span class="mobile-day-time-start">${timeStart}</span>
+                    ${timeEnd ? `<small class="mobile-day-time-end">${timeEnd}</small>` : ''}
+                </div>
+                <div class="flex-grow-1 overflow-hidden">
+                    <h6 class="mobile-day-title">${escapeHtml(ev.nome)}</h6>
+                    <div class="d-flex align-items-center gap-2 small opacity-75">
+                         ${ev.luogo ? `<i class="bi bi-geo-alt-fill"></i> ${escapeHtml(ev.luogo)}` : ''}
+                         <span class="badge ${isTask ? 'bg-warning text-dark' : 'bg-primary'}">${isTask ? 'TASK' : 'EVENTO'}</span>
+                    </div>
+                </div>
+                <i class="bi bi-chevron-right opacity-50"></i>
+            `;
+
+            card.onclick = () => {
+                modal.hide();
+                setTimeout(() => showEventDetails(ev), 200);
+            };
+
+            content.appendChild(card);
+        });
+    }
+
+    addBtn.onclick = () => {
+        modal.hide();
+        setTimeout(() => openCreateEventModal(date, 9, 0), 200);
+    };
+
+    modal.show();
+}
+
 function handleContextMenu(e, date) {
-    e.preventDefault();
+    if (e.type === 'contextmenu') e.preventDefault();
+
+    if (window.innerWidth <= 768) {
+        openCreateEventModal(date, 9, 0);
+        return;
+    }
+
     const menu = document.getElementById('contextMenu');
     const content = document.getElementById('ctxContent');
     const dateLabel = document.getElementById('ctxDateLabel');
 
-    // Usa la logica centralizzata per popolare il menu
     const items = eventsData.filter(ev => isEventActiveInDay(ev, date));
 
-    items.sort((a,b) => new Date(a.data_ora_inizio) - new Date(b.data_ora_inizio));
+    items.sort((a, b) => new Date(a.data_ora_inizio) - new Date(b.data_ora_inizio));
 
-    dateLabel.textContent = date.toLocaleDateString('it-IT', {weekday:'long', day:'numeric', month:'long'});
+    dateLabel.textContent = date.toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric', month: 'long' });
     content.innerHTML = '';
 
-    if(items.length === 0) {
+    if (items.length === 0) {
         content.innerHTML = '<div class="p-2 text-muted text-center">Nessun evento o task</div>';
     } else {
         items.forEach(ev => {
@@ -463,11 +586,11 @@ function handleContextMenu(e, date) {
     createBtn.onclick = () => {
         closeContextMenu();
         const now = new Date();
-        now.setHours(0,0,0,0);
+        now.setHours(0, 0, 0, 0);
         const checkDate = new Date(date);
-        checkDate.setHours(0,0,0,0);
+        checkDate.setHours(0, 0, 0, 0);
 
-        if(checkDate < now) {
+        if (checkDate < now) {
             alert("Non puoi creare eventi nel passato.");
         } else {
             openCreateEventModal(date, 9, 0);
@@ -476,11 +599,20 @@ function handleContextMenu(e, date) {
     content.appendChild(createBtn);
 
     menu.style.display = 'block';
+
     let x = e.pageX;
     let y = e.pageY;
 
-    if(x + 300 > window.innerWidth) x -= 300;
-    if(y + menu.offsetHeight > window.innerHeight) y -= menu.offsetHeight;
+    if (e.touches && e.touches.length > 0) {
+        x = e.touches[0].pageX;
+        y = e.touches[0].pageY;
+    } else if (e.changedTouches && e.changedTouches.length > 0) {
+        x = e.changedTouches[0].pageX;
+        y = e.changedTouches[0].pageY;
+    }
+
+    if (x + 300 > window.innerWidth) x -= 300;
+    if (y + menu.offsetHeight > window.innerHeight) y -= menu.offsetHeight;
 
     menu.style.left = x + 'px';
     menu.style.top = y + 'px';
@@ -490,20 +622,76 @@ function closeContextMenu() {
     document.getElementById('contextMenu').style.display = 'none';
 }
 
+function addLongPressListener(el, callback) {
+    let timer;
+    const duration = 800;
+
+    el.addEventListener('touchstart', (e) => {
+        timer = setTimeout(() => {
+            callback(e);
+        }, duration);
+    }, { passive: true });
+
+    el.addEventListener('touchend', () => clearTimeout(timer));
+    el.addEventListener('touchmove', () => clearTimeout(timer));
+}
+
+// SCROLL SYNC FOR MOBILE WEEK VIEW
+function setupWeekViewScrollSync() {
+    if (window.innerWidth > 768) return;
+
+    const weekHeader = document.querySelector('.week-header');
+    const weekBody = document.querySelector('.week-body');
+
+    if (!weekHeader || !weekBody) return;
+
+    // Rimuovi listener precedente
+    weekBody.removeEventListener('scroll', syncHeaderScroll);
+
+    // Aggiungi listener
+    weekBody.addEventListener('scroll', syncHeaderScroll);
+}
+
+function syncHeaderScroll(e) {
+    if (isScrollingProgrammatically) return;
+
+    const weekBody = e.target;
+    const weekHeader = document.querySelector('.week-header');
+
+    if (!weekHeader) return;
+
+    isScrollingProgrammatically = true;
+    weekHeader.scrollLeft = weekBody.scrollLeft;
+
+    requestAnimationFrame(() => {
+        isScrollingProgrammatically = false;
+    });
+}
+
+// Responsive listener
+window.addEventListener('resize', () => {
+    if (currentView === 'week') {
+        setupWeekViewScrollSync();
+    }
+});
+
 // CRUD & VALIDATION
 function saveEvent() {
     const form = document.getElementById('createEventForm');
     const alertBox = document.getElementById('dateErrorAlert');
     alertBox.classList.add('d-none');
 
-    if(!form.checkValidity()) { form.reportValidity(); return; }
+    if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+    }
 
     const formData = new FormData(form);
     const startStr = formData.get('inizio');
     const startDate = new Date(startStr);
     const now = new Date();
 
-    if(startDate < new Date(now.getTime() - 60000)) {
+    if (startDate < new Date(now.getTime() - 60000)) {
         alertBox.innerHTML = '<i class="bi bi-exclamation-triangle-fill me-2"></i>Impossibile creare eventi nel passato!';
         alertBox.classList.remove('d-none');
         return;
@@ -517,7 +705,6 @@ function saveEvent() {
         partecipanti: selectedUsers.map(u => u.id_utente)
     };
 
-    // Update ottimistico
     const tempEvent = {
         id_evento: 'temp_' + Date.now(),
         nome: payload.nome,
@@ -533,7 +720,7 @@ function saveEvent() {
 
     fetch('/dashboard/calendar/api/create', {
         method: 'POST',
-        headers: {'Content-Type': 'application/json'},
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
     })
         .then(async response => {
@@ -547,7 +734,7 @@ function saveEvent() {
                 alertBox.classList.remove('d-none');
                 return;
             }
-            if(data.status === 'success') {
+            if (data.status === 'success') {
                 bootstrap.Modal.getInstance(document.getElementById('createEventModal')).hide();
                 setTimeout(() => fetchEvents(), 300);
             }
@@ -565,7 +752,7 @@ function saveEvent() {
 function updateEvent() {
     const form = document.getElementById('editEventForm');
     const alertBox = document.getElementById('editDateErrorAlert');
-    if(alertBox) alertBox.classList.add('d-none');
+    if (alertBox) alertBox.classList.add('d-none');
 
     const formData = new FormData(form);
     const payload = {
@@ -578,9 +765,9 @@ function updateEvent() {
     };
 
     const eventIndex = storedEvents.findIndex(e => e.id_evento === payload.id);
-    const oldEvent = eventIndex >= 0 ? {...storedEvents[eventIndex]} : null;
+    const oldEvent = eventIndex >= 0 ? { ...storedEvents[eventIndex] } : null;
 
-    if(eventIndex >= 0) {
+    if (eventIndex >= 0) {
         storedEvents[eventIndex] = {
             ...storedEvents[eventIndex],
             nome: payload.nome,
@@ -595,18 +782,18 @@ function updateEvent() {
 
     fetch('/dashboard/calendar/api/update', {
         method: 'POST',
-        headers: {'Content-Type': 'application/json'},
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
     }).then(async response => {
         const data = await response.json();
-        if(!response.ok) {
-            if(oldEvent && eventIndex >= 0) {
+        if (!response.ok) {
+            if (oldEvent && eventIndex >= 0) {
                 storedEvents[eventIndex] = oldEvent;
                 mergeEventsAndTasks();
                 renderView();
             }
 
-            if(alertBox) {
+            if (alertBox) {
                 alertBox.innerHTML = `<i class="bi bi-exclamation-triangle-fill me-2"></i>${data.error || "Errore durante l'aggiornamento"}`;
                 alertBox.classList.remove('d-none');
             } else {
@@ -614,12 +801,12 @@ function updateEvent() {
             }
             return;
         }
-        if(data.status==='updated') {
+        if (data.status === 'updated') {
             bootstrap.Modal.getInstance(document.getElementById('editEventModal')).hide();
             setTimeout(() => fetchEvents(), 300);
         }
     }).catch(e => {
-        if(oldEvent && eventIndex >= 0) {
+        if (oldEvent && eventIndex >= 0) {
             storedEvents[eventIndex] = oldEvent;
             mergeEventsAndTasks();
             renderView();
@@ -631,9 +818,9 @@ function updateEvent() {
 function deleteEventFromEdit() {
     const eventId = selectedEvent.id_evento;
     const eventIndex = storedEvents.findIndex(e => e.id_evento === eventId);
-    const oldEvent = eventIndex >= 0 ? {...storedEvents[eventIndex]} : null;
+    const oldEvent = eventIndex >= 0 ? { ...storedEvents[eventIndex] } : null;
 
-    if(eventIndex >= 0) {
+    if (eventIndex >= 0) {
         storedEvents.splice(eventIndex, 1);
         mergeEventsAndTasks();
         renderView();
@@ -641,10 +828,10 @@ function deleteEventFromEdit() {
 
     fetch('/dashboard/calendar/api/delete', {
         method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({id: eventId})
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: eventId })
     }).then(response => {
-        if(!response.ok && oldEvent && eventIndex >= 0) {
+        if (!response.ok && oldEvent && eventIndex >= 0) {
             storedEvents.splice(eventIndex, 0, oldEvent);
             mergeEventsAndTasks();
             renderView();
@@ -654,7 +841,7 @@ function deleteEventFromEdit() {
         bootstrap.Modal.getInstance(document.getElementById('editEventModal')).hide();
         setTimeout(() => fetchEvents(), 300);
     }).catch(e => {
-        if(oldEvent && eventIndex >= 0) {
+        if (oldEvent && eventIndex >= 0) {
             storedEvents.splice(eventIndex, 0, oldEvent);
             mergeEventsAndTasks();
             renderView();
@@ -666,7 +853,9 @@ function deleteEventFromEdit() {
 function showEventDetails(event) {
     selectedEvent = event;
     const isTask = event.type === 'task';
-    document.getElementById('detailTitle').innerHTML = isTask ? `<span class="badge badge-task me-2">TASK</span>${event.nome}` : event.nome;
+    document.getElementById('detailTitle').innerHTML = isTask ?
+        `<span class="badge badge-task me-2">TASK</span>${event.nome}` :
+        event.nome;
 
     const start = new Date(event.data_ora_inizio);
     const end = event.data_fine ? new Date(event.data_fine) : start;
@@ -674,21 +863,23 @@ function showEventDetails(event) {
     document.getElementById('detailPlace').textContent = event.luogo || '-';
 
     const editBtn = document.getElementById('btnEditDetail');
-    if(editBtn) editBtn.style.display = isTask ? 'none' : 'block';
+    if (editBtn) editBtn.style.display = isTask ? 'none' : 'block';
 
     const partSection = document.getElementById('detailParticipantsSection');
     const partList = document.getElementById('detailParticipants');
 
-    if(!isTask) {
+    if (!isTask) {
         partSection.style.display = 'flex';
         partList.innerHTML = '...';
-        fetch(`/dashboard/calendar/api/users?id=${event.id_evento}`).then(r=>r.json()).then(users=>{
-            partList.innerHTML = '';
-            if(!users.length) partList.textContent = 'Nessuno';
-            users.forEach(u => {
-                partList.innerHTML += `<span class="badge bg-light text-dark border me-1">${u.nome} ${u.cognome}</span>`;
+        fetch(`/dashboard/calendar/api/users?id=${event.id_evento}`)
+            .then(r => r.json())
+            .then(users => {
+                partList.innerHTML = '';
+                if (!users.length) partList.textContent = 'Nessuno';
+                users.forEach(u => {
+                    partList.innerHTML += `<span class="badge bg-light text-dark border me-1">${u.nome} ${u.cognome}</span>`;
+                });
             });
-        });
     } else {
         partSection.style.display = 'none';
     }
@@ -697,7 +888,7 @@ function showEventDetails(event) {
 }
 
 function openEditModal() {
-    if(!selectedEvent || selectedEvent.type==='task') return;
+    if (!selectedEvent || selectedEvent.type === 'task') return;
     bootstrap.Modal.getInstance(document.getElementById('eventDetailsModal')).hide();
     const m = new bootstrap.Modal(document.getElementById('editEventModal'));
 
@@ -707,10 +898,12 @@ function openEditModal() {
     document.getElementById('editEventStart').value = formatDateTimeLocal(new Date(selectedEvent.data_ora_inizio));
     document.getElementById('editEventEnd').value = formatDateTimeLocal(new Date(selectedEvent.data_fine));
 
-    fetch(`/dashboard/calendar/api/users?id=${selectedEvent.id_evento}`).then(r=>r.json()).then(u=>{
-        editSelectedUsers = u;
-        updateSelectedUsersList('editSelectedUsersList', editSelectedUsers);
-    });
+    fetch(`/dashboard/calendar/api/users?id=${selectedEvent.id_evento}`)
+        .then(r => r.json())
+        .then(u => {
+            editSelectedUsers = u;
+            updateSelectedUsersList('editSelectedUsersList', editSelectedUsers);
+        });
     m.show();
 }
 
@@ -720,16 +913,16 @@ function openCreateEventModal(date, h, m) {
     const d = new Date(date);
     d.setHours(h, m, 0, 0);
 
-    if(d < now) {
+    if (d < now) {
         const nextHour = new Date(now);
-        nextHour.setMinutes(0,0,0);
+        nextHour.setMinutes(0, 0, 0);
         nextHour.setHours(nextHour.getHours() + 1);
 
         document.querySelector('input[name="inizio"]').value = formatDateTimeLocal(nextHour);
-        const end = new Date(nextHour); end.setHours(end.getHours()+1);
+        const end = new Date(nextHour); end.setHours(end.getHours() + 1);
         document.querySelector('input[name="fine"]').value = formatDateTimeLocal(end);
     } else {
-        const end = new Date(d); end.setHours(h+1);
+        const end = new Date(d); end.setHours(h + 1);
         document.querySelector('input[name="inizio"]').value = formatDateTimeLocal(d);
         document.querySelector('input[name="fine"]').value = formatDateTimeLocal(end);
     }
@@ -739,31 +932,34 @@ function openCreateEventModal(date, h, m) {
 
 function filterUsers(term, resId, selArr) {
     const box = document.getElementById(resId);
-    if(!term) { box.classList.remove('show'); return; }
-    const ex = selArr.map(u=>u.id_utente);
+    if (!term) {
+        box.classList.remove('show');
+        return;
+    }
+    const ex = selArr.map(u => u.id_utente);
     const termLower = term.toLowerCase();
 
     const res = cachedUsers.filter(u =>
-        !ex.includes(u.id_utente) && (
-            (u.nome+' '+u.cognome).toLowerCase().includes(termLower) ||
-            (u.email && u.email.toLowerCase().includes(termLower))
-        )
+            !ex.includes(u.id_utente) && (
+                (u.nome + ' ' + u.cognome).toLowerCase().includes(termLower) ||
+                (u.email && u.email.toLowerCase().includes(termLower))
+            )
     );
 
     box.innerHTML = '';
-    if(!res.length) box.innerHTML = '<div class="user-search-empty">Nessuno trovato</div>';
+    if (!res.length) box.innerHTML = '<div class="user-search-empty">Nessuno trovato</div>';
     else res.forEach(u => {
         const d = document.createElement('div');
         d.className = 'user-search-item d-flex flex-column gap-0';
         d.innerHTML = `
-            <span class="fw-bold">${escapeHtml(u.nome+' '+u.cognome)}</span>
-            <small class="text-muted" style="font-size: 0.75rem;">${escapeHtml(u.email)}</small>
-        `;
+        <span class="fw-bold">${escapeHtml(u.nome + ' ' + u.cognome)}</span>
+        <small class="text-muted" style="font-size: 0.75rem;">${escapeHtml(u.email)}</small>
+    `;
         d.onclick = () => {
             selArr.push(u);
-            updateSelectedUsersList(resId==='userSearchResults'?'selectedUsersList':'editSelectedUsersList', selArr);
+            updateSelectedUsersList(resId === 'userSearchResults' ? 'selectedUsersList' : 'editSelectedUsersList', selArr);
             box.classList.remove('show');
-            document.getElementById(resId==='userSearchResults'?'userSearchInput':'editUserSearchInput').value='';
+            document.getElementById(resId === 'userSearchResults' ? 'userSearchInput' : 'editUserSearchInput').value = '';
         };
         box.appendChild(d);
     });
@@ -779,46 +975,72 @@ function updateSelectedUsersList(id, arr) {
         d.className = 'selected-user-tag';
         d.innerHTML = `${u.nome} <button type="button" class="remove-user-btn"><i class="bi bi-x-lg"></i></button>`;
         d.querySelector('button').onclick = () => {
-            const idx = (listName==='selectedUsers'?selectedUsers:editSelectedUsers).findIndex(x=>x.id_utente===u.id_utente);
-            if(idx>-1) (listName==='selectedUsers'?selectedUsers:editSelectedUsers).splice(idx,1);
-            updateSelectedUsersList(id, (listName==='selectedUsers'?selectedUsers:editSelectedUsers));
+            const idx = (listName === 'selectedUsers' ? selectedUsers : editSelectedUsers).findIndex(x => x.id_utente === u.id_utente);
+            if (idx > -1) (listName === 'selectedUsers' ? selectedUsers : editSelectedUsers).splice(idx, 1);
+            updateSelectedUsersList(id, listName === 'selectedUsers' ? selectedUsers : editSelectedUsers);
         };
         c.appendChild(d);
     });
 }
 
 function changePeriod(d) {
-    if(currentView==='week') currentDate.setDate(currentDate.getDate()+(d*7));
-    else currentDate.setMonth(currentDate.getMonth()+d);
+    if (currentView === 'week') currentDate.setDate(currentDate.getDate() + (d * 7));
+    else currentDate.setMonth(currentDate.getMonth() + d);
     renderView();
 }
+
 function updateHeaderLabel() {
     const l = document.getElementById('currentPeriodLabel');
-    if(currentView==='week') {
+    if (currentView === 'week') {
         const s = getStartOfWeek(currentDate);
-        const e = new Date(s); e.setDate(e.getDate()+6);
-        l.textContent = `${s.getDate()} - ${e.getDate()} ${s.toLocaleDateString('it-IT',{month:'long'})}`;
-    } else l.textContent = currentDate.toLocaleDateString('it-IT',{year:'numeric',month:'long'});
+        const e = new Date(s);
+        e.setDate(e.getDate() + 6);
+        l.textContent = `${s.getDate()} - ${e.getDate()} ${s.toLocaleDateString('it-IT', { month: 'long' })}`;
+    } else {
+        l.textContent = currentDate.toLocaleDateString('it-IT', { year: 'numeric', month: 'long' });
+    }
 }
+
 function getStartOfWeek(d) {
-    const t = new Date(d); const day = t.getDay();
-    const diff = t.getDate() - day + (day===0?-6:1);
-    const r = new Date(t.setDate(diff)); r.setHours(0,0,0,0); return r;
+    const t = new Date(d);
+    const day = t.getDay();
+    const diff = t.getDate() - day + (day === 0 ? -6 : 1);
+    const r = new Date(t.setDate(diff));
+    r.setHours(0, 0, 0, 0);
+    return r;
 }
+
 function updateCurrentTimeLine() {
     document.querySelector('.current-time-line')?.remove();
-    if(currentView!=='week') return;
-    const now=new Date(); const start=getStartOfWeek(currentDate);
-    const diff=now-start;
-    if(diff>=0 && diff<604800000) {
-        const col=document.querySelectorAll('.day-column')[Math.floor(diff/86400000)];
-        if(col) {
-            const l=document.createElement('div'); l.className='current-time-line';
-            l.style.top=`${(now.getHours()+now.getMinutes()/60)*60}px`; col.appendChild(l);
+    if (currentView !== 'week') return;
+    const now = new Date();
+    const start = getStartOfWeek(currentDate);
+    const diff = now - start;
+    if (diff >= 0 && diff < 604800000) {
+        const col = document.querySelectorAll('.day-column')[Math.floor(diff / 86400000)];
+        if (col) {
+            const l = document.createElement('div');
+            l.className = 'current-time-line';
+            l.style.top = `${(now.getHours() + now.getMinutes() / 60) * 60}px`;
+            col.appendChild(l);
         }
     }
 }
-function formatTime(d) { return d.toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'}); }
-function isSameDay(d1, d2) { return d1.toDateString()===d2.toDateString(); }
-function formatDateTimeLocal(d) { return new Date(d.getTime() - d.getTimezoneOffset()*60000).toISOString().slice(0,16); }
-function escapeHtml(t) { const d=document.createElement('div'); d.innerText=t||''; return d.innerHTML; }
+
+function formatTime(d) {
+    return d.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
+}
+
+function isSameDay(d1, d2) {
+    return d1.toDateString() === d2.toDateString();
+}
+
+function formatDateTimeLocal(d) {
+    return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+}
+
+function escapeHtml(t) {
+    const d = document.createElement('div');
+    d.innerText = t || '';
+    return d.innerHTML;
+}

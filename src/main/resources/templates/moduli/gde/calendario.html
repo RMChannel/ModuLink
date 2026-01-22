@@ -22,21 +22,30 @@
     <div id="content" class="p-0">
         <div class="calendar-wrapper">
             <div class="calendar-controls">
-                <div class="d-flex align-items-center gap-3 flex-wrap">
-                    <h2 class="m-0">
-                        <i class="bi bi-calendar-event text-primary me-2"></i>
-                        Calendario
-                    </h2>
+                <!-- Titolo -->
+                <h2>
+                    <i class="bi bi-calendar-event text-primary me-2"></i>
+                    Calendario
+                </h2>
+
+                <!-- Left Controls: Navigation + Period Label -->
+                <div class="controls-left">
                     <div class="date-navigation btn-group">
-                        <button class="btn btn-outline-secondary btn-sm" id="prevPeriod" title="Periodo precedente"><i class="bi bi-chevron-left"></i></button>
+                        <button class="btn btn-outline-secondary btn-sm" id="prevPeriod" title="Periodo precedente">
+                            <i class="bi bi-chevron-left"></i>
+                        </button>
                         <button class="btn btn-outline-secondary btn-sm" id="todayBtn" title="Vai a oggi">Oggi</button>
-                        <button class="btn btn-outline-secondary btn-sm" id="nextPeriod" title="Periodo successivo"><i class="bi bi-chevron-right"></i></button>
+                        <button class="btn btn-outline-secondary btn-sm" id="nextPeriod" title="Periodo successivo">
+                            <i class="bi bi-chevron-right"></i>
+                        </button>
                     </div>
-                    <span id="currentPeriodLabel" class="fw-bold fs-5"></span>
+                    <span id="currentPeriodLabel" class="fw-bold"></span>
                 </div>
 
-                <div class="d-flex gap-3 flex-wrap align-items-center">
-                    <div class="filter-controls d-flex align-items-center gap-3 border-end pe-3 me-2">
+                <!-- Right Controls: Filters + View Selector + Actions -->
+                <div class="controls-right">
+                    <!-- Filters -->
+                    <div class="filter-controls d-flex align-items-center gap-3">
                         <div class="form-check form-switch m-0">
                             <input class="form-check-input" type="checkbox" id="filterEvents" checked>
                             <label class="form-check-label d-flex align-items-center" for="filterEvents">
@@ -53,14 +62,25 @@
                         </div>
                     </div>
 
+                    <!-- View Selector -->
                     <div class="view-selector btn-group">
-                        <button class="btn btn-outline-secondary active" data-view="week"><i class="bi bi-calendar-week me-1"></i> Settimana</button>
-                        <button class="btn btn-outline-secondary" data-view="month"><i class="bi bi-calendar-month me-1"></i> Mese</button>
+                        <button class="btn btn-outline-secondary active" data-view="week">
+                            <i class="bi bi-calendar-week me-1"></i> Settimana
+                        </button>
+                        <button class="btn btn-outline-secondary" data-view="month">
+                            <i class="bi bi-calendar-month me-1"></i> Mese
+                        </button>
                     </div>
+
+                    <!-- Action Buttons -->
                     <div class="btn-group">
-                        <button class="btn btn-outline-primary" id="refreshEventsBtn" title="Aggiorna"><i class="bi bi-arrow-clockwise"></i></button>
+                        <button class="btn btn-outline-primary" id="refreshEventsBtn" title="Aggiorna">
+                            <i class="bi bi-arrow-clockwise"></i>
+                        </button>
                     </div>
-                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createEventModal"><i class="bi bi-plus-lg me-1"></i> Nuovo</button>
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createEventModal">
+                        <i class="bi bi-plus-lg me-1"></i> Nuovo
+                    </button>
                 </div>
             </div>
 
@@ -193,6 +213,31 @@
             <div class="modal-footer">
                 <button type="button" id="btnEditDetail" class="btn btn-primary" onclick="openEditModal()">Modifica</button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Chiudi</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Mobile Day Detail Modal -->
+<div class="modal fade" id="mobileDayModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header border-0 pb-0">
+                <div>
+                    <h5 class="modal-title fw-bold fs-4" id="mobileDayTitle">Dettagli Giorno</h5>
+                    <p class="text-muted small mb-0" id="mobileDaySubtitle">Sommario eventi</p>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body pt-3">
+                <div id="mobileDayContent" class="d-flex flex-column gap-3">
+                    <!-- Events will be injected here via JS -->
+                </div>
+            </div>
+            <div class="modal-footer border-0 pt-0">
+                <button type="button" class="btn btn-primary w-100 rounded-pill" id="mobileAddEventBtn">
+                    <i class="bi bi-plus-lg me-2"></i>Nuovo Evento
+                </button>
             </div>
         </div>
     </div>
