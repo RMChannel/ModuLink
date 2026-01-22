@@ -22,65 +22,35 @@
     <!-- Main Content -->
     <div id="content">
         <!-- Top Navbar mobile toggle could go here if needed -->
-        <div class="container-fluid py-4">
-            <div class="row mb-5">
-                <div class="col-12">
-                    <div class="d-flex align-items-center gap-3">
-                        <div class="user-avatar-large shadow-sm" th:text="${utente.nome.substring(0,1)} + ${utente.cognome.substring(0,1)}">JD</div>
-                        <div>
-                            <h2 class="fw-bold mb-0">Bentornato, <span th:text="${utente.nome}">Nome</span>!</h2>
-                            <p class="text-secondary mb-0">Ecco cosa succede oggi nella tua area di lavoro.</p>
-                        </div>
-                    </div>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12 mb-4">
+                    <h2>Dashboard</h2>
+                    <p class="text-muted">Benvenuto, seleziona un modulo per iniziare.</p>
                 </div>
             </div>
-
             <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
                 <div class="col" th:each="modulo : ${moduli}">
-                    <div class="card h-100 shadow-sm border-0 rounded-4 transition-hover overflow-hidden">
-                        <div class="card-body p-4 d-flex flex-column">
-                            <div class="d-flex justify-content-between align-items-start mb-4">
-                                <div class="icon-container d-flex align-items-center justify-content-center bg-primary-subtle text-primary rounded-4" style="width: 64px; height: 64px;">
-                                    <i th:if="${modulo.url_icona != null}" th:class="${modulo.url_icona}" style="font-size: 2rem;"></i>
-                                    <i th:unless="${modulo.url_icona != null}" class="bi bi-box-seam" style="font-size: 2rem;"></i>
-                                </div>
-                                <div th:if="${stats != null and stats.get(modulo.id_modulo) != null}" class="stat-info text-end">
-                                    <h3 class="fw-bold mb-0 text-primary" th:text="${stats.get(modulo.id_modulo)}">0</h3>
-                                    <small class="text-uppercase fw-semibold text-secondary" style="font-size: 0.7rem;">
-                                        <span th:if="${modulo.id_modulo == 0}">Utenti</span>
-                                        <span th:if="${modulo.id_modulo == 1}">Ruoli</span>
-                                        <span th:if="${modulo.id_modulo == 2}">Attivi</span>
-                                        <span th:if="${modulo.id_modulo == 4}">Oggi</span>
-                                        <span th:if="${modulo.id_modulo == 5}">Pendenti</span>
-                                        <span th:if="${modulo.id_modulo == 6}">Prodotti</span>
-                                        <span th:if="${modulo.id_modulo == 9999}">Disponibili</span>
-                                        <span th:if="${modulo.id_modulo == -3}">Novità</span>
-                                        <span th:if="${modulo.id_modulo == -2}">Richieste</span>
-                                        <span th:if="${modulo.id_modulo == -1}">Admin</span>
-                                        <span th:if="${modulo.id_modulo < -3}">Info</span>
-                                    </small>
-                                </div>
+                    <div class="card h-100 shadow-sm border-0 rounded-4 transition-hover">
+                        <div class="card-body text-center d-flex flex-column align-items-center p-4">
+                            <div class="icon-container mb-3 d-flex align-items-center justify-content-center bg-primary-subtle text-primary rounded-circle" style="width: 80px; height: 80px;">
+                                <i th:if="${modulo.url_icona != null}" th:class="${modulo.url_icona}" style="font-size: 2.5rem;"></i>
+                                <i th:unless="${modulo.url_icona != null}" class="bi bi-box-seam" style="font-size: 2.5rem;"></i>
                             </div>
 
                             <h4 class="card-title fw-bold mb-2" th:text="${modulo.nome}">Nome Modulo</h4>
-                            <p class="card-text text-secondary mb-4 flex-grow-1" th:text="${modulo.descrizione}">Descrizione del modulo.</p>
-                            
-                            <div class="mt-auto">
-                                <a th:href="@{${modulo.url_modulo}}" class="btn btn-outline-primary w-100 rounded-pill py-2 fw-semibold border-2">
-                                    Apri Modulo <i class="bi bi-chevron-right ms-1"></i>
+                            <p class="card-text text-secondary mb-4" th:text="${modulo.descrizione}">Descrizione del modulo.</p>
+                            <div class="mt-auto w-100">
+                                <a th:href="@{${modulo.url_modulo}}" class="btn btn-primary w-100 rounded-pill py-2 fw-semibold">
+                                    Accedi <i class="bi bi-arrow-right ms-1"></i>
                                 </a>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="col-12" th:if="${#lists.isEmpty(moduli)}">
-                    <div class="alert alert-light border-0 shadow-sm text-center p-5 rounded-4" role="alert">
-                        <div class="mb-3">
-                            <i class="bi bi-info-circle text-primary" style="font-size: 3rem;"></i>
-                        </div>
-                        <h4 class="fw-bold">Nessun modulo attivo</h4>
-                        <p class="text-secondary">Non hai ancora accesso a nessun modulo. Contatta l'amministratore per maggiori informazioni.</p>
-                        <a href="/dashboard/store/" class="btn btn-primary rounded-pill px-4 mt-2">Visita lo Store</a>
+                    <div class="alert alert-info text-center" role="alert">
+                        <i class="bi bi-info-circle me-2"></i> Non hai ancora accesso a nessun modulo. Contatta l'amministratore per maggiori informazioni.
                     </div>
                 </div>
             </div>
