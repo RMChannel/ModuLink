@@ -285,35 +285,64 @@
 <!-- Add Role Modal -->
 <div class="modal fade" id="addRoleModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content modal-content-theme shadow-lg rounded-4">
+        <div class="modal-content modal-content-theme shadow-lg rounded-4 overflow-hidden">
+            <!-- Dynamic Color Strip -->
+            <div id="addModalColorStrip" class="position-absolute top-0 start-0 end-0" style="height: 6px; background-color: var(--color-primary); transition: background-color 0.3s ease;"></div>
+            
             <form th:action="@{/dashboard/gru/add-role}" th:object="${newRoleForm}" method="post">
-                <div class="modal-header modal-header-theme">
-                    <h5 class="modal-title fw-bold text-theme-heading">Nuovo Ruolo</h5>
+                <div class="modal-header modal-header-theme pt-4">
+                    <div class="d-flex align-items-center">
+                        <div id="addModalIcon" class="btn-icon-theme me-3" style="border-color: var(--color-primary); color: var(--color-primary);">
+                            <i class="bi bi-shield-plus"></i>
+                        </div>
+                        <div>
+                            <h5 class="modal-title fw-bold text-theme-heading">Nuovo Ruolo</h5>
+                            <p class="text-theme-muted small mb-0">Definisci un nuovo set di permessi</p>
+                        </div>
+                    </div>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body modal-body-theme">
-                    <div class="mb-3">
-                        <label for="addNome" class="form-label fw-medium text-theme-secondary">Nome</label>
-                        <input type="text" class="form-control form-control-theme" id="addNome" th:field="*{nome}" 
-                               th:classappend="${#fields.hasErrors('nome')} ? 'is-invalid' : ''" placeholder="Es. Amministratore">
-                        <div class="invalid-feedback" th:if="${#fields.hasErrors('nome')}" th:errors="*{nome}"></div>
+                    
+                    <!-- Preview Badge -->
+                    <div class="mb-4 p-3 rounded-3 d-flex align-items-center justify-content-center" style="background-color: var(--bg-body-alt); border: 1px dashed var(--border-color);">
+                        <div class="d-flex flex-column align-items-center">
+                            <span class="text-theme-muted small mb-2 uppercase fw-bold" style="font-size: 0.65rem; letter-spacing: 0.05em;">Anteprima Badge</span>
+                            <div id="addRolePreviewBadge" class="px-3 py-1 rounded-pill fw-bold shadow-sm" style="background-color: var(--color-primary); color: white; transition: all 0.3s ease;">
+                                Nuovo Ruolo
+                            </div>
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <label for="addColore" class="form-label fw-medium text-theme-secondary">Colore</label>
-                        <input type="color" class="form-control form-control-color-theme" id="addColore" th:field="*{colore}" 
-                               th:classappend="${#fields.hasErrors('colore')} ? 'is-invalid' : ''" title="Scegli il colore">
-                        <div class="invalid-feedback" th:if="${#fields.hasErrors('colore')}" th:errors="*{colore}"></div>
-                    </div>
-                    <div class="mb-3">
-                        <label for="addDescrizione" class="form-label fw-medium text-theme-secondary">Descrizione</label>
-                        <textarea class="form-control form-control-theme" id="addDescrizione" th:field="*{descrizione}" 
-                                  th:classappend="${#fields.hasErrors('descrizione')} ? 'is-invalid' : ''" rows="3" placeholder="Descrivi i permessi di questo ruolo..."></textarea>
-                        <div class="invalid-feedback" th:if="${#fields.hasErrors('descrizione')}" th:errors="*{descrizione}"></div>
+
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <label for="addNome" class="form-label fw-medium text-theme-secondary">Nome</label>
+                            <input type="text" class="form-control form-control-theme" id="addNome" th:field="*{nome}" 
+                                   th:classappend="${#fields.hasErrors('nome')} ? 'is-invalid' : ''" placeholder="Es. Amministratore">
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('nome')}" th:errors="*{nome}"></div>
+                        </div>
+                        <div class="col-12">
+                            <label for="addColore" class="form-label fw-medium text-theme-secondary">Colore</label>
+                            <div class="d-flex gap-2 align-items-center">
+                                <input type="color" class="form-control form-control-color-theme" id="addColore" th:field="*{colore}" 
+                                       th:classappend="${#fields.hasErrors('colore')} ? 'is-invalid' : ''" title="Scegli il colore" style="width: 60px; flex-shrink: 0;">
+                                <input type="text" class="form-control form-control-theme flex-grow-1" id="addColoreHex" readonly style="font-family: monospace; font-size: 0.9rem;" value="#634BFF">
+                            </div>
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('colore')}" th:errors="*{colore}"></div>
+                        </div>
+                        <div class="col-12">
+                            <label for="addDescrizione" class="form-label fw-medium text-theme-secondary">Descrizione</label>
+                            <textarea class="form-control form-control-theme" id="addDescrizione" th:field="*{descrizione}" 
+                                      th:classappend="${#fields.hasErrors('descrizione')} ? 'is-invalid' : ''" rows="3" placeholder="Descrivi i permessi di questo ruolo..."></textarea>
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('descrizione')}" th:errors="*{descrizione}"></div>
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer modal-footer-theme">
                     <button type="button" class="btn btn-outline-secondary rounded-pill" data-bs-dismiss="modal">Annulla</button>
-                    <button type="submit" class="btn btn-theme-primary rounded-pill px-4">Crea Ruolo</button>
+                    <button type="submit" class="btn btn-theme-primary rounded-pill px-4">
+                        <i class="bi bi-plus-lg me-1"></i> Crea Ruolo
+                    </button>
                 </div>
             </form>
         </div>
@@ -323,30 +352,59 @@
 <!-- Modify Role Modal -->
 <div class="modal fade" id="modifyRoleModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content modal-content-theme shadow-lg rounded-4">
+        <div class="modal-content modal-content-theme shadow-lg rounded-4 overflow-hidden">
+            <!-- Dynamic Color Strip at the top of the modal -->
+            <div id="modifyModalColorStrip" class="position-absolute top-0 start-0 end-0" style="height: 6px; background-color: var(--color-primary); transition: background-color 0.3s ease;"></div>
+            
             <form th:action="@{/dashboard/gru/modify-role}" method="post">
-                <div class="modal-header modal-header-theme">
-                    <h5 class="modal-title fw-bold text-theme-heading">Modifica Ruolo</h5>
+                <div class="modal-header modal-header-theme pt-4">
+                    <div class="d-flex align-items-center">
+                        <div id="modifyModalIcon" class="btn-icon-theme me-3" style="border-color: var(--color-primary); color: var(--color-primary);">
+                            <i class="bi bi-pencil-square"></i>
+                        </div>
+                        <div>
+                            <h5 class="modal-title fw-bold text-theme-heading">Modifica Ruolo</h5>
+                            <p class="text-theme-muted small mb-0">Aggiorna le impostazioni del ruolo</p>
+                        </div>
+                    </div>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body modal-body-theme">
                     <input type="hidden" id="modifyId" name="idRuolo">
-                    <div class="mb-3">
-                        <label for="modifyNome" class="form-label fw-medium text-theme-secondary">Nome</label>
-                        <input type="text" class="form-control form-control-theme" id="modifyNome" name="nome" required>
+                    
+                    <!-- Preview Badge -->
+                    <div class="mb-4 p-3 rounded-3 d-flex align-items-center justify-content-center" style="background-color: var(--bg-body-alt); border: 1px dashed var(--border-color);">
+                        <div class="d-flex flex-column align-items-center">
+                            <span class="text-theme-muted small mb-2 uppercase fw-bold" style="font-size: 0.65rem; letter-spacing: 0.05em;">Anteprima Badge</span>
+                            <div id="rolePreviewBadge" class="px-3 py-1 rounded-pill fw-bold shadow-sm" style="background-color: var(--color-primary); color: white; transition: all 0.3s ease;">
+                                Ruolo
+                            </div>
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <label for="modifyColore" class="form-label fw-medium text-theme-secondary">Colore</label>
-                        <input type="color" class="form-control form-control-color-theme" id="modifyColore" name="colore" title="Scegli il colore">
-                    </div>
-                    <div class="mb-3">
-                        <label for="modifyDescrizione" class="form-label fw-medium text-theme-secondary">Descrizione</label>
-                        <textarea class="form-control form-control-theme" id="modifyDescrizione" name="descrizione" rows="3"></textarea>
+
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <label for="modifyNome" class="form-label fw-medium text-theme-secondary">Nome Ruolo</label>
+                            <input type="text" class="form-control form-control-theme" id="modifyNome" name="nome" required placeholder="Es. Manager">
+                        </div>
+                        <div class="col-12">
+                            <label for="modifyColore" class="form-label fw-medium text-theme-secondary">Colore Identificativo</label>
+                            <div class="d-flex gap-2 align-items-center">
+                                <input type="color" class="form-control form-control-color-theme" id="modifyColore" name="colore" title="Scegli il colore" style="width: 60px; flex-shrink: 0;">
+                                <input type="text" class="form-control form-control-theme flex-grow-1" id="modifyColoreHex" readonly style="font-family: monospace; font-size: 0.9rem;">
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <label for="modifyDescrizione" class="form-label fw-medium text-theme-secondary">Descrizione</label>
+                            <textarea class="form-control form-control-theme" id="modifyDescrizione" name="descrizione" rows="3" placeholder="Quali sono le responsabilità di questo ruolo?"></textarea>
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer modal-footer-theme">
                     <button type="button" class="btn btn-outline-secondary rounded-pill" data-bs-dismiss="modal">Annulla</button>
-                    <button type="submit" class="btn btn-theme-primary rounded-pill px-4">Salva Modifiche</button>
+                    <button type="submit" class="btn btn-theme-primary rounded-pill px-4">
+                        <i class="bi bi-check-lg me-1"></i> Salva Modifiche
+                    </button>
                 </div>
             </form>
         </div>
