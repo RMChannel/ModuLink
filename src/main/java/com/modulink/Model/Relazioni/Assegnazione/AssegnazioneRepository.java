@@ -24,4 +24,8 @@ public interface AssegnazioneRepository extends JpaRepository<AssegnazioneEntity
     @Modifying
     @Query(value = "INSERT INTO assegnazione (ID_Task, ID_Azienda, ID_Utente) VALUES (:idTask, :idAzienda, :idUtente)", nativeQuery = true)
     void insertAssegnazione(@Param("idTask") int idTask, @Param("idAzienda") int idAzienda, @Param("idUtente") int idUtente);
+
+    @Modifying
+    @Query(value = "DELETE FROM assegnazione WHERE ID_Azienda = :idAzienda", nativeQuery = true)
+    void deleteByIdAzienda(@Param("idAzienda") int idAzienda);
 }

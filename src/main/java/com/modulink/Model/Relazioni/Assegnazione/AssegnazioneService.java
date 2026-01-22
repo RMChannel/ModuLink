@@ -35,4 +35,9 @@ public class AssegnazioneService {
         List<AssegnazioneEntity> assegnazioni = assegnazioneRepository.findByUtente(utente);
         return assegnazioni.stream().map(AssegnazioneEntity::getTask).toList();
     }
+
+    @Transactional
+    public void deleteAllByAzienda(int idAzienda) {
+        assegnazioneRepository.deleteByIdAzienda(idAzienda);
+    }
 }

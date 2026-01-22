@@ -146,27 +146,33 @@ public class AttivazioneService {
         AttivazioneEntity attivazioneEntity = attivazioneOpt.get();
 
         // Rimuovo tutte le pertinenze (permessi) associate a questa attivazione
-        // Importante: aggiornare anche le collezioni in memoria degli oggetti correlati (Modulo, Ruolo)
-        // per evitare che riferiscano a entità cancellate (TransientObjectException)
         List<PertinenzaEntity> pertinenze = pertinenzaRepository.findAllByAttivazione(attivazioneEntity);
-        
+
+        // Rimuovi in modo sicuro da Modulo per evitare TransientObjectException dovuta al CascadeType.ALL
+        if (modulo.getAffiliazioni() != null) {
+            modulo.getAffiliazioni().removeIf(p ->
+                    p.getId_azienda() == managedAzienda.getId_azienda() &&
+                            p.getId_modulo() == modulo.getId_modulo()
+            );
+        }
+
         for (PertinenzaEntity p : pertinenze) {
-            // Rimuovi da Modulo
-            if (modulo.getAffiliazioni() != null) {
-                modulo.getAffiliazioni().remove(p);
-            }
             // Rimuovi da Ruolo (se caricato)
-            // Nota: Ruolo è EAGER in Pertinenza, quindi è caricato.
             if (p.getRuolo() != null && p.getRuolo().getAffiliazioni() != null) {
-                 p.getRuolo().getAffiliazioni().remove(p);
+                // Rimuovi usando l'identità o ID per sicurezza
+                boolean removed = p.getRuolo().getAffiliazioni().remove(p);
+                if (!removed) {
+                    p.getRuolo().getAffiliazioni().removeIf(rp ->
+                            rp.getId_ruolo() == p.getId_ruolo() &&
+                                    rp.getId_modulo() == p.getId_modulo() &&
+                                    rp.getId_azienda() == p.getId_azienda()
+                    );
+                }
             }
         }
-        
+
         pertinenzaRepository.deleteAll(pertinenze);
         pertinenzaRepository.flush();
-
-        // Detach del modulo dalla sessione come sicurezza aggiuntiva
-        entityManager.detach(modulo);
 
         attivazioneRepository.delete(attivazioneEntity);
         attivazioneRepository.flush();
