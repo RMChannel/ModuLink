@@ -93,6 +93,34 @@
             border-radius: 0.5rem;
             border: 1px solid var(--border-color);
         }
+        .preview-container {
+            position: relative;
+            display: none;
+            max-width: 200px;
+            margin-top: 1rem;
+        }
+        .btn-remove-logo {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background-color: #dc3545;
+            color: white;
+            border: 2px solid white;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            z-index: 10;
+            padding: 0;
+            transition: background-color 0.2s;
+        }
+        .btn-remove-logo:hover {
+            background-color: #bb2d3b;
+        }
     </style>
 </head>
 <body>
@@ -195,10 +223,18 @@
                             <label class="form-label">
                                 <i class="bi bi-image-fill text-primary me-2"></i>Logo Aziendale
                             </label>
+
+                            <!-- Hidden field for deletion -->
+                            <input type="hidden" th:field="*{deleteFoto}" id="deleteFotoInput">
                             
-                            <div th:if="${currentLogoPath != null and !currentLogoPath.isEmpty()}" class="mb-2">
+                            <div th:if="${currentLogoPath != null and !currentLogoPath.isEmpty()}" id="currentLogoSection" class="mb-3">
                                 <p class="text-muted small mb-1">Logo Attuale:</p>
-                                <img th:src="@{'/' + ${currentLogoPath}}" class="current-logo" alt="Logo Corrente">
+                                <div class="position-relative d-inline-block">
+                                    <img th:src="@{'/' + ${currentLogoPath}}" class="current-logo" alt="Logo Corrente">
+                                    <button type="button" class="btn-remove-logo" onclick="markExistingLogoForDeletion()" title="Rimuovi logo attuale">
+                                        <i class="bi bi-x"></i>
+                                    </button>
+                                </div>
                             </div>
 
                             <div class="file-upload-wrapper">
@@ -209,7 +245,13 @@
                                 </label>
                                 <input type="file" class="file-upload-input" id="logo" th:field="*{logo}" accept="image/*" onchange="previewLogo(this)">
                             </div>
-                            <img id="logoPreview" class="logo-preview" alt="Anteprima nuovo logo">
+                            
+                            <div id="previewContainer" class="preview-container">
+                                <img id="logoPreview" class="logo-preview" alt="Anteprima nuovo logo" style="display: block; width: 100%; margin-top: 0; border: 1px solid var(--border-color); border-radius: 0.5rem;">
+                                <button type="button" class="btn-remove-logo" onclick="removeNewLogo()" title="Rimuovi foto selezionata">
+                                    <i class="bi bi-x"></i>
+                                </button>
+                            </div>
                         </div>
 
                         <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
@@ -230,6 +272,8 @@
     function previewLogo(input) {
         const fileName = document.getElementById('fileName');
         const preview = document.getElementById('logoPreview');
+        const container = document.getElementById('previewContainer');
+        const deleteFotoInput = document.getElementById('deleteFotoInput');
 
         if (input.files && input.files[0]) {
             fileName.textContent = input.files[0].name;
@@ -237,9 +281,34 @@
             const reader = new FileReader();
             reader.onload = function(e) {
                 preview.src = e.target.result;
-                preview.style.display = 'block';
+                container.style.display = 'block';
             };
             reader.readAsDataURL(input.files[0]);
+
+            // Se l'utente carica un nuovo logo, annulliamo la richiesta di cancellazione di quello vecchio
+            if (deleteFotoInput) deleteFotoInput.value = "false";
+        }
+    }
+
+    function removeNewLogo() {
+        const input = document.getElementById('logo');
+        const fileName = document.getElementById('fileName');
+        const container = document.getElementById('previewContainer');
+        const preview = document.getElementById('logoPreview');
+
+        input.value = ''; // Reset file input
+        fileName.textContent = 'Clicca per caricare un nuovo logo'; // Reset text
+        preview.src = ''; // Clear image source
+        container.style.display = 'none'; // Hide container
+    }
+
+    function markExistingLogoForDeletion() {
+        const currentLogoSection = document.getElementById('currentLogoSection');
+        const deleteFotoInput = document.getElementById('deleteFotoInput');
+        
+        if (confirm('Sei sicuro di voler rimuovere il logo attuale?')) {
+            if (deleteFotoInput) deleteFotoInput.value = "true";
+            if (currentLogoSection) currentLogoSection.style.display = 'none';
         }
     }
 </script>

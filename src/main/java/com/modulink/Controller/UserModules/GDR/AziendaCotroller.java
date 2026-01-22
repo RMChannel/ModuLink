@@ -1,7 +1,6 @@
 package com.modulink.Controller.UserModules.GDR;
 
 import com.modulink.Controller.ModuloController;
-import com.modulink.Controller.Register.RegisterAziendaForm;
 import com.modulink.Model.Azienda.AziendaEntity;
 import com.modulink.Model.Azienda.AziendaService;
 import com.modulink.Model.Modulo.ModuloService;
@@ -49,7 +48,7 @@ public class AziendaCotroller extends ModuloController {
             UtenteEntity utente = utenteOpt.get();
             AziendaEntity azienda = utente.getAzienda();
 
-            RegisterAziendaForm form = new RegisterAziendaForm();
+            EditAziendaForm form = new EditAziendaForm();
             form.setNomeAzienda(azienda.getNome());
             form.setPiva(azienda.getPiva());
             form.setIndirizzo(azienda.getIndirizzo());
@@ -67,7 +66,7 @@ public class AziendaCotroller extends ModuloController {
 
 
     @PostMapping("/edit")
-    public String edit(Principal principal, Model model, @Valid @ModelAttribute("registerAziendaForm") RegisterAziendaForm form, BindingResult result) throws IOException {
+    public String edit(Principal principal, Model model, @Valid @ModelAttribute("registerAziendaForm") EditAziendaForm form, BindingResult result) throws IOException {
         if (principal == null) {
             return "redirect:/";
         }
@@ -110,18 +109,28 @@ public class AziendaCotroller extends ModuloController {
             azienda.setTelefono(form.getTelefono());
 
             // Handle Logo
+            if (form.isDeleteFoto()){
+                if(azienda.getLogo()!=null && !azienda.getLogo().isEmpty()) {
+                    Files.deleteIfExists(Paths.get(azienda.getLogo()));
+                }
+                azienda.setLogo("");
+            }
+
             MultipartFile file = form.getLogo();
             if (file != null && !file.isEmpty()) {
                 String logodir = "azienda-logos/";
                 Path uploadPath = Paths.get(logodir);
                 if (!uploadPath.toFile().exists()) uploadPath.toFile().mkdirs();
                 
-                String filename = form.getPiva() + file.getOriginalFilename();
+                String filename = form.getPiva() + "_" + System.currentTimeMillis() + "_" + file.getOriginalFilename();
                 Path filePath = uploadPath.resolve(filename);
                 
-                if (Files.exists(filePath)) Files.delete(filePath);
+                // If we are replacing an existing logo, delete the old one
+                if (!form.isDeleteFoto() && azienda.getLogo() != null && !azienda.getLogo().isEmpty()) {
+                    Files.deleteIfExists(Paths.get(azienda.getLogo()));
+                }
+
                 Files.write(filePath, file.getBytes());
-                
                 azienda.setLogo(logodir + filename);
             }
 
