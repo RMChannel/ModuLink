@@ -15,13 +15,15 @@ import java.util.Objects;
  * <strong>Regola di Mapping JPA (@IdClass):</strong><br>
  * I nomi dei campi definiti in questa classe devono corrispondere <em>esattamente</em>
  * ai nomi degli attributi annotati con {@code @Id} nella classe {@link UtenteEntity}.
+ * </p>
  * <p>
  * La classe implementa {@link Serializable} come richiesto obbligatoriamente dalle specifiche JPA
  * per le classi utilizzate come identificatori composti.
+ * </p>
  *
  * @see UtenteEntity
  * @author Modulink Team
- * @version 1.0
+ * @version 1.0.9
  */
 public class UtenteID implements Serializable {
 
@@ -31,6 +33,7 @@ public class UtenteID implements Serializable {
      * Corrisponde all'attributo {@code private int id_utente} in {@link UtenteEntity}.
      * Questo valore viene solitamente calcolato manualmente (es. MAX ID + 1) in fase di registrazione
      * per garantire la sequenzialità specifica per azienda.
+     * </p>
      */
     private int id_utente;
 
@@ -40,9 +43,11 @@ public class UtenteID implements Serializable {
      * <strong>ATTENZIONE:</strong> Il nome di questo campo deve essere "azienda" (e non "id_azienda")
      * perché deve coincidere con il nome dell'attributo di relazione nella Entity:
      * {@code private AziendaEntity azienda;}.
+     * </p>
      * <p>
      * JPA si occupa automaticamente di mappare la Primary Key dell'oggetto {@code AziendaEntity}
      * a questo valore intero durante le operazioni di persistenza.
+     * </p>
      */
     private int azienda;
 
@@ -51,6 +56,7 @@ public class UtenteID implements Serializable {
      * <p>
      * Richiesto obbligatoriamente dalle specifiche JPA per l'istanziazione tramite reflection
      * (es. durante il caricamento da database).
+     * </p>
      */
     public UtenteID() {}
 
@@ -58,6 +64,7 @@ public class UtenteID implements Serializable {
      * Costruttore parametrico per creare un'istanza della chiave composta.
      * <p>
      * Utile per istanziare chiavi per ricerche `findById` o riferimenti.
+     * </p>
      *
      * @param id_utente L'ID sequenziale dell'utente.
      * @param azienda   L'ID dell'azienda di appartenenza.
@@ -73,6 +80,7 @@ public class UtenteID implements Serializable {
      * Fondamentale per il corretto funzionamento di Hibernate quando l'entità
      * viene inserita in Collezioni (es. {@code Set}) o gestita nella Cache di primo livello.
      * Confronta sia l'ID utente che l'ID azienda.
+     * </p>
      *
      * @param o L'oggetto da confrontare con l'istanza corrente.
      * @return {@code true} se entrambi i campi (id_utente e azienda) coincidono e l'oggetto è dello stesso tipo.
@@ -90,6 +98,7 @@ public class UtenteID implements Serializable {
      * <p>
      * Utilizza {@link Objects#hash(Object...)} per combinare i due identificativi,
      * garantendo una distribuzione uniforme e la coerenza con il metodo {@link #equals(Object)}.
+     * </p>
      *
      * @return L'hash code calcolato.
      */

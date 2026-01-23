@@ -8,6 +8,7 @@ import org.springframework.security.crypto.bcrypt.BCrypt;
  * Questa classe fornisce metodi statici per mettere in sicurezza le credenziali degli utenti
  * utilizzando l'algoritmo <strong>BCrypt</strong>. BCrypt è uno standard di settore che incorpora
  * automaticamente un "salt" casuale per proteggere dagli attacchi tramite rainbow table.
+ * </p>
  * <p>
  * Caratteristiche principali:
  * <ul>
@@ -16,10 +17,11 @@ import org.springframework.security.crypto.bcrypt.BCrypt;
  * </ul>
  * <p>
  * Utilizzare questa classe durante le fasi di registrazione (per l'hashing) e di login (per la verifica).
+ * </p>
  *
  * @see org.springframework.security.crypto.bcrypt.BCrypt
  * @author Modulink Team
- * @version 1.0
+ * @version 1.1.8
  */
 public class PasswordUtility {
 
@@ -28,6 +30,7 @@ public class PasswordUtility {
      * <p>
      * Lancia un'eccezione se invocato accidentalmente (anche tramite reflection),
      * garantendo che la classe sia utilizzata solo tramite i suoi metodi statici.
+     * </p>
      */
     private PasswordUtility() {
         throw new IllegalStateException("Utility class");
@@ -39,9 +42,11 @@ public class PasswordUtility {
      * Questo metodo utilizza <code>BCrypt.gensalt()</code> per generare un salt casuale
      * e applicarlo alla password. Di conseguenza, chiamando questo metodo più volte
      * con la stessa password, si otterranno hash differenti ogni volta.
+     * </p>
      * <p>
      * Da utilizzare prima di salvare la password nel database (es. in fase di registrazione).
      * La stringa risultante include il salt e le informazioni sull'algoritmo necessarie per la verifica futura.
+     * </p>
      *
      * @param plainPassword La password in chiaro inserita dall'utente.
      * @return Una stringa contenente l'hash cifrato della password (lunghezza tipica 60 caratteri).
@@ -56,8 +61,10 @@ public class PasswordUtility {
      * Questo metodo estrae il salt dall'hash memorizzato e lo utilizza per hashare
      * la password in chiaro fornita, confrontando poi i risultati. Gestisce internamente
      * la complessità del confronto sicuro contro attacchi temporali (timing attacks).
+     * </p>
      * <p>
      * Da utilizzare in fase di autenticazione (Login).
+     * </p>
      *
      * @param plainPassword  La password in chiaro inserita dall'utente al momento del login.
      * @param hashedPassword L'hash della password precedentemente generato e recuperato dal database.

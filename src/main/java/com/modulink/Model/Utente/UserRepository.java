@@ -15,14 +15,16 @@ import java.util.Optional;
  * Questa interfaccia estende {@link JpaRepository} per fornire operazioni CRUD standard
  * su database relazionali. Utilizza {@link UtenteID} come tipo della chiave primaria,
  * riflettendo la struttura a chiave composta dell'entità.
+ * </p>
  * <p>
  * Spring Data JPA genera automaticamente l'implementazione di questa interfaccia a runtime,
  * riducendo la necessità di scrivere codice boilerplate per l'accesso ai dati.
+ * </p>
  *
  * @see UtenteEntity
  * @see UtenteID
  * @author Modulink Team
- * @version 1.1
+ * @version 1.4.1
  */
 @Repository
 public interface UserRepository extends JpaRepository<UtenteEntity, UtenteID> {
@@ -33,6 +35,7 @@ public interface UserRepository extends JpaRepository<UtenteEntity, UtenteID> {
      * Questo è un "Query Method" derivato: Spring Data JPA analizza il nome del metodo
      * e crea automaticamente la query SQL corrispondente (es. <code>SELECT * FROM Utente WHERE Email = ?</code>).
      * Utilizzato principalmente durante le fasi di login e recupero credenziali.
+     * </p>
      *
      * @param email L'indirizzo email univoco dell'utente da cercare.
      * @return Un {@link Optional} contenente l'utente se trovato, oppure un Optional vuoto se nessun utente corrisponde all'email fornita.
@@ -44,10 +47,12 @@ public interface UserRepository extends JpaRepository<UtenteEntity, UtenteID> {
      * <p>
      * Questo metodo è fondamentale per la strategia di generazione manuale degli ID:
      * permette di conoscere l'ultimo ID assegnato per calcolare il successivo (<code>MAX + 1</code>).
+     * </p>
      * <p>
      * La funzione JPQL <code>COALESCE(MAX(u.id_utente), 0)</code> garantisce che, se l'azienda
      * non ha ancora utenti (e quindi MAX restituisce <code>null</code>), il metodo ritorni <code>0</code>
      * invece di lanciare un'eccezione o restituire null.
+     * </p>
      *
      * @param idAzienda L'ID dell'azienda di cui si vuole trovare il massimo ID utente corrente.
      * @return L'ID più alto presente (o 0 se l'azienda è vuota).
@@ -56,6 +61,12 @@ public interface UserRepository extends JpaRepository<UtenteEntity, UtenteID> {
     int findMaxIdByAzienda(@Param("idAzienda") int idAzienda);
 
 
+    /**
+     * Recupera tutti gli utenti appartenenti ad una specifica azienda.
+     *
+     * @param azienda L'entità Azienda per cui filtrare gli utenti.
+     * @return Una lista di tutti gli utenti associati all'azienda data.
+     */
     List<UtenteEntity> getAllByAziendaIs(AziendaEntity azienda);
 
     /**
