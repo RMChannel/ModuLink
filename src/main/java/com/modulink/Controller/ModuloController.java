@@ -32,7 +32,6 @@ public abstract class ModuloController {
      * Servizio per la logica di business e il controllo accessi dei moduli.
      */
     private final ModuloService moduloService;
-
     /**
      * Costruttore per inizializzare il controller con il servizio moduli e l'identificativo specifico.
      *

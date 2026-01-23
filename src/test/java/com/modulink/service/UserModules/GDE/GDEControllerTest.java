@@ -1,4 +1,4 @@
-package com.modulink.Controller.UserModules.GDE;
+package com.modulink.service.UserModules.GDE;
 
 import com.modulink.Model.Azienda.AziendaEntity;
 import com.modulink.Model.Eventi.EventoEntity;
