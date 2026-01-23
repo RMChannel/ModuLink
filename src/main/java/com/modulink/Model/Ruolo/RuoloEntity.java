@@ -11,21 +11,22 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Rappresenta l'entità <strong>Ruolo</strong> nel sistema Modulink.
+ * Rappresenta l'entità di persistenza <strong>Ruolo</strong> all'interno dell'architettura RBAC (Role-Based Access Control) di Modulink.
  * <p>
- * Questa classe mappa la tabella <code>Ruolo</code> dello schema <code>modulink</code>.
- * I ruoli definiscono le mansioni o i livelli di accesso degli utenti all'interno di una specifica azienda,
- * costituendo la base per il controllo degli accessi basato sui ruoli (RBAC).
+ * Questa classe mappa la tabella <code>Ruolo</code> dello schema <code>modulink</code> e definisce i profili di autorizzazione
+ * assegnabili agli utenti all'interno di un contesto aziendale (Tenant).
+ * </p>
  * <p>
- * L'entità utilizza una chiave primaria composta definita dalla classe {@link RuoloID},
- * formata dall'unione dell'ID del ruolo e dell'ID dell'azienda. Questo permette a diverse aziende
- * di avere ruoli con lo stesso ID locale (es. ID 1 = Admin per l'azienda A, ID 1 = Admin per l'azienda B),
- * mantenendo l'isolamento dei dati (Multi-tenancy).
+ * L'entità utilizza una <strong>chiave primaria composta</strong> definita dalla classe {@link RuoloID},
+ * costituita dalla coppia ({@code id_ruolo}, {@code id_azienda}). Questa strategia di partizionamento consente
+ * la coesistenza di ID ruolo identici (es. ID 1) in tenant differenti, garantendo l'isolamento logico dei dati.
+ * </p>
  *
  * @see RuoloID
  * @see AziendaEntity
  * @author Modulink Team
- * @version 1.0
+ * @version 1.5.0
+ * @since 1.0.0
  */
 @Entity
 @Table(name="Ruolo", schema="modulink")
@@ -33,22 +34,26 @@ import java.util.Set;
 public class RuoloEntity {
 
     /**
-     * Identificativo numerico del ruolo.
+     * Identificativo numerico locale del ruolo.
      * <p>
-     * Questo campo è parte della chiave primaria composta.
-     * Non essendo annotato con <code>@GeneratedValue</code>, il valore deve essere
-     * assegnato logicamente dall'applicazione (es. sequenziale per azienda).
+     * Parte della chiave primaria composta. Questo valore viene gestito programmaticamente per mantenere sequenze separate per ogni azienda.
+     * </p>
+     *
+     * @since 1.0.0
      */
     @Id
     @Column(name="ID_Ruolo", nullable = false)
     private int id_ruolo;
 
     /**
-     * L'azienda a cui questo ruolo appartiene.
+     * Riferimento all'azienda proprietaria del ruolo.
      * <p>
-     * Parte della chiave primaria composta. Definisce il contesto aziendale
-     * in cui il ruolo è valido e garantisce l'univocità della coppia (ID_Ruolo, ID_Azienda).
-     * Mappata tramite relazione Many-to-One.
+     * Parte della chiave primaria composta (Partition Key).
+     * La relazione è gestita con una Foreign Key vincolata a livello database con clausola <code>ON DELETE CASCADE</code>,
+     * assicurando che l'eliminazione di un'azienda comporti la rimozione automatica di tutti i suoi ruoli.
+     * </p>
+     *
+     * @since 1.0.0
      */
     @Id
     @ManyToOne
@@ -57,49 +62,82 @@ public class RuoloEntity {
     private AziendaEntity azienda;
 
     /**
-     * Nome del ruolo (es. "Amministratore", "Dipendente", "Manager").
+     * Denominazione funzionale del ruolo (es. "Amministratore", "Revisore").
      * <p>
-     * Utilizzato per la visualizzazione nelle interfacce utente e per la logica
-     * di business non basata su ID.
+     * Campo obbligatorio utilizzato per l'identificazione visiva nelle interfacce di gestione.
+     * </p>
+     *
+     * @since 1.0.0
      */
     @Column(name="Nome", nullable = false)
     private String nome;
 
     /**
-     * Rappresentazione cromatica del ruolo.
+     * Codice colore esadecimale (es. "#FF5733") o nome CSS standard.
      * <p>
-     * Solitamente contiene un codice esadecimale (es. "#FF5733") o il nome di un colore
-     * utilizzato nel frontend per distinguere visivamente i ruoli (es. nei badge o calendari).
+     * Attributo di presentazione utilizzato dal frontend per renderizzare badge o etichette distintive per il ruolo.
+     * </p>
+     *
+     * @since 1.0.0
      */
     @Column(name="Colore", nullable = false)
     private String colore;
 
     /**
-     * Descrizione opzionale delle responsabilità o dei permessi associati al ruolo.
-     * Utile per fornire dettagli aggiuntivi agli amministratori di sistema.
+     * Descrizione testuale estesa delle responsabilità e dei privilegi conferiti dal ruolo.
+     * <p>
+     * Campo opzionale (Nullable).
+     * </p>
+     *
+     * @since 1.0.0
      */
     @Column(name="Descrizione")
     private String descrizione;
 
     /**
-     * Relazione One-To-Many verso l'entità di associazione intermedio.
+     * Insieme delle associazioni Utente-Ruolo attive.
      * <p>
-     * Questa struttura permette di navigare dai ruoli agli utenti che li possiedono.
+     * Relazione One-To-Many bidirezionale verso {@link AssociazioneEntity}.
+     * Configurato con <code>FetchType.EAGER</code> per caricare immediatamente gli utenti associati
+     * e <code>CascadeType.ALL</code> per propagare le operazioni di persistenza/rimozione.
+     * </p>
+     *
+     * @since 1.0.0
      */
     @OneToMany(mappedBy = "ruolo", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<AssociazioneEntity> associazioni = new HashSet<>();
 
+    /**
+     * Insieme delle affiliazioni o pertinenze ai Moduli.
+     * <p>
+     * Relazione One-To-Many verso {@link PertinenzaEntity}, definisce quali moduli funzionali
+     * sono accessibili agli utenti che possiedono questo ruolo.
+     * </p>
+     *
+     * @since 1.2.0
+     */
     @OneToMany(mappedBy = "ruolo", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<PertinenzaEntity> affiliazioni = new HashSet<>();
 
     /**
-     * Costruttore vuoto predefinito.
+     * Costruttore predefinito (No-Args).
      * <p>
-     * Richiesto obbligatoriamente da JPA per l'istanziazione dell'entità tramite reflection
-     * durante il recupero dei dati dal database.
+     * Necessario per la conformità alle specifiche JPA (Java Persistence API).
+     * </p>
+     *
+     * @since 1.0.0
      */
     public RuoloEntity(){}
 
+    /**
+     * Costruttore di convenienza per la creazione di nuovi ruoli (con ID provvisorio 0).
+     *
+     * @param azienda     L'azienda di appartenenza.
+     * @param nome        Il nome del ruolo.
+     * @param colore      Il colore distintivo.
+     * @param descrizione La descrizione funzionale.
+     * @since 1.0.0
+     */
     public RuoloEntity(AziendaEntity azienda, String nome, String colore, String descrizione) {
         this.id_ruolo = 0;
         this.azienda = azienda;
@@ -109,13 +147,14 @@ public class RuoloEntity {
     }
 
     /**
-     * Costruttore completo per inizializzare un nuovo Ruolo.
+     * Costruttore completo per l'inizializzazione dell'entità.
      *
-     * @param id_ruolo    L'ID numerico del ruolo (parte della PK).
-     * @param azienda     L'azienda di appartenenza (parte della PK).
-     * @param nome        Il nome descrittivo del ruolo.
-     * @param colore      Il colore associato al ruolo (es. Hex code).
-     * @param descrizione Una descrizione breve del ruolo.
+     * @param id_ruolo    L'ID numerico locale.
+     * @param azienda     L'azienda di appartenenza.
+     * @param nome        Il nome del ruolo.
+     * @param colore      Il colore distintivo.
+     * @param descrizione La descrizione funzionale.
+     * @since 1.0.0
      */
     public RuoloEntity(int id_ruolo, AziendaEntity azienda, String nome, String colore, String descrizione) {
         this.id_ruolo = id_ruolo;
@@ -126,9 +165,9 @@ public class RuoloEntity {
     }
 
     /**
-     * Restituisce l'ID locale del ruolo.
-     *
-     * @return L'intero che identifica il ruolo all'interno dell'azienda.
+     * Recupera l'ID locale del ruolo.
+     * @return Intero ID.
+     * @since 1.0.0
      */
     public int getId_ruolo() {
         return id_ruolo;
@@ -136,35 +175,35 @@ public class RuoloEntity {
 
     /**
      * Imposta l'ID locale del ruolo.
-     *
-     * @param id_ruolo Il nuovo ID da assegnare.
+     * @param id_ruolo Nuovo ID.
+     * @since 1.0.0
      */
     public void setId_ruolo(int id_ruolo) {
         this.id_ruolo = id_ruolo;
     }
 
     /**
-     * Restituisce l'azienda associata a questo ruolo.
-     *
-     * @return L'oggetto {@link AziendaEntity} di appartenenza.
+     * Recupera l'azienda associata.
+     * @return Oggetto {@link AziendaEntity}.
+     * @since 1.0.0
      */
     public AziendaEntity getAzienda() {
         return azienda;
     }
 
     /**
-     * Associa il ruolo a una specifica azienda.
-     *
-     * @param azienda La nuova azienda di appartenenza.
+     * Imposta l'azienda associata.
+     * @param azienda Nuova azienda.
+     * @since 1.0.0
      */
     public void setAzienda(AziendaEntity azienda) {
         this.azienda = azienda;
     }
 
     /**
-     * Restituisce il nome visualizzabile del ruolo.
-     *
-     * @return Il nome del ruolo.
+     * Recupera il nome del ruolo.
+     * @return Stringa nome.
+     * @since 1.0.0
      */
     public String getNome() {
         return nome;
@@ -172,17 +211,17 @@ public class RuoloEntity {
 
     /**
      * Imposta il nome del ruolo.
-     *
-     * @param nome Il nome da assegnare.
+     * @param nome Nuovo nome.
+     * @since 1.0.0
      */
     public void setNome(String nome) {
         this.nome = nome;
     }
 
     /**
-     * Restituisce il colore associato al ruolo per scopi di UI.
-     *
-     * @return La stringa rappresentante il colore.
+     * Recupera il colore del ruolo.
+     * @return Stringa codice colore.
+     * @since 1.0.0
      */
     public String getColore() {
         return colore;
@@ -190,43 +229,63 @@ public class RuoloEntity {
 
     /**
      * Imposta il colore del ruolo.
-     *
-     * @param colore Il nuovo colore (es. codice HEX o nome CSS).
+     * @param colore Nuovo codice colore.
+     * @since 1.0.0
      */
     public void setColore(String colore) {
         this.colore = colore;
     }
 
     /**
-     * Restituisce la descrizione dettagliata del ruolo.
-     *
-     * @return La descrizione, o null se non presente.
+     * Recupera la descrizione.
+     * @return Stringa descrizione.
+     * @since 1.0.0
      */
     public String getDescrizione() {
         return descrizione;
     }
 
     /**
-     * Imposta la descrizione del ruolo.
-     *
-     * @param descrizione La nuova descrizione.
+     * Imposta la descrizione.
+     * @param descrizione Nuova descrizione.
+     * @since 1.0.0
      */
     public void setDescrizione(String descrizione) {
         this.descrizione = descrizione;
     }
 
+    /**
+     * Recupera le associazioni utente collegate.
+     * @return Set di {@link AssociazioneEntity}.
+     * @since 1.0.0
+     */
     public Set<AssociazioneEntity> getAssociazioni() {
         return associazioni;
     }
 
+    /**
+     * Imposta le associazioni utente.
+     * @param associazioni Nuovo set di associazioni.
+     * @since 1.0.0
+     */
     public void setAssociazioni(Set<AssociazioneEntity> associazioni) {
         this.associazioni = associazioni;
     }
 
+    /**
+     * Recupera le affiliazioni ai moduli.
+     * @return Set di {@link PertinenzaEntity}.
+     * @since 1.2.0
+     */
     public Set<PertinenzaEntity> getAffiliazioni() {
         return affiliazioni;
     }
 
+    /**
+     * Imposta le affiliazioni ai moduli.
+     * @param affiliazioni Nuovo set di affiliazioni.
+     * @since 1.2.0
+     */
     public void setAffiliazioni(Set<PertinenzaEntity> affiliazioni) {
         this.affiliazioni = affiliazioni;
     }

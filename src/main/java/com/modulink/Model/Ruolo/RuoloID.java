@@ -4,49 +4,63 @@ import java.io.Serializable;
 import java.util.Objects;
 
 /**
- * Classe che rappresenta la chiave primaria composta per l'entità {@link RuoloEntity}.
+ * Classe che definisce la struttura della chiave primaria composta per l'entità {@link RuoloEntity}.
  * <p>
- * In JPA, una chiave composta richiede una classe dedicata annotata o referenziata da {@code @IdClass}.
- * Questa classe deve obbligatoriamente implementare l'interfaccia {@link Serializable}
- * e sovrascrivere i metodi {@code equals} e {@code hashCode} per garantire
- * l'unicità e il corretto funzionamento nella mappa di identità di Hibernate.
+ * In accordo con le specifiche JPA 3.x, quando un'entità utilizza una chiave composta derivata da relazioni
+ * (es. <code>@ManyToOne</code> che fa parte dell'ID), è necessario definire una classe ID corrispondente.
+ * </p>
  * <p>
- * L'identità di un ruolo è definita non solo dal suo ID numerico, ma anche dall'azienda
- * a cui appartiene, permettendo a diverse aziende di avere ruoli con lo stesso ID locale.
+ * La scelta di una chiave composta (ID Ruolo + ID Azienda) abilita lo schema Multi-Tenancy a livello di applicazione,
+ * permettendo la duplicazione degli ID sequenziali dei ruoli attraverso diversi tenant.
+ * </p>
  *
  * @see RuoloEntity
  * @author Modulink Team
- * @version 1.0
+ * @version 1.5.0
+ * @since 1.0.0
  */
 public class RuoloID implements Serializable {
 
     /**
-     * Identificativo numerico del ruolo.
-     * Corrisponde al campo {@code id_ruolo} definito nell'entità.
+     * Identificativo numerico locale del ruolo.
+     * <p>
+     * Corrisponde all'attributo {@code id_ruolo} dell'entità {@link RuoloEntity}.
+     * Il nome del campo deve coincidere esattamente con quello della classe Entity.
+     * </p>
+     *
+     * @since 1.0.0
      */
     private int id_ruolo;
 
     /**
-     * Identificativo numerico dell'azienda.
+     * Identificativo numerico dell'azienda (Foreign Key).
      * <p>
-     * Corrisponde alla foreign key verso l'entità Azienda.
-     * Il nome del campo deve coincidere con il nome dell'attributo di relazione {@code @ManyToOne}
-     * presente nella classe Entity.
+     * Corrisponde all'attributo di relazione {@code azienda} dell'entità {@link RuoloEntity}.
+     * Anche se nell'entità è un oggetto, qui viene mappato come tipo primitivo (int)
+     * corrispondente al tipo della Primary Key dell'entità target ({@link com.modulink.Model.Azienda.AziendaEntity}).
+     * </p>
+     *
+     * @since 1.0.0
      */
     private int azienda;
 
     /**
-     * Costruttore vuoto predefinito.
+     * Costruttore predefinito (No-Args).
      * <p>
-     * Necessario per la creazione dell'istanza tramite reflection da parte del provider JPA.
+     * Essenziale per permettere al provider JPA (Hibernate) di istanziare la classe
+     * durante le operazioni di caricamento (Lazy Loading) o merge.
+     * </p>
+     *
+     * @since 1.0.0
      */
     public RuoloID(){}
 
     /**
-     * Costruttore parametrico per istanziare una chiave specifica.
+     * Costruttore parametrico per la creazione diretta di istanze della chiave.
      *
-     * @param id_ruolo   L'ID del ruolo.
-     * @param azienda L'ID dell'azienda associata.
+     * @param id_ruolo L'ID numerico del ruolo.
+     * @param azienda  L'ID numerico dell'azienda associata.
+     * @since 1.0.0
      */
     public RuoloID(int id_ruolo, int azienda) {
         this.id_ruolo = id_ruolo;
@@ -54,13 +68,15 @@ public class RuoloID implements Serializable {
     }
 
     /**
-     * Verifica l'uguaglianza tra due chiavi composte.
+     * Verifica l'uguaglianza logica tra due istanze di chiave composta.
      * <p>
-     * Due oggetti {@code RuoloID} sono considerati identici solo se entrambi
-     * i campi {@code id_ruolo} e {@code azienda} coincidono.
+     * Il confronto avviene per valore su entrambi i campi costitutivi ({@code id_ruolo} e {@code azienda}).
+     * Fondamentale per il corretto funzionamento delle Collection Java e delle Cache di secondo livello di Hibernate.
+     * </p>
      *
-     * @param o L'oggetto con cui confrontare l'istanza corrente.
-     * @return {@code true} se gli oggetti rappresentano la stessa chiave primaria, {@code false} altrimenti.
+     * @param o L'oggetto da confrontare.
+     * @return {@code true} se gli oggetti sono strutturalmente identici, {@code false} altrimenti.
+     * @since 1.0.0
      */
     @Override
     public boolean equals(Object o) {
@@ -70,32 +86,52 @@ public class RuoloID implements Serializable {
     }
 
     /**
-     * Genera l'hash code per la chiave composta.
+     * Calcola il codice hash univoco per la chiave composta.
      * <p>
-     * Combina gli hash di {@code id_ruolo} e {@code azienda} per ottenere un identificativo
-     * efficiente per l'utilizzo in strutture dati basate su hash (es. HashMap, HashSet).
+     * Utilizza {@link Objects#hash(Object...)} per generare un hash consistente basato
+     * sui valori dei campi {@code id_ruolo} e {@code azienda}.
+     * </p>
      *
-     * @return L'intero rappresentante l'hash code.
+     * @return Valore intero dell'hash.
+     * @since 1.0.0
      */
     @Override
     public int hashCode() {
         return Objects.hash(id_ruolo, azienda);
     }
 
-    // Getter e Setter (Opzionali per JPA ma utili per manipolazione manuale)
-
+    /**
+     * Recupera l'identificativo del ruolo.
+     * @return L'ID intero del ruolo.
+     * @since 1.0.0
+     */
     public int getId_ruolo() {
         return id_ruolo;
     }
 
+    /**
+     * Imposta l'identificativo del ruolo.
+     * @param id_ruolo Il nuovo ID intero.
+     * @since 1.0.0
+     */
     public void setId_ruolo(int id_ruolo) {
         this.id_ruolo = id_ruolo;
     }
 
+    /**
+     * Recupera l'identificativo dell'azienda.
+     * @return L'ID intero dell'azienda.
+     * @since 1.0.0
+     */
     public int getAzienda() {
         return azienda;
     }
 
+    /**
+     * Imposta l'identificativo dell'azienda.
+     * @param azienda Il nuovo ID intero dell'azienda.
+     * @since 1.0.0
+     */
     public void setAzienda(int azienda) {
         this.azienda = azienda;
     }
