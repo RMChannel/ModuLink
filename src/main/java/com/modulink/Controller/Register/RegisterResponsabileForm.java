@@ -12,9 +12,11 @@ import org.springframework.web.multipart.MultipartFile;
  * i dati inviati dal client durante la procedura di registrazione di un nuovo utente con ruolo Responsabile.
  * Include le annotazioni di <strong>Jakarta Validation</strong> per garantire l'integrità dei dati
  * prima che vengano processati dalla logica di business.
+ * </p>
  *
  * @author Modulink Team
- * @version 1.0
+ * @version 1.1.0
+ * @since 1.0.0
  */
 public class RegisterResponsabileForm {
 

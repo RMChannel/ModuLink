@@ -19,12 +19,33 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Collections;
 
+/**
+ * Controller per il modulo <strong>GRU (Gestione Ruoli Utenti)</strong>.
+ * <p>
+ * Questo modulo permette di definire la struttura organizzativa dell'azienda attraverso la creazione
+ * e gestione di ruoli personalizzati. Fornisce le funzionalità per creare, modificare ed eliminare ruoli,
+ * nonché per assegnare massivamente utenti a specifici ruoli.
+ * Estende {@link ModuloController} (ID Modulo: 1) per la gestione dei permessi di accesso.
+ * </p>
+ *
+ * @author Modulink Team
+ * @version 2.1.0
+ * @since 1.2.0
+ */
 @Controller
 public class GRUController extends ModuloController {
     private final ModuloService moduloService;
     private final CustomUserDetailsService customUserDetailsService;
     private final RuoloService ruoloService;
 
+    /**
+     * Costruttore per l'iniezione delle dipendenze.
+     *
+     * @param moduloService            Servizio gestione moduli.
+     * @param customUserDetailsService Servizio utenti.
+     * @param ruoloService             Servizio gestione ruoli.
+     * @since 1.2.0
+     */
     public GRUController(ModuloService moduloService, CustomUserDetailsService customUserDetailsService, RuoloService ruoloService) {
         super(moduloService, 1);
         this.moduloService = moduloService;
@@ -32,6 +53,17 @@ public class GRUController extends ModuloController {
         this.ruoloService = ruoloService;
     }
 
+    /**
+     * Visualizza la dashboard di gestione ruoli.
+     * <p>
+     * Carica l'elenco dei ruoli esistenti e la lista completa degli utenti per facilitare le operazioni di assegnazione.
+     * </p>
+     *
+     * @param principal Identità utente loggato.
+     * @param model     Modello UI.
+     * @return Vista "moduli/gru/GestioneRuoli" o redirect.
+     * @since 1.2.0
+     */
     @GetMapping({"dashboard/gru/","dashboard/gru"})
     public String dashboardDispatcher(Principal principal, Model model) {
         String email =  principal.getName();
@@ -55,6 +87,16 @@ public class GRUController extends ModuloController {
         }
     }
 
+    /**
+     * Crea un nuovo ruolo aziendale personalizzato.
+     *
+     * @param newRoleForm   DTO con i dati del nuovo ruolo (nome, colore, descrizione).
+     * @param bindingResult Esito validazione.
+     * @param principal     Identità utente.
+     * @param model         Modello UI.
+     * @return Redirect alla dashboard con esito.
+     * @since 1.2.0
+     */
     @PostMapping("dashboard/gru/add-role")
     public String addRole(@ModelAttribute("newRoleForm") @Valid NewRoleForm newRoleForm, BindingResult bindingResult, Principal principal, Model model) {
         String email = principal.getName();
@@ -82,6 +124,19 @@ public class GRUController extends ModuloController {
         }
     }
 
+    /**
+     * Modifica le proprietà di un ruolo esistente.
+     *
+     * @param idRuolo     ID del ruolo da modificare.
+     * @param nome        Nuovo nome.
+     * @param colore      Nuovo colore (esadecimale).
+     * @param descrizione Nuova descrizione.
+     * @param principal   Identità utente.
+     * @param model       Modello UI.
+     * @param newRoleForm DTO placeholder.
+     * @return Redirect alla dashboard con esito.
+     * @since 1.2.0
+     */
     @PostMapping("dashboard/gru/modify-role")
     public String modifyRole(@RequestParam int idRuolo, @RequestParam String nome, @RequestParam String colore, @RequestParam String descrizione, Principal principal, Model model, @ModelAttribute("newRoleForm") NewRoleForm newRoleForm) {
         Optional<UtenteEntity> utenteOpt = customUserDetailsService.findByEmail(principal.getName());
@@ -115,6 +170,19 @@ public class GRUController extends ModuloController {
         }
     }
 
+    /**
+     * Elimina un ruolo personalizzato.
+     * <p>
+     * Non permette l'eliminazione dei ruoli di sistema (Default).
+     * </p>
+     *
+     * @param idRuolo     ID del ruolo.
+     * @param principal   Identità utente.
+     * @param model       Modello UI.
+     * @param newRoleForm DTO placeholder.
+     * @return Redirect con esito operazione.
+     * @since 1.2.0
+     */
     @PostMapping("dashboard/gru/delete-role")
     public String deleteRole(@RequestParam int idRuolo, Principal principal, Model model, @ModelAttribute("newRoleForm") NewRoleForm newRoleForm) {
         Optional<UtenteEntity> utenteOpt = customUserDetailsService.findByEmail(principal.getName());
@@ -142,6 +210,20 @@ public class GRUController extends ModuloController {
         }
     }
 
+    /**
+     * Assegna un insieme di utenti a uno specifico ruolo.
+     * <p>
+     * Aggiorna le associazioni esistenti, sovrascrivendo la lista degli utenti appartenenti al ruolo.
+     * </p>
+     *
+     * @param idRuolo     ID del ruolo target.
+     * @param userIds     Lista degli ID degli utenti da assegnare.
+     * @param principal   Identità utente.
+     * @param model       Modello UI.
+     * @param newRoleForm DTO placeholder.
+     * @return Redirect con esito.
+     * @since 1.2.5
+     */
     @PostMapping("dashboard/gru/assign-role")
     public String assignRole(@RequestParam int idRuolo, @RequestParam(required = false) List<Integer> userIds, Principal principal, Model model, @ModelAttribute("newRoleForm") NewRoleForm newRoleForm) {
         Optional<UtenteEntity> utenteOpt = customUserDetailsService.findByEmail(principal.getName());
@@ -172,6 +254,11 @@ public class GRUController extends ModuloController {
         }
     }
 
+    /**
+     * Il modulo GRU è un componente core del sistema di gestione utenti e non può essere disinstallato.
+     *
+     * @param azienda Azienda target.
+     */
     //Modulo non disinstallabile
     @Override
     public void disinstallaModulo(AziendaEntity azienda) {

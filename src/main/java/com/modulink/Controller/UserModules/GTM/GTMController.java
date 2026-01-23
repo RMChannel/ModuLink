@@ -33,6 +33,22 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+/**
+ * Controller per il modulo <strong>GTM (Gestione Task Manager)</strong>.
+ * <p>
+ * Questo controller gestisce l'intero ciclo di vita delle attività operative (Task):
+ * creazione, assegnazione a singoli utenti o interi ruoli, modifica, completamento e cancellazione.
+ * Integra un sistema di assegnazione flessibile basato su {@link GTMMessage} che permette di
+ * indirizzare i task in modo polimorfico.
+ * </p>
+ * <p>
+ * Estende {@link ModuloController} (ID Modulo: 5) per la verifica dei permessi.
+ * </p>
+ *
+ * @author Modulink Team
+ * @version 3.2.1
+ * @since 1.3.0
+ */
 @Controller
 public class GTMController extends ModuloController {
     private final TaskService taskService;
@@ -41,6 +57,17 @@ public class GTMController extends ModuloController {
     private final RuoloService ruoloService;
     private final AssociazioneService associazioneService;
 
+    /**
+     * Costruttore per l'iniezione delle dipendenze.
+     *
+     * @param moduloService            Servizio moduli.
+     * @param taskService              Servizio gestione task.
+     * @param assegnazioneService      Servizio assegnazione task.
+     * @param customUserDetailsService Servizio utenti.
+     * @param ruoloService             Servizio ruoli.
+     * @param associazioneService      Servizio associazione utente-ruolo.
+     * @since 1.3.0
+     */
     public GTMController(ModuloService moduloService, TaskService taskService, AssegnazioneService assegnazioneService, CustomUserDetailsService customUserDetailsService, RuoloService ruoloService, AssociazioneService associazioneService) {
         super(moduloService, 5);
         this.taskService = taskService;
@@ -50,6 +77,18 @@ public class GTMController extends ModuloController {
         this.associazioneService = associazioneService;
     }
 
+    /**
+     * Visualizza la dashboard di gestione Task.
+     * <p>
+     * Recupera e mostra sia i task creati dall'utente corrente (per monitoraggio),
+     * sia i task assegnati all'utente (da completare).
+     * </p>
+     *
+     * @param principal Identità utente.
+     * @param model     Modello UI.
+     * @return Vista "moduli/gtm/GestioneTask" o redirect.
+     * @since 1.3.0
+     */
     @GetMapping({"/dashboard/gtm","/dashboard/gtm/"})
     public String getGTM(Principal principal, Model model) {
         Optional<UtenteEntity> utenteOpt = customUserDetailsService.findByEmail(principal.getName());
@@ -64,6 +103,17 @@ public class GTMController extends ModuloController {
         else return "redirect:/";
     }
 
+    /**
+     * API per recuperare la lista di possibili assegnatari (Utenti e Ruoli).
+     * <p>
+     * Utilizzato dal frontend per popolare il selettore di assegnazione.
+     * Restituisce una lista eterogenea di oggetti {@link GTMMessage} normalizzati.
+     * </p>
+     *
+     * @param principal Identità utente.
+     * @return JSON List di GTMMessage o BadRequest.
+     * @since 1.3.5
+     */
     @PostMapping("/dashboard/gtm/getusers")
     public Object getUsers(Principal principal) {
         Optional<UtenteEntity> utenteOpt = customUserDetailsService.findByEmail(principal.getName());
@@ -79,6 +129,21 @@ public class GTMController extends ModuloController {
         else return ResponseEntity.badRequest().build();
     }
 
+    /**
+     * Crea un nuovo Task.
+     * <p>
+     * Implementa la logica di esplosione delle assegnazioni: se un task è assegnato a un Ruolo,
+     * il sistema risolve tutti gli utenti appartenenti a quel ruolo e crea un'assegnazione per ciascuno.
+     * Esegue validazioni sulle date (scadenza futura).
+     * </p>
+     *
+     * @param principal     Identità creatore.
+     * @param model         Modello UI.
+     * @param form          DTO dati task.
+     * @param bindingResult Esito validazione.
+     * @return Redirect alla dashboard GTM con esito.
+     * @since 1.3.0
+     */
     @PostMapping({"/dashboard/gtm","/dashboard/gtm/"})
     public String createNewTask(Principal principal, Model model, @Valid @ModelAttribute("form") GTMForm form, BindingResult bindingResult) {
         Optional<UtenteEntity> utenteOpt = customUserDetailsService.findByEmail(principal.getName());
@@ -122,6 +187,18 @@ public class GTMController extends ModuloController {
         else return "redirect:/";
     }
 
+    /**
+     * Cancella un Task esistente.
+     * <p>
+     * Permesso solo all'utente che ha creato il task (Owner).
+     * </p>
+     *
+     * @param principal Identità utente.
+     * @param model     Modello UI.
+     * @param idTask    ID del task.
+     * @return Redirect con esito.
+     * @since 1.3.0
+     */
     @PostMapping({"/dashboard/gtm/delete-task","/dashboard/gtm/delete-task/"})
     public String removeTask(Principal principal, Model model, @RequestParam int idTask) {
         Optional<UtenteEntity> utenteOpt = customUserDetailsService.findByEmail(principal.getName());
@@ -138,6 +215,18 @@ public class GTMController extends ModuloController {
         else return "redirect:/";
     }
 
+    /**
+     * Marca un task come completato.
+     * <p>
+     * Imposta la data di completamento al momento attuale.
+     * </p>
+     *
+     * @param principal Identità utente.
+     * @param model     Modello UI.
+     * @param idTask    ID del task.
+     * @return Redirect con esito.
+     * @since 1.3.0
+     */
     @PostMapping({"/dashboard/gtm/set-as-completato","/dashboard/gtm/set-as-completato/"})
     public String setAsCompletato(Principal principal, Model model, @RequestParam int idTask) {
         Optional<UtenteEntity> utenteOpt = customUserDetailsService.findByEmail(principal.getName());
@@ -151,6 +240,20 @@ public class GTMController extends ModuloController {
         else return "redirect:/";
     }
 
+    /**
+     * Modifica i dettagli di un Task esistente.
+     * <p>
+     * Permette di cambiare titolo, priorità, scadenza, stato di completamento e assegnatari.
+     * Aggiorna le relazioni di assegnazione nel database.
+     * </p>
+     *
+     * @param principal     Identità creatore.
+     * @param model         Modello UI.
+     * @param form          DTO modifiche.
+     * @param bindingResult Esito validazione.
+     * @return Redirect con esito.
+     * @since 1.3.0
+     */
     @PostMapping({"/dashboard/gtm/edit-task","/dashboard/gtm/edit-task/"})
     public String editTask(Principal principal, Model model, @Valid @ModelAttribute("editForm") GTMEditForm form, BindingResult bindingResult) {
         Optional<UtenteEntity> utenteOpt = customUserDetailsService.findByEmail(principal.getName());
@@ -203,6 +306,12 @@ public class GTMController extends ModuloController {
         else return "redirect:/";
     }
 
+    /**
+     * Disinstalla il modulo GTM rimuovendo tutti i task associati all'azienda.
+     *
+     * @param azienda Azienda target.
+     * @since 1.3.0
+     */
     @Override
     public void disinstallaModulo(AziendaEntity azienda) {
         taskService.deleteAllByAzienda(azienda);

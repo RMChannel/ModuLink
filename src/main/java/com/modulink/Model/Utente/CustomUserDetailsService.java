@@ -53,8 +53,6 @@ public class CustomUserDetailsService implements UserDetailsService {
      */
     private final AziendaRepository aziendaRepository;
 
-    private final RuoloService ruoloService;
-
     /**
      * Costruttore per l'iniezione delle dipendenze (Dependency Injection).
      * <p>
@@ -64,12 +62,10 @@ public class CustomUserDetailsService implements UserDetailsService {
      *
      * @param userRepository    L'istanza del repository Utente gestita dal container.
      * @param aziendaRepository L'istanza del repository Azienda gestita dal container.
-     * @param ruoloService      Il servizio per la gestione dei ruoli.
      */
-    public CustomUserDetailsService(UserRepository userRepository, AziendaRepository aziendaRepository, RuoloService ruoloService) {
+    public CustomUserDetailsService(UserRepository userRepository, AziendaRepository aziendaRepository) {
         this.userRepository = userRepository;
         this.aziendaRepository = aziendaRepository;
-        this.ruoloService = ruoloService;
     }
 
     /**

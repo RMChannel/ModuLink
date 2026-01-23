@@ -11,12 +11,15 @@ import org.springframework.web.multipart.MultipartFile;
  * Questo DTO raccoglie le informazioni anagrafiche e di contatto dell'azienda durante la fase di onboarding.
  * Le annotazioni di <strong>Jakarta Validation</strong> assicurano che i dati inseriti rispettino
  * i formati richiesti (es. lunghezza P.IVA, formato telefono) prima di essere passati al Service Layer.
+ * </p>
  * <p>
  * Oltre ai campi di input utente, contiene campi ausiliari per la gestione del file di logo (bytes e nome file)
  * per facilitare il passaggio di dati o il ripristino della vista in caso di errori di validazione.
+ * </p>
  *
  * @author Modulink Team
- * @version 1.0
+ * @version 1.2.0
+ * @since 1.0.0
  */
 public class RegisterAziendaForm {
 

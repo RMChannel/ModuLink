@@ -33,6 +33,19 @@ import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 
 
+/**
+ * Controller per il modulo <strong>GDU (Gestione Dati Utenti)</strong>.
+ * <p>
+ * Questo componente rappresenta il pannello di controllo per la gestione del personale aziendale.
+ * Implementa le funzionalità CRUD complete per gli account utente: registrazione nuovi dipendenti,
+ * modifica dei profili esistenti, rimozione utenti e gestione del primo accesso (First Login).
+ * Estende {@link ModuloController} (ID Modulo: 0 - modulo core) per la gestione dei permessi.
+ * </p>
+ *
+ * @author Modulink Team
+ * @version 3.0.1
+ * @since 1.3.0
+ */
 @Controller
 public class GDUController extends ModuloController {
     private final CustomUserDetailsService customUserDetailsService;
@@ -41,6 +54,17 @@ public class GDUController extends ModuloController {
     private final String senderEmail;
     private final EmailService emailService;
 
+    /**
+     * Costruttore per l'iniezione delle dipendenze.
+     *
+     * @param moduloService            Servizio moduli.
+     * @param customUserDetailsService Servizio utenti.
+     * @param ruoloService             Servizio ruoli.
+     * @param associazioneService      Servizio associazioni utente-ruolo.
+     * @param senderEmail              Email mittente per notifiche.
+     * @param emailService             Servizio invio email.
+     * @since 1.3.0
+     */
     public GDUController(ModuloService moduloService, CustomUserDetailsService customUserDetailsService, RuoloService ruoloService, AssociazioneService associazioneService, @Value("${spring.mail.properties.mail.smtp.from}") String senderEmail, EmailService emailService) {
         super(moduloService, 0);
         this.customUserDetailsService=customUserDetailsService;
@@ -50,6 +74,19 @@ public class GDUController extends ModuloController {
         this.emailService=emailService;
     }
 
+    /**
+     * Visualizza la dashboard di gestione utenti.
+     * <p>
+     * Carica l'elenco di tutti gli utenti appartenenti all'azienda dell'utente loggato.
+     * </p>
+     *
+     * @param principal    Identità utente.
+     * @param model        Modello UI.
+     * @param newUserForm  DTO per nuovo utente.
+     * @param editUserForm DTO per modifica utente.
+     * @return Vista "moduli/gdu/GestioneUtenti" o redirect.
+     * @since 1.3.0
+     */
     @GetMapping({"dashboard/gdu/","dashboard/gdu"})
     public String dashboardDispatcher(Principal principal, Model model, @ModelAttribute NewUserForm newUserForm, @ModelAttribute EditUserForm editUserForm) {
         String email =  principal.getName();
@@ -64,6 +101,25 @@ public class GDUController extends ModuloController {
         }
     }
 
+    /**
+     * Rimuove un utente dal sistema aziendale.
+     * <p>
+     * Esegue controlli di sicurezza per impedire:
+     * <ul>
+     *     <li>L'eliminazione di utenti appartenenti ad altre aziende (Cross-Tenant check).</li>
+     *     <li>L'auto-eliminazione dell'utente loggato.</li>
+     * </ul>
+     * La cancellazione è transazionale e rimuove a cascata le associazioni correlate.
+     *
+     *
+     * @param principal Identità richiedente.
+     * @param model     Modello UI.
+     * @param email     Email dell'utente da eliminare.
+     * @param newUserForm DTO placeholder.
+     * @param editUserForm DTO placeholder.
+     * @return Redirect alla dashboard GDU con esito.
+     * @since 1.3.0
+     */
     @Transactional
     @PostMapping("dashboard/gdu/remove-user")
     public String removeUser(Principal principal, Model model, @RequestParam("email") String email, @ModelAttribute NewUserForm newUserForm, @ModelAttribute EditUserForm editUserForm) {
@@ -102,6 +158,11 @@ public class GDUController extends ModuloController {
         }
     }
 
+    /**
+     * Genera una password casuale sicura di 12 caratteri.
+     *
+     * @return Stringa password.
+     */
     @NonNull
     private String generatePassword() {
         String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz@!";
@@ -111,6 +172,26 @@ public class GDUController extends ModuloController {
         return stringBuilder.toString();
     }
 
+    /**
+     * Crea un nuovo account utente aziendale.
+     * <p>
+     * Esegue i seguenti passaggi:
+     * <ol>
+     *     <li>Genera una password temporanea sicura.</li>
+     *     <li>Crea l'entità {@link UtenteEntity} e la associa all'azienda.</li>
+     *     <li>Assegna il ruolo predefinito ("New User") per forzare il primo accesso.</li>
+     *     <li>Invia una mail di benvenuto con le credenziali temporanee.</li>
+     * </ol>
+     *
+     *
+     * @param principal      Identità amministratore.
+     * @param model          Modello UI.
+     * @param newUserForm    DTO dati nuovo utente.
+     * @param bindingResults Esito validazione.
+     * @param editUserForm   DTO placeholder.
+     * @return Redirect alla dashboard GDU con esito.
+     * @since 1.3.0
+     */
     @Transactional
     @PostMapping("dashboard/gdu/add-user")
     public String addUser(Principal principal, Model model, @Valid @ModelAttribute NewUserForm newUserForm, BindingResult bindingResults, @ModelAttribute EditUserForm editUserForm) {
@@ -161,6 +242,21 @@ public class GDUController extends ModuloController {
         }
     }
 
+    /**
+     * Modifica i dati di un utente esistente.
+     * <p>
+     * Permette all'amministratore di aggiornare anagrafica e contatti dei dipendenti.
+     * Include la possibilità di forzare un reset della password amministrativo.
+     * </p>
+     *
+     * @param principal      Identità amministratore.
+     * @param model          Modello UI.
+     * @param editUserForm   DTO dati modificati.
+     * @param bindingResults Esito validazione.
+     * @param newUserForm    DTO placeholder.
+     * @return Redirect alla dashboard GDU con esito.
+     * @since 1.3.0
+     */
     @PostMapping("dashboard/gdu/modify-user")
     public String editUser(Principal principal, Model model, @Valid @ModelAttribute EditUserForm editUserForm, BindingResult bindingResults, @ModelAttribute NewUserForm newUserForm) {
         String emailLogged =  principal.getName();
@@ -217,6 +313,20 @@ public class GDUController extends ModuloController {
         }
     }
 
+    /**
+     * Gestisce la procedura di primo accesso (First Login).
+     * <p>
+     * Imposta la password definitiva scelta dall'utente e assegna i ruoli standard,
+     * completando l'attivazione dell'account.
+     * </p>
+     *
+     * @param principal       Identità utente.
+     * @param model           Modello UI.
+     * @param password        Nuova password.
+     * @param confirmPassword Conferma password.
+     * @return Redirect alla dashboard o errore in pagina.
+     * @since 1.3.0
+     */
     @PostMapping("dashboard/gdu/firstlogin")
     public String registerNewUser(Principal principal, Model model, @RequestParam String password, @RequestParam String confirmPassword) {
         String emailLogged =  principal.getName();
@@ -262,3 +372,4 @@ public class GDUController extends ModuloController {
         return;
     }
 }
+

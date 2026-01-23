@@ -17,14 +17,44 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.Principal;
 
+/**
+ * Controller per la gestione della modifica del profilo utente.
+ * <p>
+ * Fornisce le funzionalità per permettere agli utenti autenticati di aggiornare i propri dati anagrafici,
+ * cambiare la password e gestire l'immagine del profilo (caricamento/rimozione).
+ * Implementa logiche di validazione di sicurezza per prevenire modifiche non autorizzate (es. cambio email non consentito).
+ * </p>
+ *
+ * @author Modulink Team
+ * @version 2.2.0
+ * @since 1.2.0
+ */
 @Controller
 public class EditUserController {
     private final CustomUserDetailsService customUserDetailsService;
 
+    /**
+     * Costruttore per l'iniezione delle dipendenze.
+     *
+     * @param customUserDetailsService Servizio per la gestione degli utenti.
+     * @since 1.2.0
+     */
     public EditUserController(CustomUserDetailsService customUserDetailsService) {
         this.customUserDetailsService=customUserDetailsService;
     }
 
+    /**
+     * Prepara e visualizza la pagina di modifica del profilo.
+     * <p>
+     * Popola il form con i dati attuali dell'utente loggato recuperati dal Model (popolato dall'interceptor globale).
+     * </p>
+     *
+     * @param principal    L'utente loggato.
+     * @param model        Il modello UI contenente l'utente corrente.
+     * @param editUserForm Il DTO da popolare per il binding del form.
+     * @return Il nome della vista "user/edit-profile" o un redirect se non autenticato.
+     * @since 1.2.0
+     */
     @GetMapping({"/dashboard/edit-user","/dashboard/edit-user/"})
     public String getEditUserPage(Principal principal, Model model, @ModelAttribute EditUserForm editUserForm) {
         if (principal == null) return "redirect:/";
@@ -39,6 +69,27 @@ public class EditUserController {
         }
     }
 
+    /**
+     * Processa la richiesta di aggiornamento dei dati utente.
+     * <p>
+     * Esegue diverse operazioni critiche:
+     * <ul>
+     *     <li>Validazione dei campi obbligatori e del formato (telefono, lunghezza stringhe).</li>
+     *     <li>Verifica della corrispondenza delle password se viene richiesto un cambio password.</li>
+     *     <li>Controllo di integrità sull'email (non modificabile).</li>
+     *     <li>Gestione del filesystem per l'upload o la rimozione dell'immagine di profilo.</li>
+     *     <li>Aggiornamento persistente dell'entità utente.</li>
+     * </ul>
+     *
+     *
+     * @param principal     Utente loggato.
+     * @param model         Modello UI.
+     * @param editUserForm  DTO con i nuovi dati inviati.
+     * @param bindingResult Risultati della validazione standard.
+     * @return Ricarica la pagina con messaggio di successo o errore.
+     * @throws IOException In caso di errori I/O durante la gestione del file immagine.
+     * @since 1.2.0
+     */
     @PostMapping("/dashboard/update-user")
     public String updateUser(Principal principal, Model model, @Valid @ModelAttribute EditUserForm editUserForm, BindingResult bindingResult) throws IOException {
         if(principal == null) return "redirect:/";
