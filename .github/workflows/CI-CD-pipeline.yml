@@ -271,6 +271,78 @@ jobs:
           reporter: java-junit
           fail-on-error: false
 
+  Login-test:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      checks: write
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: modulink
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Test Login (LoginControllerTest)
+        env:
+          DB_URL: jdbc:mysql://localhost:3306/modulink
+          DB_USER: root
+          DB_PASS: root
+          MAIL: ${{ secrets.MAIL }}
+          PASSWORD_MAIL: ${{ secrets.PASSWORD_MAIL }}
+        run: mvn -B test -Dtest=com.modulink.controller.Login.LoginControllerTest -Dactivate.databasepop=true -Dspring.jpa.hibernate.ddl-auto=create-drop
+
+      - name: Publish Test Report
+        uses: dorny/test-reporter@v1
+        if: always()
+        with:
+          name: Test Results (Login)
+          path: target/surefire-reports/*.xml
+          reporter: java-junit
+          fail-on-error: false
+
+  Model-test:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      checks: write
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Test Model
+        run: mvn -B test "-Dtest=com.modulink.model.**"
+
+      - name: Publish Test Report
+        uses: dorny/test-reporter@v1
+        if: always()
+        with:
+          name: Test Results (Model)
+          path: target/surefire-reports/*.xml
+          reporter: java-junit
+          fail-on-error: false
+
   Util-test:
     needs: build-and-test
     runs-on: ubuntu-latest
@@ -317,7 +389,7 @@ jobs:
           fail-on-error: false
 
   build-docker-image:
-    needs: [build-and-test, GDU-test, GTM-test, GDE-test, GDM-test, Security-test, Util-test]
+    needs: [build-and-test, GDU-test, GTM-test, GDE-test, GDM-test, Security-test, Util-test, Login-test, Model-test]
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
 
@@ -344,7 +416,7 @@ jobs:
             PASSWORD_MAIL=${{ secrets.PASSWORD_MAIL }}
 
   build-and-deploy:
-    needs: [build-and-test, GDU-test, GTM-test, GDE-test, GDM-test, Security-test, Util-test, build-docker-image]
+    needs: [build-and-test, GDU-test, GTM-test, GDE-test, GDM-test, Security-test, Util-test, build-docker-image, Login-test, Model-test]
     runs-on: ubuntu-latest
     steps:
       - name: Deploy to Server via SSH
