@@ -443,7 +443,7 @@ public class RegisterControllerTest {
                         .file(immagine)
                         .param("nome", "Mario")
                         .param("cognome", "Rossi")
-                        .param("email", "robbencito@gmail.com") // Valore di test TC10_GDU1
+                        .param("email", "r.cito@studenti.unisa.it") // Valore di test TC10_GDU1
                         .param("telefonoutente", "3333769853")
                         .param("password", "Password123")
                         .param("confermaPassword", "Password123")
