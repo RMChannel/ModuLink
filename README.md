@@ -11,6 +11,13 @@ Il sistema permette alle aziende di creare il proprio ambiente di lavoro su misu
 
 ---
 
+## 🔗 Link Utili
+
+* **Sito Web & Documentazione:** [rmchannel.github.io/ModuLink](https://rmchannel.github.io/ModuLink/)
+* **Demo Live:** [modulink.run.place](https://modulink.run.place/)
+
+---
+
 ## 📑 Indice
 
 - [Caratteristiche Principali](#-caratteristiche-principali)
