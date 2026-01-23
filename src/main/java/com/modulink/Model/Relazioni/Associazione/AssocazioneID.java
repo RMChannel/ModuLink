@@ -4,64 +4,73 @@ import java.io.Serializable;
 import java.util.Objects;
 
 /**
- * Rappresenta la chiave primaria composta per l'entità di unione {@link AssociazioneEntity}.
+ * Rappresenta la chiave primaria composta per l'entità di unione {@link AssociazioneEntity}, gestendo l'identità della relazione tra Utenti e Ruoli.
  * <p>
- * Questa classe definisce l'identità univoca di un'assegnazione di ruolo.
- * L'identità è formata dalla tripla:
+ * Questa classe implementa l'interfaccia {@link Serializable} per conformità alle specifiche JPA riguardanti le chiavi composte (Composite Keys).
+ * L'identità è definita dalla tripla di attributi:
  * <ul>
- * <li><strong>Utente:</strong> Chi possiede il ruolo.</li>
- * <li><strong>Ruolo:</strong> Quale mansione svolge.</li>
- * <li><strong>Azienda:</strong> Il contesto condiviso (l'utente e il ruolo devono appartenere alla stessa azienda).</li>
+ * <li><strong>ID_Utente:</strong> Identificativo dell'utente assegnatario.</li>
+ * <li><strong>ID_Ruolo:</strong> Identificativo del ruolo assegnato.</li>
+ * <li><strong>ID_Azienda:</strong> Discriminante del tenant che garantisce l'integrità referenziale cross-entità.</li>
  * </ul>
+ *
  * <p>
- * È necessaria per il funzionamento di {@link jakarta.persistence.IdClass} su {@link AssociazioneEntity}.
- * I nomi dei campi qui definiti devono corrispondere esattamente ai nomi degli attributi
- * annotati con {@code @Id} nella classe Entity corrispondente.
+ * La presenza di <code>id_azienda</code> come parte della chiave primaria composta riflette il modello multi-tenant del sistema,
+ * dove utenti e ruoli sono logicamente isolati per azienda.
+ * </p>
  *
  * @see AssociazioneEntity
  * @author Modulink Team
- * @version 1.0
+ * @version 1.0.1
+ * @since 1.0.0
  */
 public class AssocazioneID implements Serializable {
 
     /**
-     * Parte della FK verso Utente.
-     * Identifica lo specifico utente all'interno dell'azienda.
-     * Deve coincidere con il nome dell'attributo mappato nella relazione {@code @ManyToOne} verso Utente.
+     * Identificativo univoco dell'Utente.
+     * <p>
+     * Parte della chiave esterna composta verso la tabella <code>Utente</code>.
+     * </p>
+     *
+     * @since 1.0.0
      */
     private int id_utente;
 
     /**
-     * Parte della FK verso Ruolo.
-     * Identifica lo specifico ruolo all'interno dell'azienda.
-     * Deve coincidere con il nome dell'attributo mappato nella relazione {@code @ManyToOne} verso Ruolo.
+     * Identificativo univoco del Ruolo.
+     * <p>
+     * Parte della chiave esterna composta verso la tabella <code>Ruolo</code>.
+     * </p>
+     *
+     * @since 1.0.0
      */
     private int id_ruolo;
 
     /**
-     * Contesto Aziendale condiviso.
+     * Identificativo dell'Azienda (Tenant Identifier).
      * <p>
-     * Questo campo è fondamentale: fa parte sia della chiave esterna verso {@code Utente},
-     * sia della chiave esterna verso {@code Ruolo}. Garantisce l'integrità referenziale
-     * impedendo di associare un utente dell'Azienda A a un ruolo dell'Azienda B.
-     * <p>
-     * In JPA, questo singolo campo mappa la colonna "ID_Azienda" che è condivisa tra le due
-     * relazioni {@code @MapsId} o {@code @JoinColumn} parziali.
+     * Campo critico per l'integrità dei dati: assicura che un utente possa essere associato
+     * esclusivamente a ruoli definiti all'interno della medesima organizzazione.
+     * </p>
+     *
+     * @since 1.0.0
      */
     private int id_azienda;
 
     /**
-     * Costruttore vuoto.
-     * Richiesto da JPA per la creazione dell'istanza tramite reflection.
+     * Costruttore predefinito richiesto per la corretta istanziazione tramite i provider di persistenza (JPA/Hibernate).
+     *
+     * @since 1.0.0
      */
     public AssocazioneID() {}
 
     /**
-     * Costruttore completo.
+     * Costruttore parametrico per l'inizializzazione manuale della chiave composta.
      *
-     * @param id_utente  L'ID dell'utente.
-     * @param id_ruolo   L'ID del ruolo.
-     * @param id_azienda L'ID dell'azienda condivisa.
+     * @param id_utente  Identificativo dell'utente.
+     * @param id_ruolo   Identificativo del ruolo.
+     * @param id_azienda Identificativo dell'azienda.
+     * @since 1.0.0
      */
     public AssocazioneID(int id_utente, int id_ruolo, int id_azienda) {
         this.id_utente = id_utente;
@@ -70,13 +79,11 @@ public class AssocazioneID implements Serializable {
     }
 
     /**
-     * Verifica l'uguaglianza tra due chiavi composte.
-     * Tutti e tre i campi (Utente, Ruolo, Azienda) devono coincidere.
-     * <p>
-     * Essenziale per il corretto funzionamento in {@code Set} e cache di Hibernate.
+     * Verifica l'uguaglianza tra istanze di chiavi composte basandosi sulla corrispondenza di tutti i campi.
      *
-     * @param o L'oggetto da confrontare.
-     * @return true se le chiavi sono identiche.
+     * @param o Oggetto da confrontare.
+     * @return true se i tre identificativi coincidono, false altrimenti.
+     * @since 1.0.0
      */
     @Override
     public boolean equals(Object o) {
@@ -89,37 +96,72 @@ public class AssocazioneID implements Serializable {
     }
 
     /**
-     * Genera l'hash code basato sui tre identificativi.
+     * Calcola il valore hash per l'identità della chiave composta.
      *
-     * @return L'hash code calcolato.
+     * @return Valore hash calcolato.
+     * @since 1.0.0
      */
     @Override
     public int hashCode() {
         return Objects.hash(id_utente, id_ruolo, id_azienda);
     }
 
-    // --- GETTER E SETTER (Aggiunti per completezza) ---
-
+    /**
+     * Recupera l'ID dell'utente.
+     *
+     * @return L'ID utente.
+     * @since 1.0.0
+     */
     public int getId_utente() {
         return id_utente;
     }
 
+    /**
+     * Imposta l'ID dell'utente.
+     *
+     * @param id_utente Nuovo ID utente.
+     * @since 1.0.0
+     */
     public void setId_utente(int id_utente) {
         this.id_utente = id_utente;
     }
 
+    /**
+     * Recupera l'ID del ruolo.
+     *
+     * @return L'ID ruolo.
+     * @since 1.0.0
+     */
     public int getId_ruolo() {
         return id_ruolo;
     }
 
+    /**
+     * Imposta l'ID del ruolo.
+     *
+     * @param id_ruolo Nuovo ID ruolo.
+     * @since 1.0.0
+     */
     public void setId_ruolo(int id_ruolo) {
         this.id_ruolo = id_ruolo;
     }
 
+    /**
+     * Recupera l'ID dell'azienda.
+     *
+     * @return L'ID azienda.
+     * @since 1.0.0
+     */
     public int getId_azienda() {
         return id_azienda;
     }
 
+    /**
+     * Imposta l'ID dell'azienda.
+     *
+     * @param id_azienda Nuovo ID azienda.
+     * @since 1.0.0
+     */
     public void setId_azienda(int id_azienda) {
         this.id_azienda = id_azienda;
     }

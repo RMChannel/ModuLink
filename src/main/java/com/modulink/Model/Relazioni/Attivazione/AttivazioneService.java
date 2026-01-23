@@ -16,28 +16,68 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Service Layer responsabile della gestione del ciclo di vita delle attivazioni dei moduli.
+ * <p>
+ * Gestisce l'attivazione predefinita per i nuovi utenti, l'acquisto di nuovi moduli (con relativa assegnazione
+ * dei permessi al responsabile) e la dismissione (vendita) dei moduli con pulizia delle dipendenze.
+ * Integra la gestione della cache per garantire performance ottimali.
+ * </p>
+ *
+ * @author Modulink Team
+ * @version 3.1.5
+ * @since 1.2.0
+ */
 @Service
 public class AttivazioneService {
+
     private final AttivazioneRepository attivazioneRepository;
     private final ModuloRepository moduloRepository;
     private final PertinenzaRepository pertinenzaRepository;
     private final RuoloService ruoloService;
     private final AziendaRepository aziendaRepository;
-    private final jakarta.persistence.EntityManager entityManager;
 
-    public AttivazioneService(AttivazioneRepository attivazioneRepository, ModuloRepository moduloRepository, PertinenzaRepository pertinenzaRepository, RuoloService ruoloService, AziendaRepository aziendaRepository, jakarta.persistence.EntityManager entityManager) {
+    /**
+     * Costruttore per l'iniezione delle dipendenze.
+     *
+     * @param attivazioneRepository Repository delle attivazioni.
+     * @param moduloRepository      Repository dei moduli.
+     * @param pertinenzaRepository  Repository delle pertinenze (permessi).
+     * @param ruoloService          Service per la gestione ruoli.
+     * @param aziendaRepository     Repository delle aziende.
+     * @since 1.2.0
+     */
+    public AttivazioneService(AttivazioneRepository attivazioneRepository, ModuloRepository moduloRepository, PertinenzaRepository pertinenzaRepository, RuoloService ruoloService, AziendaRepository aziendaRepository) {
         this.attivazioneRepository=attivazioneRepository;
         this.moduloRepository=moduloRepository;
         this.pertinenzaRepository = pertinenzaRepository;
         this.ruoloService=ruoloService;
         this.aziendaRepository=aziendaRepository;
-        this.entityManager = entityManager;
+
     }
 
+    /**
+     * Recupera un'attivazione specifica tramite il suo ID composto.
+     *
+     * @param attivazioneID L'ID composto dell'attivazione.
+     * @return L'entità {@link AttivazioneEntity} trovata.
+     * @throws IllegalArgumentException se l'attivazione non viene trovata.
+     * @since 1.2.0
+     */
     public AttivazioneEntity getAttivazioneById(AttivazioneID attivazioneID) {
         return attivazioneRepository.findById(attivazioneID).orElseThrow(() -> new IllegalArgumentException("L'attivazione non è stata trovata"));
     }
 
+    /**
+     * Esegue l'attivazione dei moduli predefiniti (Core) per una nuova azienda.
+     * <p>
+     * Viene chiamata tipicamente durante la fase di registrazione di un nuovo tenant.
+     * I moduli con ID 0, 1, 2, 3 e 9999 vengono assegnati automaticamente.
+     * </p>
+     *
+     * @param aziendaEntity L'azienda appena creata.
+     * @since 1.2.0
+     */
     @Transactional
     public void attivazioneDefault(AziendaEntity aziendaEntity) {
         List<AttivazioneEntity> attivazioni=new ArrayList<>();
@@ -51,6 +91,13 @@ public class AttivazioneService {
         attivazioneRepository.saveAll(attivazioni);
     }
 
+    /**
+     * Restituisce la lista dei moduli disponibili per l'acquisto da parte di un'azienda.
+     *
+     * @param aziendaEntity L'azienda cliente.
+     * @return Lista di moduli non ancora attivi.
+     * @since 1.3.0
+     */
     public List<ModuloEntity> getNotPurchased(AziendaEntity aziendaEntity) {
         if (aziendaEntity == null) {
             return new ArrayList<>();
@@ -58,6 +105,13 @@ public class AttivazioneService {
         return attivazioneRepository.getAllNotPurchased(aziendaEntity);
     }
 
+    /**
+     * Restituisce la lista dei moduli "Premium" acquistati dall'azienda (escludendo quelli core).
+     *
+     * @param aziendaEntity L'azienda cliente.
+     * @return Lista di moduli acquistati (filtrata dai moduli di sistema).
+     * @since 1.3.0
+     */
     public List<ModuloEntity> getAllPurchased(AziendaEntity aziendaEntity) {
         if (aziendaEntity == null) {
             return new ArrayList<>();
@@ -67,6 +121,24 @@ public class AttivazioneService {
         return moduli;
     }
 
+    /**
+     * Gestisce la logica di acquisto di un nuovo modulo.
+     * <p>
+     * Esegue i seguenti passaggi in transazione:
+     * <ol>
+     *     <li>Verifica l'esistenza e la visibilità del modulo.</li>
+     *     <li>Controlla che non sia già attivo.</li>
+     *     <li>Crea e salva l'entità {@link AttivazioneEntity}.</li>
+     *     <li>Assegna automaticamente i permessi di gestione (Pertinenza) al Ruolo Responsabile dell'azienda.</li>
+     * </ol>
+     * Invalida le cache relative ai moduli utente.
+     *
+     *
+     * @param azienda   L'azienda acquirente.
+     * @param moduloId  L'ID del modulo da acquistare.
+     * @return true se l'operazione ha successo, false altrimenti.
+     * @since 2.0.0
+     */
     @Transactional
     @CacheEvict(value = {"moduliByUtente", "moduloAccess", "modulo"}, allEntries = true)
     public boolean purchaseModulo(AziendaEntity azienda, int moduloId) {
@@ -113,6 +185,23 @@ public class AttivazioneService {
         return true;
     }
 
+    /**
+     * Gestisce la dismissione (vendita/rimozione) di un modulo.
+     * <p>
+     * Esegue una pulizia profonda per mantenere la coerenza dei dati:
+     * <ol>
+     *     <li>Verifica che il modulo sia effettivamente attivo.</li>
+     *     <li>Rimuove tutte le {@link PertinenzaEntity} (permessi) associate a quel modulo per quell'azienda.</li>
+     *     <li>Rimuove l'attivazione stessa.</li>
+     * </ol>
+     * Gestisce con attenzione le collezioni Hibernate per evitare {@code TransientObjectException}.
+     *
+     *
+     * @param azienda   L'azienda che dismette il modulo.
+     * @param moduloId  L'ID del modulo da rimuovere.
+     * @return true se l'operazione ha successo, false altrimenti.
+     * @since 2.1.0
+     */
     @Transactional
     @CacheEvict(value = {"moduliByUtente", "moduloAccess", "modulo"}, allEntries = true)
     public boolean sellModulo(AziendaEntity azienda, int moduloId) {
