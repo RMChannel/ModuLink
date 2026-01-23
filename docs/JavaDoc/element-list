@@ -6,6 +6,7 @@ com.modulink.Controller.AdminModules.Support
 com.modulink.Controller.Dashboard
 com.modulink.Controller.EditUser
 com.modulink.Controller.HomePage
+com.modulink.controller.Login
 com.modulink.Controller.Login
 com.modulink.Controller.Register
 com.modulink.Controller.UserModules.GDE
@@ -17,6 +18,7 @@ com.modulink.Controller.UserModules.GMA.Store
 com.modulink.Controller.UserModules.GRU
 com.modulink.Controller.UserModules.GTM
 com.modulink.DatabasePopulator
+com.modulink.model
 com.modulink.Model.Azienda
 com.modulink.Model.Email
 com.modulink.Model.Eventi
@@ -33,3 +35,9 @@ com.modulink.Model.Ruolo
 com.modulink.Model.SupportForm
 com.modulink.Model.Task
 com.modulink.Model.Utente
+com.modulink.security
+com.modulink.service.Register
+com.modulink.service.UserModules.GDE
+com.modulink.service.UserModules.GDM
+com.modulink.service.UserModules.GTM
+com.modulink.util
