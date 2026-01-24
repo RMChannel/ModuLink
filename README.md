@@ -12,8 +12,8 @@ Il sistema permette alle aziende di creare il proprio ambiente di lavoro su misu
 ---
 
 #### 🔗 Link Utili
-*   **Sito Web & Documentazione:** rmchannel.github.io/ModuLink
-*   **Demo Live:** modulink.run.place
+* **Sito Web & Documentazione:** [rmchannel.github.io/ModuLink](https://rmchannel.github.io/ModuLink/)
+* **Demo Live:** [modulink.run.place](https://modulink.run.place/)
 
 ---
 
@@ -190,5 +190,3 @@ Il server genera automaticamente delle aziende di base per il testing e un accou
 *   **Daniele Carpentieri** (DC) - Team Member
 *   **Aleksandre Chikviladze** (AC) - Team Member
 *   **Arjel Buzi** (AB) - Team Member
-
-,
