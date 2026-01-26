@@ -1,4 +1,4 @@
-package com.modulink.Controller.UserModules.GDM;
+package com.modulink.service.UserModules.GDM;
 
 import com.modulink.Model.Azienda.AziendaEntity;
 import com.modulink.Model.Modulo.ModuloService;

@@ -1,4 +1,4 @@
-package com.modulink.Controller.UserModules.GTM;
+package com.modulink.service.UserModules.GTM;
 
 import com.modulink.Model.Azienda.AziendaEntity;
 import com.modulink.Model.Modulo.ModuloService;
