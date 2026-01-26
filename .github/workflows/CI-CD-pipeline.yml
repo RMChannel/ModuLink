@@ -14,18 +14,16 @@ jobs:
       checks: write
 
     steps:
-      # 1. Scarica il codice
       - uses: actions/checkout@v4
-
-      # 2. Configura Java 17
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
           cache: maven
-
-      # 3. Test RunningTest
+      
+      # Nota: RunningTest sembra un test unitario/mock che potrebbe non richiedere un DB reale, 
+      # ma se lo richiede, aggiungi qui il blocco 'services' come sotto.
       - name: Test RunningTest
         env:
           DB_URL: ${{ secrets.DB_URL }}
@@ -35,7 +33,6 @@ jobs:
           PASSWORD_MAIL: ${{ secrets.PASSWORD_MAIL }}
         run: mvn -B test -Dtest=com.modulink.RunningTest
 
-      # 4. Pubblica Report dei Test (Grafico)
       - name: Publish Test Report
         uses: dorny/test-reporter@v1
         if: always()
@@ -51,12 +48,20 @@ jobs:
     permissions:
       contents: read
       checks: write
+    
+    # 1. CREA UN DB ISOLATO SOLO PER QUESTO JOB
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: modulink
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
     steps:
-      # 1. Scarica il codice
       - uses: actions/checkout@v4
-
-      # 2. Configura Java 17
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
@@ -64,17 +69,17 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
-      # 3. Test GDU (RegisterControllerTest)
       - name: Test GDU (RegisterControllerTest)
         env:
-          DB_URL: ${{ secrets.DB_URL }}
-          DB_USER: ${{ secrets.DB_USER }}
-          DB_PASS: ${{ secrets.DB_PASS }}
+          # 2. PUNTA AL DB LOCALE DEL CONTAINER
+          DB_URL: jdbc:mysql://localhost:3306/modulink
+          DB_USER: root
+          DB_PASS: root
           MAIL: ${{ secrets.MAIL }}
           PASSWORD_MAIL: ${{ secrets.PASSWORD_MAIL }}
-        run: mvn -B test -Dtest=com.modulink.service.Register.RegisterControllerTest -Dactivate.databasepop=false -Dspring.jpa.hibernate.ddl-auto=update
+        # 3. ABILITA IL POPOLATORE (true) E USA CREATE-DROP
+        run: mvn -B test -Dtest=com.modulink.service.Register.RegisterControllerTest -Dactivate.databasepop=true -Dspring.jpa.hibernate.ddl-auto=create-drop
 
-      # 4. Pubblica Report dei Test (Grafico)
       - name: Publish Test Report
         uses: dorny/test-reporter@v1
         if: always()
@@ -90,12 +95,19 @@ jobs:
     permissions:
       contents: read
       checks: write
+    
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: modulink
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
     steps:
-      # 1. Scarica il codice
       - uses: actions/checkout@v4
-
-      # 2. Configura Java 17
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
@@ -103,17 +115,15 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
-      # 3. Test GTM (GTMControllerTest)
       - name: Test GTM (GTMControllerTest)
         env:
-          DB_URL: ${{ secrets.DB_URL }}
-          DB_USER: ${{ secrets.DB_USER }}
-          DB_PASS: ${{ secrets.DB_PASS }}
+          DB_URL: jdbc:mysql://localhost:3306/modulink
+          DB_USER: root
+          DB_PASS: root
           MAIL: ${{ secrets.MAIL }}
           PASSWORD_MAIL: ${{ secrets.PASSWORD_MAIL }}
-        run: mvn -B test -Dtest=com.modulink.service.UserModules.GTM.GTMControllerTest -Dactivate.databasepop=false -Dspring.jpa.hibernate.ddl-auto=update
+        run: mvn -B test -Dtest=com.modulink.service.UserModules.GTM.GTMControllerTest -Dactivate.databasepop=true -Dspring.jpa.hibernate.ddl-auto=create-drop
 
-      # 4. Pubblica Report dei Test (Grafico)
       - name: Publish Test Report
         uses: dorny/test-reporter@v1
         if: always()
@@ -130,11 +140,18 @@ jobs:
       contents: read
       checks: write
 
-    steps:
-      # 1. Scarica il codice
-      - uses: actions/checkout@v4
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: modulink
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
-      # 2. Configura Java 17
+    steps:
+      - uses: actions/checkout@v4
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
@@ -142,17 +159,15 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
-      # 3. Test GDE (GDEControllerTest)
       - name: Test GDE (GDEControllerTest)
         env:
-          DB_URL: ${{ secrets.DB_URL }}
-          DB_USER: ${{ secrets.DB_USER }}
-          DB_PASS: ${{ secrets.DB_PASS }}
+          DB_URL: jdbc:mysql://localhost:3306/modulink
+          DB_USER: root
+          DB_PASS: root
           MAIL: ${{ secrets.MAIL }}
           PASSWORD_MAIL: ${{ secrets.PASSWORD_MAIL }}
-        run: mvn -B test -Dtest=com.modulink.service.UserModules.GDE.GDEControllerTest -Dactivate.databasepop=false -Dspring.jpa.hibernate.ddl-auto=update
+        run: mvn -B test -Dtest=com.modulink.service.UserModules.GDE.GDEControllerTest -Dactivate.databasepop=true -Dspring.jpa.hibernate.ddl-auto=create-drop
 
-      # 4. Pubblica Report dei Test (Grafico)
       - name: Publish Test Report
         uses: dorny/test-reporter@v1
         if: always()
@@ -169,11 +184,18 @@ jobs:
       contents: read
       checks: write
 
-    steps:
-      # 1. Scarica il codice
-      - uses: actions/checkout@v4
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: modulink
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
-      # 2. Configura Java 17
+    steps:
+      - uses: actions/checkout@v4
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
@@ -181,17 +203,15 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
-      # 3. Test GDM (GDMControllerTest)
       - name: Test GDM (GDMControllerTest)
         env:
-          DB_URL: ${{ secrets.DB_URL }}
-          DB_USER: ${{ secrets.DB_USER }}
-          DB_PASS: ${{ secrets.DB_PASS }}
+          DB_URL: jdbc:mysql://localhost:3306/modulink
+          DB_USER: root
+          DB_PASS: root
           MAIL: ${{ secrets.MAIL }}
           PASSWORD_MAIL: ${{ secrets.PASSWORD_MAIL }}
-        run: mvn -B test -Dtest=com.modulink.service.UserModules.GDM.GDMControllerTest -Dactivate.databasepop=false -Dspring.jpa.hibernate.ddl-auto=update
+        run: mvn -B test -Dtest=com.modulink.service.UserModules.GDM.GDMControllerTest -Dactivate.databasepop=true -Dspring.jpa.hibernate.ddl-auto=create-drop
 
-      # 4. Pubblica Report dei Test (Grafico)
       - name: Publish Test Report
         uses: dorny/test-reporter@v1
         if: always()
@@ -208,11 +228,18 @@ jobs:
       contents: read
       checks: write
 
-    steps:
-      # 1. Scarica il codice
-      - uses: actions/checkout@v4
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: modulink
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
-      # 2. Configura Java 17
+    steps:
+      - uses: actions/checkout@v4
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
@@ -220,23 +247,21 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
-      # 3. Configura Chrome
       - name: Setup Chrome
         uses: browser-actions/setup-chrome@v1
         with:
           chrome-version: stable
 
-      # 4. Test Security
       - name: Test Security
         env:
-          DB_URL: ${{ secrets.DB_URL }}
-          DB_USER: ${{ secrets.DB_USER }}
-          DB_PASS: ${{ secrets.DB_PASS }}
+          DB_URL: jdbc:mysql://localhost:3306/modulink
+          DB_USER: root
+          DB_PASS: root
           MAIL: ${{ secrets.MAIL }}
           PASSWORD_MAIL: ${{ secrets.PASSWORD_MAIL }}
-        run: mvn -B test "-Dtest=com.modulink.security.**" -Dspring.jpa.hibernate.ddl-auto=create-drop
+        # Security test ha bisogno dell'admin creato dal populator
+        run: mvn -B test "-Dtest=com.modulink.security.**" -Dactivate.databasepop=true -Dspring.jpa.hibernate.ddl-auto=create-drop
 
-      # 4. Pubblica Report dei Test (Grafico)
       - name: Publish Test Report
         uses: dorny/test-reporter@v1
         if: always()
@@ -252,12 +277,20 @@ jobs:
     permissions:
       contents: read
       checks: write
+    
+    # Anche i test util potrebbero aver bisogno di un contesto DB se testano repository o servizi
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: modulink
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
     steps:
-      # 1. Scarica il codice
       - uses: actions/checkout@v4
-
-      # 2. Configura Java 17
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
@@ -265,17 +298,15 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
-      # 3. Test Utils
       - name: Test Utils
         env:
-          DB_URL: ${{ secrets.DB_URL }}
-          DB_USER: ${{ secrets.DB_USER }}
-          DB_PASS: ${{ secrets.DB_PASS }}
+          DB_URL: jdbc:mysql://localhost:3306/modulink
+          DB_USER: root
+          DB_PASS: root
           MAIL: ${{ secrets.MAIL }}
           PASSWORD_MAIL: ${{ secrets.PASSWORD_MAIL }}
-        run: mvn -B test "-Dtest=com.modulink.util.**" -Dspring.jpa.hibernate.ddl-auto=update
+        run: mvn -B test "-Dtest=com.modulink.util.**" -Dactivate.databasepop=true -Dspring.jpa.hibernate.ddl-auto=create-drop
 
-      # 4. Pubblica Report dei Test (Grafico)
       - name: Publish Test Report
         uses: dorny/test-reporter@v1
         if: always()
