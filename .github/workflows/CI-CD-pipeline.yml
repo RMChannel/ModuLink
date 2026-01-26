@@ -234,7 +234,7 @@ jobs:
           DB_PASS: ${{ secrets.DB_PASS }}
           MAIL: ${{ secrets.MAIL }}
           PASSWORD_MAIL: ${{ secrets.PASSWORD_MAIL }}
-        run: mvn -B test "-Dtest=com.modulink.security.**" -Dspring.jpa.hibernate.ddl-auto=update
+        run: mvn -B test "-Dtest=com.modulink.security.**" -Dspring.jpa.hibernate.ddl-auto=create-drop
 
       # 4. Pubblica Report dei Test (Grafico)
       - name: Publish Test Report
