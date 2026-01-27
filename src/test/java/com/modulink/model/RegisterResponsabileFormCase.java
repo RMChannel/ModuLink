@@ -20,7 +20,13 @@ public class RegisterResponsabileFormCase {
         form.setCognome("Verdi");
         form.setTelefonoutente("+39 347 7654321");
 
-        MockMultipartFile file = new MockMultipartFile("immagineProfilo", "avatar.jpg", "image/jpeg", "avatar content".getBytes());
+        byte[] content = new byte[1024 * 1024 * 13];
+        MockMultipartFile file = new MockMultipartFile(
+                "immagineProfilo",
+                "Foto.jpg",
+                "image/jpeg",
+                content
+        );
         form.setImmagineProfilo(file);
 
         assertEquals("admin@example.com", form.getEmail());

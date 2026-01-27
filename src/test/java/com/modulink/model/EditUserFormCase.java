@@ -21,8 +21,14 @@ public class EditUserFormCase {
         form.setPassword("password123");
         form.setConfirmPassword("password123");
         form.setRemoveImageFlag(true);
-        
-        MockMultipartFile file = new MockMultipartFile("immagineProfilo", "test.jpg", "image/jpeg", "test image content".getBytes());
+
+        byte[] content = new byte[1024 * 1024 * 13];
+        MockMultipartFile file = new MockMultipartFile(
+                "immagineProfilo",
+                "Foto.jpg",
+                "image/jpeg",
+                content
+        );
         form.setImmagineProfilo(file);
 
         assertEquals("Mario", form.getNome());

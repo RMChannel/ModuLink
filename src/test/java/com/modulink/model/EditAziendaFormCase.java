@@ -24,8 +24,14 @@ public class EditAziendaFormCase {
         byte[] bytes = "new logo content".getBytes();
         form.setLogoBytes(bytes);
         form.setLogoFileName("new_logo.png");
-        
-        MockMultipartFile file = new MockMultipartFile("logo", "new_logo.png", "image/png", bytes);
+
+        byte[] content = new byte[1024 * 1024 * 13];
+        MockMultipartFile file = new MockMultipartFile(
+                "immagineProfilo",
+                "Foto.jpg",
+                "image/jpeg",
+                content
+        );
         form.setLogo(file);
 
         assertEquals("ModuLink Srl", form.getNomeAzienda());
