@@ -7,7 +7,7 @@ import org.springframework.mock.web.MockMultipartFile;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@SpringBootTest
+
 public class RegisterResponsabileFormCase {
 
     @Test
