@@ -9,11 +9,14 @@
 **ModuLink** è una piattaforma **SaaS (Software as a Service)** modulare e multi-tenant progettata per la gestione integrata dei processi aziendali.
 Il sistema permette alle aziende di creare il proprio ambiente di lavoro su misura, installando e configurando solo i moduli necessari per le proprie attività operative.
 
+> [!IMPORTANT]
+> **Stato del Progetto:** In seguito alla consegna dell'esame, la demo live è stata disabilitata. Inoltre, è stato rimosso dalla pipeline di CI/CD il passaggio di pubblicazione automatica dell'immagine su Docker Hub.
+
 ---
 
 #### 🔗 Link Utili
 * **Sito Web & Documentazione:** [rmchannel.github.io/ModuLink](https://rmchannel.github.io/ModuLink/)
-* **Demo Live:** [modulink.run.place](https://modulink.run.place/)
+* **Demo Live:** ~~modulink.run.place~~ (**Disabilitata** - Esame consegnato)
 
 ---
 
