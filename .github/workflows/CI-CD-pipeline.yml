@@ -13,6 +13,16 @@ jobs:
       contents: read
       checks: write
 
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: modulink
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
     steps:
       - uses: actions/checkout@v4
       - name: Set up JDK 17
@@ -26,12 +36,12 @@ jobs:
       # ma se lo richiede, aggiungi qui il blocco 'services' come sotto.
       - name: Test RunningTest
         env:
-          DB_URL: ${{ secrets.DB_URL }}
-          DB_USER: ${{ secrets.DB_USER }}
-          DB_PASS: ${{ secrets.DB_PASS }}
+          DB_URL: jdbc:mysql://localhost:3306/modulink
+          DB_USER: root
+          DB_PASS: root
           MAIL: ${{ secrets.MAIL }}
           PASSWORD_MAIL: ${{ secrets.PASSWORD_MAIL }}
-        run: mvn -B test -Dtest=com.modulink.RunningTest
+        run: mvn -B test -Dtest=com.modulink.RunningTest -Dactivate.databasepop=true -Dspring.jpa.hibernate.ddl-auto=create-drop
 
       - name: Publish Test Report
         uses: dorny/test-reporter@v1
@@ -322,6 +332,16 @@ jobs:
       contents: read
       checks: write
 
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: modulink
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
     steps:
       - uses: actions/checkout@v4
       - name: Set up JDK 17
@@ -332,7 +352,13 @@ jobs:
           cache: maven
 
       - name: Test Model
-        run: mvn -B test "-Dtest=com.modulink.model.**"
+        env:
+          DB_URL: jdbc:mysql://localhost:3306/modulink
+          DB_USER: root
+          DB_PASS: root
+          MAIL: ${{ secrets.MAIL }}
+          PASSWORD_MAIL: ${{ secrets.PASSWORD_MAIL }}
+        run: mvn -B test "-Dtest=com.modulink.model.**" -Dactivate.databasepop=true -Dspring.jpa.hibernate.ddl-auto=create-drop
 
       - name: Publish Test Report
         uses: dorny/test-reporter@v1
